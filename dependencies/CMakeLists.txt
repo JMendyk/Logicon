@@ -1,5 +1,19 @@
 set(DEPS_DIR ${CMAKE_CURRENT_LIST_DIR})
 
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
+
+##### GL3W #####
+set(GL3W_DIR ${DEPS_DIR}/gl3w)
+
+add_subdirectory(${GL3W_DIR})
+include_directories(${GL3W_DIR}/include)
+target_sources(${EXECUTABLE_NAME}
+    PUBLIC
+        ${GL3W_DIR}/src/gl3w.c
+)
+
 ##### GLFW #####
 set(GLFW_DIR ${DEPS_DIR}/glfw)
 
@@ -10,12 +24,6 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(${GLFW_DIR})
 target_link_libraries(${EXECUTABLE_NAME} glfw)
-
-##### GL3W #####
-set(GL3W_DIR ${DEPS_DIR}/gl3w)
-
-target_include_directories(${EXECUTABLE_NAME} PUBLIC ${GL3W_DIR})
-target_sources(${EXECUTABLE_NAME} PUBLIC ${GL3W_DIR}/GL/gl3w.c)
 
 ##### ImGUI #####
 set(IMGUI_DIR ${DEPS_DIR}/imgui)

@@ -8,12 +8,30 @@
 
 #include "gate.h"
 
-class Input : Gate {
-public:
-    explicit Input(int ID);
+namespace Logicon {
+    /**
+     * @brief Input switch gate implementation.
+     * INPUTS:  0
+     * OUTPUTS: 1
+     *
+     * Input changes it's state if it is `clicked`.
+     * Default state is LOW
+     */
+    class Input : Gate {
 
-    void clickAction() override;
-};
+    public:
+        explicit Input(ID id, Circuit parent);
 
+        /**
+         * If the state flag is HIGH outputs HIGH, otherwise outputs LOW
+         */
+        void update() override;
+
+        /**
+         * Changes state flag for block when it is `clicked`
+         */
+        void clickAction() override;
+    };
+} // namespace Logicon
 
 #endif //LOGICON_INPUT_H

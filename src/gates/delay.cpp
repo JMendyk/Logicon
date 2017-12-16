@@ -4,4 +4,16 @@
 
 #include "gates/delay.h"
 
-Delay::Delay(int ID) : Gate(ID) {}
+namespace Logicon {
+    Delay::Delay(ID id, Circuit parent) : Gate(id, parent) {
+
+    }
+
+    void Delay::update() {
+
+    }
+
+    void Delay::changeSettings(Tick delay) {
+
+    }
+} // namespace Logicon

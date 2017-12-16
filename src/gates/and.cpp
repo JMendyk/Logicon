@@ -4,9 +4,13 @@
 
 #include "gates/and.h"
 
-And::And(int ID) : Gate(ID) {}
+namespace Logicon {
+    And::And(ID id, Circuit parent) : Gate(id, parent) {
 
-void And::update() {
+    }
 
-}
+    void And::update() {
+
+    }
+} // namespace Logicon
 

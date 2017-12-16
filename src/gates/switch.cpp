@@ -4,8 +4,16 @@
 
 #include "gates/switch.h"
 
-Switch::Switch(int ID) : Gate(ID) {}
+namespace Logicon {
+    Switch::Switch(ID id, Circuit parent) : Gate(id, parent) {
 
-void Switch::clickAction() {
-    Gate::clickAction();
-}
+    }
+
+    void Switch::update() {
+
+    }
+
+    void Switch::clickAction() {
+        Gate::clickAction();
+    }
+} // namespace Logicon

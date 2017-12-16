@@ -4,8 +4,16 @@
 
 #include "gates/input.h"
 
-Input::Input(int ID) : Gate(ID) {}
+namespace Logicon {
+    Input::Input(ID id, Circuit parent) : Gate(id, parent) {
 
-void Input::clickAction() {
-    return Gate::clickAction();
-}
+    }
+
+    void Input::update() {
+
+    }
+
+    void Input::clickAction() {
+        Gate::clickAction();
+    }
+} // namespace Logicon

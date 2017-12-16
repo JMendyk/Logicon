@@ -4,40 +4,48 @@
 
 #include "gates/gate.h"
 
-Gate::Gate(const int ID) : ID(ID) {}
+namespace Logicon {
+    Gate::Gate(ID id, Circuit parent) {
 
-int Gate::getID() const {
-    return ID;
-}
+    }
 
-bool Gate::getInputState(int index) {
+    ID Gate::getID() const {
+        return 0;
+    }
 
-}
+    PortState Gate::getInputState(PortIndex index) {
+        return 0;
+    }
 
-bool Gate::getOutputState(int index) {
+    void Gate::setInputState(PortIndex index, PortState state) {
 
-}
+    }
 
-void Gate::setInputState(int index, bool state) {
+    Connection Gate::getInputConnection(PortIndex index) {
+        return Logicon::Connection();
+    }
 
-}
+    void Gate::setInputConnection(PortIndex index, ID otherId, PortIndex otherPort) {
 
-void Gate::setOutputState(int index, bool state) {
+    }
 
-}
+    PortState Gate::getOutputState(PortIndex index) {
+        return 0;
+    }
 
-std::pair<int, int> Gate::getInputConnection(int index) {
+    void Gate::setOutputState(PortIndex index, PortState state) {
 
-}
+    }
 
-void Gate::setInputConnection(int index, int id, int port) {
+    void Gate::addOutputConnection(PortIndex index, ID other_id, PortIndex other_port) {
 
-}
+    }
 
-void Gate::addOutputConnection(int index, int id, int port) {
+    void Gate::removeOutputConnection(PortIndex index, ID other_id, PortIndex other_port) {
 
-}
+    }
 
-void Gate::removeOutputConnection(int id, int port) {
-
-}
+    Gate::PortConnectionsList_ Gate::getOutputConnections(PortIndex index) {
+        return Logicon::Gate::PortConnectionsList_();
+    }
+} // namespace Logicon

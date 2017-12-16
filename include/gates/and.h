@@ -5,15 +5,25 @@
 #ifndef LOGICON_AND_H
 #define LOGICON_AND_H
 
+
 #include "gate.h"
 
-class And : Gate {
-public:
+namespace Logicon {
+    /**
+     * @brief And gate implementation.
+     * INPUTS:  2
+     * OUTPUTS: 1
+     */
+    class And : Gate {
 
-    explicit And(int ID);
+    public:
+        explicit And(ID id, Circuit parent);
 
-    void update() override;
-};
-
+        /**
+         * Behaves like standard and gate - output is true only if both inputs are true
+         */
+        void update() override;
+    };
+}  // namespace Logicon
 
 #endif //LOGICON_AND_H

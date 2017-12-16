@@ -8,13 +8,28 @@
 
 #include "gate.h"
 
-class Switch : Gate {
-public:
-    explicit Switch(int ID);
+namespace Logicon{
+    /**
+     * @brief Switch gate implementation
+     * Gate works on the same principle as light switch - if it is switched, it sends input to output,
+     * if it isn't, then the output is LOW
+     */
+    class Switch : Gate {
 
-    void clickAction() override;
+    public:
+        explicit Switch(ID id, Circuit parent);
 
-};
+        /**
+         * OUT = IN if switched, LOW otherwise
+         */
+        void update() override;
 
+        /**
+         * Changes state on `click` between switched and not switched
+         */
+        void clickAction() override;
+
+    };
+} // namespace Logicon
 
 #endif //LOGICON_SWITCH_H

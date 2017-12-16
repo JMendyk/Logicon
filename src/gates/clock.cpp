@@ -4,4 +4,17 @@
 
 #include "gates/clock.h"
 
-Clock::Clock(int ID) : Gate(ID) {}
+namespace Logicon {
+    Clock::Clock(ID id, Circuit parent) : Gate(id, parent) {
+
+    }
+
+    void Clock::update() {
+
+    }
+
+    void Clock::changeSettings(Tick onPeriod, Tick offPeriod, Tick phase) {
+
+    }
+
+} // namespace Logicon

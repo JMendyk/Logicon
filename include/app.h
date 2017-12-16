@@ -8,9 +8,16 @@
 
 #include "gates/clock.h"
 
-class App {
-    //TODO
-};
+namespace Logicon {
+    /**
+     * @brief Main app class.
+     * It coordinates work between various components: menus, engine, canvas, circuit, parsers, data etc.
+     * Main program loop is located in here.
+     */
+    class App {
+        //TODO
+    };
+} // namespace Logicon
 
 
 #endif //LOGICON_APP_H

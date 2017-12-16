@@ -2,10 +2,9 @@
 // Created by rufus on 11.12.17.
 //
 
-#include "and.h"
+#include "gates/and.h"
 
-
-And::And(int ID) : Circuit(ID) {}
+And::And(int ID) : Gate(ID) {}
 
 void And::update() {
 

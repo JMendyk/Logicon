@@ -6,9 +6,9 @@
 #define LOGICON_DELAY_H
 
 
-#include "circuit.h"
+#include "gate.h"
 
-class Delay : Circuit {
+class Delay : Gate {
 public:
     explicit Delay(int ID);
 

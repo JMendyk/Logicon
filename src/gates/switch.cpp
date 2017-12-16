@@ -2,10 +2,10 @@
 // Created by rufus on 11.12.17.
 //
 
-#include "switch.h"
+#include "gates/switch.h"
 
-Switch::Switch(int ID) : Circuit(ID) {}
+Switch::Switch(int ID) : Gate(ID) {}
 
 void Switch::clickAction() {
-    Circuit::clickAction();
+    Gate::clickAction();
 }

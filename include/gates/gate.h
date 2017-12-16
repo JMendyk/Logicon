@@ -2,15 +2,15 @@
 // Created by rufus on 11.12.17.
 //
 
-#ifndef LOGICON_CIRCUIT_H
-#define LOGICON_CIRCUIT_H
+#ifndef LOGICON_GATE_H
+#define LOGICON_GATE_H
 
 #include <string>
 #include <tuple>
 #include <vector>
-#include "../data.h"
+#include "data.h"
 
-class Circuit {
+class Gate {
 private:
     const int ID;
     Data data;
@@ -23,7 +23,7 @@ private:
                     >
             > > outputs;
 public:
-    explicit Circuit(int ID);
+    explicit Gate(int ID);
 
     int getID() const;
 
@@ -49,4 +49,4 @@ public:
 };
 
 
-#endif //LOGICON_CIRCUIT_H
+#endif //LOGICON_GATE_H

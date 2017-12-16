@@ -1,13 +1,17 @@
 set(SRC_DIR ${CMAKE_CURRENT_LIST_DIR})
 
+# adds files to targer sources
 target_sources(${EXECUTABLE_NAME}
     PUBLIC
         ${SRC_DIR}/main.cpp
+
         ${SRC_DIR}/data.cpp
         ${SRC_DIR}/app.cpp
         ${SRC_DIR}/engine.cpp
         ${SRC_DIR}/circuitParser.cpp
-        ${SRC_DIR}/gates/circuit.cpp
+        ${SRC_DIR}/circuit.cpp
+
+        ${SRC_DIR}/gates/gate.cpp
         ${SRC_DIR}/gates/clock.cpp
         ${SRC_DIR}/gates/switch.cpp
         ${SRC_DIR}/gates/input.cpp

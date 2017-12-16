@@ -6,9 +6,9 @@
 #define LOGICON_CLOCK_H
 
 
-#include "circuit.h"
+#include "gate.h"
 
-class Clock : Circuit {
+class Clock : Gate {
 public:
     explicit Clock(int ID);
 

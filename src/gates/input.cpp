@@ -2,10 +2,10 @@
 // Created by rufus on 11.12.17.
 //
 
-#include "input.h"
+#include "gates/input.h"
 
-Input::Input(int ID) : Circuit(ID) {}
+Input::Input(int ID) : Gate(ID) {}
 
 void Input::clickAction() {
-    return Circuit::clickAction();
+    return Gate::clickAction();
 }

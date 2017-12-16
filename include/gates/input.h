@@ -6,9 +6,9 @@
 #define LOGICON_INPUT_H
 
 
-#include "circuit.h"
+#include "gate.h"
 
-class Input : Circuit {
+class Input : Gate {
 public:
     explicit Input(int ID);
 

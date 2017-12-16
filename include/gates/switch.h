@@ -6,9 +6,9 @@
 #define LOGICON_SWITCH_H
 
 
-#include "circuit.h"
+#include "gate.h"
 
-class Switch : Circuit {
+class Switch : Gate {
 public:
     explicit Switch(int ID);
 

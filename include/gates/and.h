@@ -5,9 +5,9 @@
 #ifndef LOGICON_AND_H
 #define LOGICON_AND_H
 
-#include "circuit.h"
+#include "gate.h"
 
-class And : Circuit {
+class And : Gate {
 public:
 
     explicit And(int ID);

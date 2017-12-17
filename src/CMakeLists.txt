@@ -10,6 +10,7 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/engine.cpp
         ${SRC_DIR}/fileController.cpp
         ${SRC_DIR}/circuit.cpp
+        ${SRC_DIR}/graphics.cpp
 
         ${SRC_DIR}/gates/gate.cpp
         ${SRC_DIR}/gates/clock.cpp

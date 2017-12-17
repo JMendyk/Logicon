@@ -2,8 +2,8 @@
 // Created by rufus on 12.12.17.
 //
 
-#include "circuitParser.h"
+#include "fileController.h"
 
-namespace Logicon{
+namespace Logicon {
 
 } // namespace Logicon

@@ -8,7 +8,7 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/data.cpp
         ${SRC_DIR}/app.cpp
         ${SRC_DIR}/engine.cpp
-        ${SRC_DIR}/circuitParser.cpp
+        ${SRC_DIR}/fileController.cpp
         ${SRC_DIR}/circuit.cpp
 
         ${SRC_DIR}/gates/gate.cpp

@@ -1,5 +1,7 @@
 set(DEPS_DIR ${CMAKE_CURRENT_LIST_DIR})
 
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
@@ -34,7 +36,7 @@ target_sources(${EXECUTABLE_NAME}
         ${IMGUI_DIR}/imgui.cpp
         ${IMGUI_DIR}/imgui_draw.cpp
         # Uncomment if you want to use demo functionalities
-        # ${IMGUI_DIR}/imgui_demo.cpp
+        ${IMGUI_DIR}/imgui_demo.cpp
 )
 
 ##### imgui_impl_glfw_gl3 #####
@@ -45,3 +47,18 @@ target_sources(${EXECUTABLE_NAME}
     PUBLIC
         ${IMGUI_IMPL_GLFW_GL3_DIR}/imgui_impl_glfw_gl3.cpp
 )
+
+##### DevIL #####
+set(DEVIL_DIR ${DEPS_DIR}/devil/DevIL)
+
+add_definitions(-DIL_STATIC_LIB)
+set(IL_TESTS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(${DEVIL_DIR})
+target_link_libraries(${EXECUTABLE_NAME} IL ILU ILUT)
+target_include_directories(${EXECUTABLE_NAME} PUBLIC ${DEVIL_DIR}/include)
+
+###### json #####
+set(JSON_DIR ${DEPS_DIR}/json)
+
+target_include_directories(${EXECUTABLE_NAME} PUBLIC ${JSON_DIR})

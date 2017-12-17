@@ -9,6 +9,8 @@ Project to work properly requires:
 - GLFW
 - ImGUI
 - imgui\_impl\_glfw\_gl3
+- json
+- DevIL
 
 ## Dependencies description
 
@@ -32,6 +34,12 @@ make
 ### [imgui\_impl\_glfw\_gl3](https://github.com/ocornut/imgui) (included in project's source)
 *Version tagged v1.52. Sourced directly from ImGUI's repo.*
 ImGUI integration for OpenGL3 & GLFW.
+
+### [json](https://github.com/nlohmann/json) (included in project's source)
+*Version tagged v2.1.1.*
+
+### [DevIL](https://github.com/DentonW/DevIL) (included in project's source)
+*Version tagged v1.8.0*
 
 ## Platform specific
 

@@ -1,0 +1,28 @@
+Updating dependencies - Sat Dec 16 00:34:21 2017 +0100
+Dependency: glfw
+999f355, Wed Aug 17 16:48:22 2016 +0200 : Documentation work
+Dependency: gl3w
+c8aad29, Fri Dec 1 00:46:00 2017 +0200 : Revert "Look for libGL.so and not libGL.so.1 on Linux."
+Dependency: imgui
+9f200d1, Fri Oct 27 17:10:41 2017 +0200 : Version 1.52
+------------------------------------------------------
+
+Updating dependencies - Sat Dec 16 00:36:10 2017 +0100
+Dependency: glfw
+999f355, Wed Aug 17 16:48:22 2016 +0200 : Documentation work
+Dependency: gl3w
+8f7f459, Thu Dec 14 14:01:25 2017 +0200 : dlopen with RTLD_LOCAL.
+Dependency: imgui
+9f200d1, Fri Oct 27 17:10:41 2017 +0200 : Version 1.52
+------------------------------------------------------
+
+Updating dependencies - Sat Dec 16 01:15:08 2017 +0100
+Dependency: glfw
+999f355, Wed Aug 17 16:48:22 2016 +0200 : Documentation work
+Dependency: gl3w
+8f7f459, Thu Dec 14 14:01:25 2017 +0200 : dlopen with RTLD_LOCAL.
+Dependency: imgui
+9f200d1, Fri Oct 27 17:10:41 2017 +0200 : Version 1.52
+Dependency: json
+9ff0cc0, Sat Feb 25 16:43:15 2017 +0100 : :memo: updated documentation
+------------------------------------------------------

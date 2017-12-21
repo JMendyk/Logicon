@@ -18,4 +18,8 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/gates/input.cpp
         ${SRC_DIR}/gates/and.cpp
         ${SRC_DIR}/gates/delay.cpp
+
+        ${SRC_DIR}/widgets/menu_widget.cpp
+        ${SRC_DIR}/widgets/blocks_widget.cpp
+        ${SRC_DIR}/widgets/footer_widget.cpp
 )

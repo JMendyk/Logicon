@@ -30,7 +30,7 @@ namespace Logicon {
         /// ID representing gate
         ID id;
         /// ordered container of all inputs the gate has as tuples <state, connectedBlockId, connectedBlockPortIndex>
-        std::vector<std::tuple<PortState, ID, PortIndex> > inputs; //
+        std::vector<std::tuple<PortState, ID, Port> > inputs; //
         /// ordered container of all outputs the gat has as tuples <states, containerOfConnections>
         std::vector<std::pair<PortState, PortConnectionsList_> > outputs;
         /// additional data individual for each gate like labels etc.
@@ -66,7 +66,7 @@ namespace Logicon {
          * @param index index of input which state we want
          * @return PortState_ representing state of given input
          */
-        PortState getInputState(PortIndex index);
+        PortState getInputState(Port index);
 
         /**
          * @brief Changes state of specified input.
@@ -74,7 +74,7 @@ namespace Logicon {
          * @param index index of input which state we want to change
          * @param state new state for given input
          */
-        void setInputState(PortIndex index, PortState state);
+        void setInputState(Port index, PortState state);
 
         /**
          * @brief Returns pair describing witch which element specified input is connected to.
@@ -84,7 +84,7 @@ namespace Logicon {
          * @param index index of input which info we want
          * @return pair <ID, PortIndex> identifying other end of connection
          */
-        Connection getInputConnection(PortIndex index);
+        Connection getInputConnection(Port index);
 
         /**
          * @brief Changes information about connection at specified input.
@@ -95,7 +95,7 @@ namespace Logicon {
          * @param otherId ID of block we connect to
          * @param otherPort index of block's port we connect to
          */
-        void setInputConnection(PortIndex index, ID otherId, PortIndex otherPort);
+        void setInputConnection(Port index, ID otherId, Port otherPort);
 
         /**
          * @brief Returns state of specified output.
@@ -103,7 +103,7 @@ namespace Logicon {
          * @param index index of output which state we want
          * @return PortState_ representing state of given output
          */
-        PortState getOutputState(PortIndex index);
+        PortState getOutputState(Port index);
 
         /**
          * @brief Changes state of specified output.
@@ -111,7 +111,7 @@ namespace Logicon {
          * @param index index of output which state we want to change
          * @param state new state for given output
          */
-        void setOutputState(PortIndex index, PortState state);
+        void setOutputState(Port index, PortState state);
 
         /**
          * @brief Adds another output connection at given output port.
@@ -123,7 +123,7 @@ namespace Logicon {
          * @param other_id ID of block we connect to
          * @param other_port index of block's port we connect to
          */
-        void addOutputConnection(PortIndex index, ID other_id, PortIndex other_port);
+        void addOutputConnection(Port index, ID other_id, Port other_port);
 
         /**
          * @brief Finds and removes given connection from specified output.
@@ -134,7 +134,7 @@ namespace Logicon {
          * @param other_id ID of block we are currently connected and want to disconnect
          * @param other_port index of connected block's port we are currently connected and want to disconnect
          */
-        void removeOutputConnection(PortIndex index, ID other_id, PortIndex other_port);
+        void removeOutputConnection(Port index, ID other_id, Port other_port);
 
         /**
          * @brief Returns list of all connections at specified port.
@@ -144,7 +144,7 @@ namespace Logicon {
          * @param index index of output which connections list we want
          * @return container with connections outgoing from given output
          */
-        PortConnectionsList_ getOutputConnections(PortIndex index);
+        PortConnectionsList_ getOutputConnections(Port index);
 
     };
 } // namespace Logicon

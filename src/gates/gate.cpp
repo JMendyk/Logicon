@@ -13,39 +13,39 @@ namespace Logicon {
         return 0;
     }
 
-    PortState Gate::getInputState(PortIndex index) {
+    PortState Gate::getInputState(Port index) {
         return 0;
     }
 
-    void Gate::setInputState(PortIndex index, PortState state) {
+    void Gate::setInputState(Port index, PortState state) {
 
     }
 
-    Connection Gate::getInputConnection(PortIndex index) {
+    Connection Gate::getInputConnection(Port index) {
         return Logicon::Connection();
     }
 
-    void Gate::setInputConnection(PortIndex index, ID otherId, PortIndex otherPort) {
+    void Gate::setInputConnection(Port index, ID otherId, Port otherPort) {
 
     }
 
-    PortState Gate::getOutputState(PortIndex index) {
+    PortState Gate::getOutputState(Port index) {
         return 0;
     }
 
-    void Gate::setOutputState(PortIndex index, PortState state) {
+    void Gate::setOutputState(Port index, PortState state) {
 
     }
 
-    void Gate::addOutputConnection(PortIndex index, ID other_id, PortIndex other_port) {
+    void Gate::addOutputConnection(Port index, ID other_id, Port other_port) {
 
     }
 
-    void Gate::removeOutputConnection(PortIndex index, ID other_id, PortIndex other_port) {
+    void Gate::removeOutputConnection(Port index, ID other_id, Port other_port) {
 
     }
 
-    Gate::PortConnectionsList_ Gate::getOutputConnections(PortIndex index) {
+    Gate::PortConnectionsList_ Gate::getOutputConnections(Port index) {
         return Logicon::Gate::PortConnectionsList_();
     }
 } // namespace Logicon

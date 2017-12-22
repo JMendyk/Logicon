@@ -22,13 +22,11 @@ namespace Logicon{
     /// ID_ type identifying all blocks
     typedef const unsigned int ID;
     /// represents port by it's index in corresponding array in `Gate`
-    typedef unsigned int PortIndex;
+    typedef unsigned int Port;
     /// represents port state ON or OFF
     typedef bool PortState;
     /// represents single connection as pair <ID, PortIndex>
-    typedef std::pair<ID, PortIndex > Connection;
-    /// represents pointer to circuit
-    typedef Circuit* CircuitPointer;
+    typedef std::pair<ID, Port> Connection;
     /// represents tick type
     typedef int Tick;
 } // namespace Logicon

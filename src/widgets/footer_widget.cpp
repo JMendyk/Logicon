@@ -29,15 +29,29 @@ namespace Logicon {
                 | ImGuiWindowFlags_NoResize
                 | ImGuiWindowFlags_NoMove;
 
-        ImGui::Begin("Footer", nullptr, window_flags);
+        ImGui::Begin("Footer Widget", nullptr, window_flags);
         {
             ImGui::SetWindowPos(window_pos, ImGuiCond_Always);
             ImGui::SetWindowSize(window_size, ImGuiCond_Always);
 
+            // Left area
+            for (int idx = 0; idx < 2; idx++) {
+                if (idx == 0) {
+                    ImGui::Text("Logicon");
+                    ImGui::SameLine();
+                    ImGui::VerticalSeparator();
+                } else if (idx == 1) {
+                    ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+                }
+                ImGui::SameLine();
+            }
+
+            // Right area
+
             /*
              * Solution based on an answer to ImGui issue #934
              * https://github.com/ocornut/imgui/issues/934#issuecomment-340231002
-             * I (JMendyk) refactored mentioned solution using a for-loop
+             * I (@JMendyk) refactored mentioned solution using a for-loop
              * thus order of elements is the same as they will appear on the screen
              */
 

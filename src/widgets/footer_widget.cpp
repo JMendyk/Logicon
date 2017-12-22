@@ -4,6 +4,13 @@
 
 #include "widgets/footer_widget.h"
 
+#include <vector>
+#include <iostream>
+
+// For VerticalSeparator - since re-implementing it
+// would required adding many ImGui's internal functions
+#include <imgui_internal.h>
+
 namespace Logicon {
 
     bool FooterWidget::init(GLFWwindow* window) {
@@ -16,7 +23,55 @@ namespace Logicon {
     }
 
     void FooterWidget::render_ui(const ImVec2 &window_pos, const ImVec2 &window_size) {
+        ImGuiWindowFlags window_flags =
+                0
+                | ImGuiWindowFlags_NoTitleBar
+                | ImGuiWindowFlags_NoResize
+                | ImGuiWindowFlags_NoMove;
 
+        ImGui::Begin("Footer", nullptr, window_flags);
+        {
+            ImGui::SetWindowPos(window_pos, ImGuiCond_Always);
+            ImGui::SetWindowSize(window_size, ImGuiCond_Always);
+
+            /*
+             * Solution based on an answer to ImGui issue #934
+             * https://github.com/ocornut/imgui/issues/934#issuecomment-340231002
+             * I (JMendyk) refactored mentioned solution using a for-loop
+             * thus order of elements is the same as they will appear on the screen
+             */
+
+            static const int elements_count = 4;
+            // The 100.0f is just a guess size for the first frame.
+            static std::vector<float> widths(elements_count, {100.0f});
+            static const float ItemSpacing = ImGui::GetStyle().ItemSpacing.x;
+            float pos = 0;
+
+            for (int idx = elements_count - 1; idx >= 0; idx--) {
+                pos += widths[idx] + ItemSpacing;
+                ImGui::SameLine(ImGui::GetWindowWidth() - pos);
+                ImGui::BeginGroup();
+                if (idx == 0) {
+                    ImGui::Text("In: %d", 1);
+                    ImGui::SameLine();
+                    ImGui::VerticalSeparator();
+                } else if (idx == 1) {
+                    ImGui::Text("Out: %d", 0);
+                    ImGui::SameLine();
+                    ImGui::VerticalSeparator();
+                } else if (idx == 2) {
+                    ImGui::Text("Gates: %d", 3);
+                    ImGui::SameLine();
+                    ImGui::VerticalSeparator();
+                } else if (idx == 3) {
+                    ImGui::Text("File: %s", "Circuit1");
+                }
+                ImGui::EndGroup();
+                widths[idx] = ImGui::GetItemRectSize().x;
+            }
+
+        }
+        ImGui::End();
     }
 
-};
+} // namespace Logicon

@@ -4,6 +4,10 @@
 
 #include "widgets/menu_widget.h"
 
+// For VerticalSeparator - since re-implementing it
+// would required adding many ImGui's internal functions
+#include <imgui_internal.h>
+
 namespace Logicon {
 
     ImFont* myFont = nullptr;
@@ -30,7 +34,7 @@ namespace Logicon {
                 | ImGuiWindowFlags_NoResize
                 | ImGuiWindowFlags_NoMove;
 
-        ImGui::Begin("Actions Window", nullptr, window_flags);
+        ImGui::Begin("Menu Widget", nullptr, window_flags);
         {
             ImGui::SetWindowPos(window_pos, ImGuiCond_Always);
             ImGui::SetWindowSize(window_size, ImGuiCond_Always);
@@ -44,11 +48,17 @@ namespace Logicon {
             ImGui::Button("Save", ImVec2(sz, sz));
             ImGui::SameLine();
 
+            ImGui::VerticalSeparator();
+            ImGui::SameLine();
+
             ImGui::Button("Play", ImVec2(sz, sz));
             ImGui::SameLine();
             ImGui::Button("Stop", ImVec2(sz, sz));
             ImGui::SameLine();
             ImGui::Button("Reset", ImVec2(sz, sz));
+            ImGui::SameLine();
+
+            ImGui::VerticalSeparator();
             ImGui::SameLine();
 
             static int tickrate = 1000;

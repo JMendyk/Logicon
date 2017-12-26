@@ -10,7 +10,7 @@ Project to work properly requires:
 - ImGUI
 - imgui\_impl\_glfw\_gl3
 - json
-- DevIL
+- stb_image
 
 ## Dependencies description
 
@@ -38,8 +38,8 @@ ImGUI integration for OpenGL3 & GLFW.
 ### [json](https://github.com/nlohmann/json) (included in project's source)
 *Version tagged v2.1.1.*
 
-### [DevIL](https://github.com/DentonW/DevIL) (included in project's source)
-*Version tagged v1.8.0*
+### [stb_image](https://github.com/nothings/stb/blob/master/stb_image.h) (included in project's source)
+*master branch*
 
 ## Platform specific
 

@@ -7,13 +7,11 @@
 
 #include <GL/gl.h>
 
-#include <IL/il.h>
-
 namespace Logicon {
 
     struct Texture {
         GLuint textureId;
-        ILint width, height;
+        int width, height;
     };
 
     Texture load_texture(const char* filename);

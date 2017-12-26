@@ -2,6 +2,7 @@
 // Created by rufus on 25.12.17.
 //
 
+#include <ctime>
 #include "logger.h"
 
 Logger *Logger::logger = nullptr;

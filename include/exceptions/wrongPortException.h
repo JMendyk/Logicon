@@ -21,7 +21,6 @@ namespace Logicon {
     public:
         explicit wrongPortException(ID id, Port port, bool isInput) : id(id), port(port), input(isInput) {}
 
-    private:
         const char *what() const throw() override {
             std::string err = "Couldn't access ";
             err += input ? "input" : "output";

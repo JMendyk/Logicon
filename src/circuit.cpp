@@ -96,6 +96,31 @@ namespace Logicon {
     void Circuit::remove(ID id) {
         if (gates.count(id) == 0)
             return; // TODO log abort removing nonexistent gate
+        auto erased = gates[id];
+        try {
+            // erase input connections
+            for (int port = 0; port < erased->getInputsCount(); ++port) { // for all input ports
+                auto inputConnections = erased->getInputConnections(port);
+                for (auto connection : inputConnections) { // for all input connections at given port
+                    auto connected = this->find(connection.id); // connection with other block
+                    connected->removeOutputConnection(connection.port, erased->getID(), port); // remove from other
+                }
+            }
+            // erase output connections
+            for (int port = 0; port < erased->getOutputsCount(); ++port) { // for all outputs
+                auto outputsConnections = erased->getOutputConnections(port);
+                for (auto connection : outputsConnections) { // for all output connections at given port
+                    auto connected = this->find(connection.id); // find specified connection
+                    connected->clearInputConnections(connection.port); // remove this from the other end
+                }
+
+            }
+        } catch (wrongPortException &e) {
+            std::cerr << "Error while removing gate with ID:`"
+                      << id << "` from circuit.";
+            std::cerr << e.what();
+        }
+
         gates.erase(id);
     }
 

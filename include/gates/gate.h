@@ -112,7 +112,7 @@ namespace Logicon {
         * @param input input port of this gate
         * @return iterable container of connections on given input port
         */
-        PortConnectionList_ getInputConnections(Port input) const;
+        const PortConnectionList_ &getInputConnections(Port input) const;
 
         /**
         * @brief Changes information about connection at specified input.
@@ -182,7 +182,7 @@ namespace Logicon {
         * @param output output port of this gate
         * @return iterable container of connections at given output port
         */
-        PortConnectionList_ getOutputConnections(Port output);
+        const PortConnectionList_ &getOutputConnections(Port output);
 
         /**
         * @brief Adds another output connection at given output port.

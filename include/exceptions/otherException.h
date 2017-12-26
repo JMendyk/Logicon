@@ -20,7 +20,6 @@ namespace Logicon {
         // TODO pass string format with variadic number of arguments like in std::printf()
         explicit otherException(std::string details) : details(std::move(details)) {}
 
-    private:
         const char *what() const throw() override {
             std::string err = "Logicon encountered some exception: \n";
             err += details;

@@ -63,7 +63,7 @@ namespace Logicon {
                != inputs[input].second.end();
     }
 
-    Gate::PortConnectionList_ Gate::getInputConnections(Port input) const {
+    const Gate::PortConnectionList_ &Gate::getInputConnections(Port input) const {
         if (input < 0 || input >= inputs.size())
             throw wrongPortException(this->id, input, true);
 
@@ -128,7 +128,7 @@ namespace Logicon {
 
     }
 
-    Gate::PortConnectionList_ Gate::getOutputConnections(Port output) {
+    const Gate::PortConnectionList_ &Gate::getOutputConnections(Port output) {
         if (output < 0 || output >= outputs.size())
             throw wrongPortException(this->id, output, false);
 

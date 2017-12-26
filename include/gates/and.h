@@ -17,7 +17,8 @@ namespace Logicon {
     class And : Gate {
 
     public:
-        explicit And(ID id, Circuit parent);
+        /// Constructor
+        explicit And(ID id);
 
         /**
          * Behaves like standard and gate - output is true only if both inputs are true

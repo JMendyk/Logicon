@@ -17,7 +17,8 @@ namespace Logicon{
     class Switch : Gate {
 
     public:
-        explicit Switch(ID id, Circuit parent);
+        /// Constructor: default state is LOW
+        explicit Switch(ID id);
 
         /**
          * OUT = IN if switched, LOW otherwise

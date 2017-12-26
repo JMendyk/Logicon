@@ -5,10 +5,9 @@
 #ifndef LOGICON_CIRCUIT_H
 #define LOGICON_CIRCUIT_H
 
-#include <gates/gate.h>
 #include "types.h"
-#include <map>
-#include <list>
+#include <gates/gate.h>
+
 
 namespace Logicon {
     /**
@@ -18,9 +17,14 @@ namespace Logicon {
      * connecting and disconnecting gates, adding new gates, removing gates and finding gates by ID.
      */
     class Circuit {
-        ID id;
-        std::map<ID, Gate> gates;
+    private:
+        const ID id;
+        std::map<ID, std::shared_ptr<Gate>> gates;
         Data data;
+
+    public:
+        /// Constructor
+        explicit Circuit(ID id);
 
         /**
          * @brief Connects gates with specified IDs on specified ports
@@ -36,7 +40,8 @@ namespace Logicon {
         /**
          * @brief Disconnects two specified gates on specified ports
          *
-         * If connection doesn't exist, nothing happens.
+         * @note If connection doesn't exist, nothing happens.
+         *
          * @param idFrom gate from which the wire exits (gate A in connection A->B)
          * @param output output port in the first gate (output port of gate A in connection A->B)
          * @param idTo gate where the wire enters (gate B in connection A->B)
@@ -47,10 +52,11 @@ namespace Logicon {
         /**
          * @brief Adds new gate to the circuit.
          *
-         * @warning The gate shouldn't be connected to any other gate before adding (all ports clear).
-         * @param gate gate object to add to the circuit
+         * @details Should accept a shared pointer to the object created using std::make_shared
+         *
+         * @param gate shared pointer to the newly created Gate object
          */
-        void add(Gate gate);
+        void add(const std::shared_ptr<Gate> &gate);
 
         /**
          * @brief Removes gate with specified ID from the circuit.
@@ -61,18 +67,17 @@ namespace Logicon {
         void remove(ID id);
 
         /**
-         * @brief Returns gate object from the circuit based on the ID
-         * @return Found gate or exception if gate is not found
-         * @throws IdNotFoundException if ID is not found
+         * @brief Returns share pointer to gate object from the circuit based on the ID
+         * @return existing shared pointer to found gate or nullptr if gate with given ID is not found
          */
-        Gate find(ID id);
+        std::shared_ptr<Gate> find(ID id);
 
 
         /**
-         * @brief Returns iterable list of gates associated with circuit
-         * @return iterable container of gates.
+         * @brief Returns iterable list of shared pointers to gates associated with circuit
+         * @return iterable container of pointers to gates.
          */
-        std::list<Gate> getGates();
+        std::list<std::shared_ptr<Gate>> getGates();
 
     };
 } // namespace Logicon

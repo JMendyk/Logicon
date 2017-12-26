@@ -27,7 +27,8 @@ namespace Logicon {
         Tick delay;
 
     public:
-        explicit Delay(ID id, Circuit parent);
+        /// Constructor constructs default 1 tick delay
+        explicit Delay(ID id);
 
         /**
          * Replays input function on output with specified delay

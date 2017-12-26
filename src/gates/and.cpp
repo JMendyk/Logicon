@@ -5,9 +5,7 @@
 #include "gates/and.h"
 
 namespace Logicon {
-    And::And(ID id, Circuit parent) : Gate(id, parent) {
-
-    }
+    And::And(ID id) : Gate(id, 2, 1) {}
 
     void And::update() {
 

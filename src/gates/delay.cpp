@@ -5,9 +5,8 @@
 #include "gates/delay.h"
 
 namespace Logicon {
-    Delay::Delay(ID id, Circuit parent) : Gate(id, parent) {
+    Delay::Delay(ID id) : Gate(id, 1, 1) {}
 
-    }
 
     void Delay::update() {
 

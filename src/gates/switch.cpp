@@ -5,9 +5,7 @@
 #include "gates/switch.h"
 
 namespace Logicon {
-    Switch::Switch(ID id, Circuit parent) : Gate(id, parent) {
-
-    }
+    Switch::Switch(ID id) : Gate(id, 1, 1) {}
 
     void Switch::update() {
 

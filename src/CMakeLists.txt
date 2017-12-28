@@ -19,4 +19,8 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/gates/input.cpp
         ${SRC_DIR}/gates/and.cpp
         ${SRC_DIR}/gates/delay.cpp
+
+        ${SRC_DIR}/exceptions/logiconException.cpp
+        ${SRC_DIR}/exceptions/idNotFoundException.cpp
+        ${SRC_DIR}/exceptions/wrongPortException.cpp
 )

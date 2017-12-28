@@ -81,7 +81,6 @@ namespace Logicon {
          */
         std::shared_ptr<Gate> find(ID id);
 
-
         /**
          * @brief Returns iterable list of shared pointers to gates associated with circuit
          * @return iterable container of pointers to gates.

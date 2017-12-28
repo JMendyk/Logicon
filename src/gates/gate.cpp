@@ -171,16 +171,16 @@ namespace Logicon {
     // =======
 
     void Gate::reset() {
-        for (auto input : inputs)
+        for (auto &input : inputs)
             input.first = Logicon::initialState;
-        for (auto output:outputs)
+        for (auto &output:outputs)
             output.first = Logicon::initialState;
     }
 
     void Gate::clear() {
-        for (auto input : inputs)
+        for (auto &input : inputs)
             input.second.clear();
-        for (auto output : outputs)
+        for (auto &output : outputs)
             output.second.clear();
     }
 

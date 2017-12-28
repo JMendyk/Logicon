@@ -7,6 +7,7 @@
 #include <gates/and.h>
 #include <gates/input.h>
 #include <exceptions/logiconException.h>
+#include <logger.h>
 #include "app.h"
 
 namespace Logicon {
@@ -30,13 +31,14 @@ namespace Logicon {
             std::cout << "O[" << i << "]=(" << gate->getOutputState(i) << "){ ";
             auto outputs = gate->getOutputConnections(i);
             for (auto &output : outputs)
-                std::cout << "#" << output.id << ":" << output.port << "  ";
+                std::cout << "#~" << output.id << ":" << output.port << "  ";
             std::cout << "} ";
         }
         std::cout << std::endl;
     }
 
     void App::run() {
+        Logicon::Logger::init("ToosterTest");
         Circuit circuit(Logicon::Circuit::nextID());
         std::cout << "commands: exit, info, add, connect, disconnect" << std::endl;
         while (true) {
@@ -64,16 +66,13 @@ namespace Logicon {
             } else if (cmd == "remove") {
                 ID id;
                 std::cin >> id;
+
                 circuit.remove(id);
             } else if (cmd == "connect") {
-                try {
-                    ID ID1, ID2;
-                    Port output, input;
-                    std::cin >> ID1 >> output >> ID2 >> input;
-                    circuit.connect(ID1, output, ID2, input);
-                } catch (std::exception &e) { //TODO fixup, maybe SEH happens ???
-                    std::cerr << "APP:\n" << e.what() << ":APP\n";
-                }
+                ID ID1, ID2;
+                Port output, input;
+                std::cin >> ID1 >> output >> ID2 >> input;
+                circuit.connect(ID1, output, ID2, input);
             } else if (cmd == "disconnect") {
                 ID ID1, ID2;
                 Port output, input;
@@ -85,24 +84,31 @@ namespace Logicon {
                 bool isInput;
                 State state;
                 std::cin >> id >> port >> isInput >> state;
-                try {
-                    auto g = circuit.find(id);
+                auto g = circuit.find(id);
+                if (g != nullptr) {
                     if (isInput)
                         g->setInputState(port, state);
                     else
                         g->setOutputState(port, state);
-                } catch (Logicon::logiconException &e) {
-                    std::cerr << e.what();
                 }
             } else if (cmd == "update") {
                 ID id;
                 std::cin >> id;
-                try {
-                    auto g = circuit.find(id);
+                auto g = circuit.find(id);
+                if (g != nullptr)
                     g->update();
-                } catch (Logicon::logiconException &e) {
-                    std::cerr << e.what();
-                }
+            } else if (cmd == "reset") {
+                ID id;
+                std::cin >> id;
+                auto g = circuit.find(id);
+                if (g != nullptr)
+                    g->reset();
+            } else if (cmd == "clear") {
+                ID id;
+                std::cin >> id;
+                auto g = circuit.find(id);
+                if (g != nullptr)
+                    g->clear();
             }
         }
     }

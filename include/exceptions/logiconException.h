@@ -5,8 +5,7 @@
 #ifndef LOGICON_OTHEREXCEPTION_H
 #define LOGICON_OTHEREXCEPTION_H
 
-#include <exception>
-#include <utility>
+#include <stdexcept>
 #include <types.h>
 
 namespace Logicon {
@@ -19,36 +18,25 @@ namespace Logicon {
         std::string circumstances;
         std::string description;
 
-        void update() {
-            this->message = "Logicon encountered an exception.\n";
-            this->message.append(circumstances);
-            this->message.append(description);
-        }
+
+        void update();
     public:
-        // TODO pass string format with variadic number of arguments like in std::printf()
-        explicit logiconException(std::string details) : description(std::move(details)) { update(); }
+        ///Constructor
+        explicit logiconException(std::string details);
 
         /**
          * Appends info about circumstances at the beginning.
          * @param circumstances  circumstances in which exception was thrown
          */
-        void when(const std::string &circumstances) {
-            this->circumstances.append(circumstances);
-            update();
-        }
+        void when(const std::string &circumstances);
 
         /**
          * Appends details at the end of the exception message.
          * @param details details to append to exception description
          */
-        void details(const std::string &details) {
-            this->description.append(details);
-            update();
-        }
+        void details(const std::string &details);
 
-        const char *what() const throw() override {
-            return message.c_str();
-        }
+        const char *what() const throw() override;
     };
 } // namespace Logicon
 

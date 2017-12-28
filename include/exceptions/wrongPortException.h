@@ -16,12 +16,7 @@ namespace Logicon {
     class wrongPortException : public Logicon::logiconException {
 
     public:
-        explicit wrongPortException(ID id, Port port, bool isInput) : logiconException("") {
-            std::string err = "Couldn't access ";
-            err += isInput ? "input" : "output";
-            err += " port '" + std::to_string(id) + "':'" + std::to_string(port) + "'\n";
-            this->details(err);
-        }
+        explicit wrongPortException(ID id, Port port, bool isInput);
     };
 } // namespace Logicon
 #endif //LOGICON_MISSINGINPUTEXCEPTION_H

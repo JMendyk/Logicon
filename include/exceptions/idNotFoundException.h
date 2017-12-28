@@ -9,6 +9,7 @@
 #include <exception>
 #include <types.h>
 #include <sstream>
+#include "logiconException.h"
 
 
 namespace Logicon {
@@ -18,11 +19,7 @@ namespace Logicon {
     class idNotFoundException : public Logicon::logiconException {
 
     public:
-        explicit idNotFoundException(ID id) : logiconException("") {
-            std::string desc = "Couldn't find a gate with ID:'" + std::to_string(id) + "'\n";
-            this->details(desc);
-        }
-
+        explicit idNotFoundException(ID id);
     };
 } // namespace Logicon
 

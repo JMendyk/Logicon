@@ -6,6 +6,7 @@
 #include <exceptions/idNotFoundException.h>
 #include <algorithm>
 #include <iostream>
+#include <logger.h>
 #include "circuit.h"
 
 namespace Logicon {
@@ -40,22 +41,22 @@ namespace Logicon {
 
             bool ConnectedAB = gateFrom->isOutputConnectedWith(output, idTo, input);
             bool ConnectedBA = gateTo->isInputConnectedWith(input, idFrom, output);
-            if (ConnectedAB && ConnectedBA) // TODO log connection abort - it already exists
-                return;
+            if (ConnectedAB && ConnectedBA)
+                Logicon::Logger::info("Tried connecting already connected gates '%d:%d' -> '%d:%d'!",
+                                      idFrom, output, idTo, input);
             else if (!ConnectedAB && !ConnectedBA) { // create new connection - override input, add to output
                 gateFrom->addOutputConnection(output, idTo, input);
                 gateTo->setInputConnection(input, idFrom, output);
-            } else // TODO pass ID:port to exception
+            } else // TODO #1 fix windows SEH problems on rethrow
                 throw Logicon::logiconException("Information about connection isn't present in both gates!");
-        } catch (Logicon::logiconException &e) { // TODO log
-            std::string circumstances = "while connecting blocks '" +
+        } catch (Logicon::logiconException &e) {
+            std::string circumstances = "While connecting blocks '" +
                                         std::to_string(idFrom) + ":" + std::to_string(output) +
                                         "' -> '" +
                                         std::to_string(idTo) + ":" + std::to_string(input) +
-                                        "':\n";
+                                        "'.";
             e.when(circumstances);
-            std::cerr << e.what(); // TODO fix windows SEH problems on rethrow
-            return;
+            Logicon::Logger::warn(e.what());
         }
     }
 
@@ -79,35 +80,45 @@ namespace Logicon {
 
             bool ConnectedAB = gateFrom->isOutputConnectedWith(output, idTo, input);
             bool ConnectedBA = gateTo->isInputConnectedWith(input, idFrom, output);
-            if (!ConnectedAB && !ConnectedBA) // TODO log connection abort - it already exists
-                return;
+            if (!ConnectedAB && !ConnectedBA)
+                Logicon::Logger::info("Tried disconnecting already disconnected gates '%d:%d' -> '%d:%d'!",
+                                      idFrom, output, idTo, input);
             else if (ConnectedAB && ConnectedBA) { // create new connection - override input, add to output
                 gateFrom->removeOutputConnection(output, idTo, input);
                 gateTo->clearInputConnections(input);
-            } else // TODO pass ID:port to exception
+            } else
                 throw Logicon::logiconException("Information about connection isn't present in both gates!");
-        } catch (Logicon::logiconException &e) { // TODO log
-            std::string circumstances = "while disconnecting blocks '" +
+        } catch (Logicon::logiconException &e) {
+            std::string circumstances = "While disconnecting blocks '" +
                                         std::to_string(idFrom) + ":" + std::to_string(output) +
                                         "' -> '" +
                                         std::to_string(idTo) + ":" + std::to_string(input) +
-                                        "':\n";
+                                        "'.";
             e.when(circumstances);
-            std::cerr << e.what(); // TODO fix windows SEH problems on rethrow
-            return;
+            Logicon::Logger::warn(e.what());
         }
     }
 
     void Circuit::add(std::shared_ptr<Gate> gate) {
-        if (gates.count(gate->getID()) > 0)
-            throw logiconException("Gates with the same ID cannot be in the same circuit!");
-        gates.insert(std::pair<ID, std::shared_ptr<Gate>>(gate->getID(), gate));
+        try {
+            if (gates.count(gate->getID()) > 0)
+                throw logiconException("Gates with the same ID cannot be in the same circuit!");
+            gates.insert(std::pair<ID, std::shared_ptr<Gate>>(gate->getID(), gate));
+        } catch (Logicon::logiconException &e) { // TODO #1
+            std::string circumstances = "While adding gate with ID:'"
+                                        + std::to_string(gate->getID())
+                                        + "'.";
+            e.when(circumstances);
+            Logicon::Logger::warn(e.what());
+        }
     }
 
     void Circuit::remove(ID id) {
-        if (gates.count(id) == 0)
-            return; // TODO log abort removing nonexistent gate
-        auto erased = gates[id];
+        if (gates.count(id) == 0) { // cannot find => abort
+            Logicon::Logger::info("Tried removing missing gate with ID:'%d'!", id);
+            return;
+        }
+        auto erased = this->find(id);
         try {
             // erase input connections
             for (Port port = 0; port < erased->getInputsCount(); ++port) { // for all input ports
@@ -124,17 +135,15 @@ namespace Logicon {
                     auto connected = this->find(connection.id); // find specified connection
                     connected->clearInputConnections(connection.port); // remove this from the other end
                 }
-
             }
-        } catch (wrongPortException &e) {
-            std::string circumstances = "Error while removing gate with ID:`" +
-                                        std::to_string(id) + "` from circuit.";
+            //remove this
+            gates.erase(id);
+        } catch (wrongPortException &e) { // TODO #1
+            std::string circumstances = "While removing gate with ID:'" +
+                                        std::to_string(id) + "' from the circuit.";
             e.when(circumstances);
-            std::cerr << e.what(); // TODO fix windows SEH problems on rethrow
-            return;
+            Logicon::Logger::warn(e.what());
         }
-
-        gates.erase(id);
     }
 
     std::shared_ptr<Gate> Circuit::find(ID id) {
@@ -155,4 +164,5 @@ namespace Logicon {
 
         return gatesList;
     }
+
 } // namespace Logicon

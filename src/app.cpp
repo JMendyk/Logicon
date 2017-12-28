@@ -4,10 +4,6 @@
 
 #include "app.h"
 
-#include <IL/il.h>
-#include <IL/ilu.h>
-#include <IL/ilut.h>
-
 #include <imgui_impl_glfw_gl3.h>
 
 #include <iostream> // for error printing
@@ -34,20 +30,6 @@ namespace Logicon {
         glfwMakeContextCurrent(this->window);
         glfwSwapInterval(1); // Enable vsync
         gl3wInit();
-
-        if ((ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
-          ||(iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION)
-          ||(ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)) {
-            std::cerr << "DevIL versions are different... Exiting.\n";
-            return false;
-        }
-
-        //// Initialise all DevIL functionality
-        ilutRenderer(ILUT_OPENGL);
-        ilInit();
-        iluInit();
-        ilutInit();
-        ilutRenderer(ILUT_OPENGL);
 
         // Setup ImGui binding
         ImGui_ImplGlfwGL3_Init(this->window, true);

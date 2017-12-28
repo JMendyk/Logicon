@@ -17,7 +17,7 @@ namespace Logicon {
      * Input changes it's state if it is `clicked`.
      * Default state is LOW
      */
-    class Input : Gate {
+    class Input : public Gate {
 
     public:
         /// Constructor: default state is LOW

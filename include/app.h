@@ -15,7 +15,8 @@ namespace Logicon {
      * Main program loop is located in here.
      */
     class App {
-        //TODO
+    public:
+        void run();
     };
 } // namespace Logicon
 

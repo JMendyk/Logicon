@@ -22,7 +22,7 @@ namespace Logicon {
      * right on time axis.
      *
      */
-    class Clock : Gate {
+    class Clock : public Gate {
 
     private:
         /// how long in ticks should the ON state be transmitted

@@ -29,10 +29,13 @@ namespace Logicon {
     typedef unsigned int ID;
     /// Represents port by it's index in corresponding array in `Gate`.
     typedef unsigned int Port;
-    /// Represents port state ON or OFF.
-    typedef bool State;
+    /// Represents port state OFF(0) or ON(1). Engine can use other variables to indicate if state was calculated.
+    typedef int State;
     /// Represents tick type.
     typedef int Tick;
+
+    /// Represents initial state of port
+    static const State initialState = 0;
 
     /// Represents single connection as pair <ID, PortIndex>.
     struct Connection {
@@ -50,7 +53,6 @@ namespace Logicon {
             return !(rhs == *this);
         }
     };
-
 } // namespace Logicon
 
 #endif //LOGICON_TYPES_H

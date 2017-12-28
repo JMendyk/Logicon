@@ -5,9 +5,8 @@
 #include "gates/input.h"
 
 namespace Logicon {
-    Input::Input(ID id, Circuit parent) : Gate(id, parent) {
+    Input::Input(ID id) : Gate(id, 0, 1) {}
 
-    }
 
     void Input::update() {
 

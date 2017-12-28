@@ -14,7 +14,7 @@ namespace Logicon {
      * INPUTS:  2
      * OUTPUTS: 1
      */
-    class And : Gate {
+    class And : public Gate {
 
     public:
         /// Constructor

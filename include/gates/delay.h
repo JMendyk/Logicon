@@ -20,14 +20,15 @@ namespace Logicon {
      * Function representing state of output in time is something like this:
      * out_state(time+delay) = in_state(time)
      */
-    class Delay : Gate {
+    class Delay : public Gate {
 
     private:
         /// how much the input signal is shifted into the future. can't be less than 0.
         Tick delay;
 
     public:
-        explicit Delay(ID id, Circuit parent);
+        /// Constructor constructs default 1 tick delay
+        explicit Delay(ID id);
 
         /**
          * Replays input function on output with specified delay

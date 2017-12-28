@@ -5,14 +5,11 @@
 #ifndef LOGICON_GATE_H
 #define LOGICON_GATE_H
 
-#include <string>
-#include <vector>
-#include <circuit.h>
 #include <types.h>
-#include "data.h"
 
 
 namespace Logicon {
+
     /**
      * @brief Abstract class representing a logic gate.
      *
@@ -23,25 +20,35 @@ namespace Logicon {
     class Gate {
 
     private:
-        typedef std::vector<Connection> PortConnectionsList_;
+        /// LOCAL TYPEDEFS
+        /// ==============
 
-        /// reference to parent TODO: change to shared_pointer
-        const Circuit parent;
+        /// iterable container of outgoing connections from certain port
+        typedef std::vector<Connection> PortConnectionList_;
+
+        /// MEMBERS
+        /// =======
+
         /// ID representing gate
-        ID id;
-        /// ordered container of all inputs the gate has as tuples <state, connectedBlockId, connectedBlockPortIndex>
-        std::vector<std::tuple<PortState, ID, PortIndex> > inputs; //
+        const ID id;
+        /// ordered container of all inputs the gate has as tuples <state, container of input collections>
+        std::vector<std::pair<State, PortConnectionList_> > inputs;
         /// ordered container of all outputs the gat has as tuples <states, containerOfConnections>
-        std::vector<std::pair<PortState, PortConnectionsList_> > outputs;
+        std::vector<std::pair<State, PortConnectionList_> > outputs;
         /// additional data individual for each gate like labels etc.
 
     public:
         /**
-         * @brief Constructor acceping new uniqe ID and a reference to parent circuit.
-         * @param ID uniqe ID identifying block
-         * @param circuit reference to parent circuit
+         * @brief Constructor accepting new unique ID and a number of inputs and outputs.
+         * @param ID unique ID identifying block
+         * @param inputsCount number of inputs
+         * @param outputsCount number of outputs
          */
-        explicit Gate(ID id, Circuit parent);
+        explicit Gate(ID id, unsigned int inputsCount, unsigned int outputsCount);
+
+        // ======
+        // INPUTS
+        // ======
 
         /**
          * @brief Returns this gate's ID.
@@ -51,7 +58,176 @@ namespace Logicon {
         ID getID() const;
 
         /**
-         * @brief Calculates states of outputs according to block's logics.
+        * @brief Returns inputs count.
+        * @return number of inputs
+        */
+        int getInputsCount() const;
+
+        /**
+        * @brief Returns state of specified input.
+        *
+        * @param input input port of this gate
+        * @return State representing state of given input
+        */
+        State getInputState(Port input) const;
+
+        /**
+        * @brief Changes state of specified input.
+        *
+        * @warning In the future release may change to addInput if multiple
+         * input connections will be supported.
+         *
+        * @param input input port of this gate
+        * @param state new state for given input
+        */
+        void setInputState(Port input, State state);
+
+        /**
+         * @brief Check if specified port is connected with anything.
+         * @param input input port of this gate
+         * @return true if given port is not connected with anything, false otherwise
+         */
+        bool isInputEmpty(Port input) const;
+
+        /**
+        * @brief Checks if given input is connected with given gate at given port.
+        *
+        * @param input input port of this gate
+        * @param otherId ID of the connected gate
+        * @param otherPort output port of the connected gate
+        * @return true if connection otherId:otherPort -> this:index exists, false otherwise
+        */
+        bool isInputConnectedWith(Port input, ID otherId, Port otherPort);
+
+        /**
+        * @brief Returns list of connections with given input.
+        *
+        * @warning Currently only a single connection at given input exists,
+         * so the returned list has at most one element in it. Returning list
+         * instead of single Connection shifts the responsibility of checking
+         * for connection existence onto the caller. Returning list is also a way
+         * to adapt for possible future change in API where multiple connections
+         * may be linked to one input port.
+        *
+        * @param input input port of this gate
+        * @return iterable container of connections on given input port
+        */
+        const PortConnectionList_ &getInputConnections(Port input) const;
+
+        /**
+        * @brief Changes information about connection at specified input.
+        *
+        * @warning It won't check if connection is valid, it will just set the fields!
+        *
+        * @param input input port of this gate
+        * @param otherId ID of the connected gate
+        * @param otherPort input port of the connected gate
+        */
+        void setInputConnection(Port input, ID otherId, Port otherPort);
+
+        /**
+         * @brief Removes all connections from given input port
+         * @param input input port of this gate
+         */
+        void clearInputConnections(Port input);
+
+        // =======
+        // OUTPUTS
+        // =======
+
+        /**
+         * @brief Returns outputs count.
+         * @return number of outputs
+         */
+        int getOutputsCount() const;
+
+        /**
+         * @brief Returns state of specified output.
+         *
+         * @param output output port of this gate
+         * @return State representing state of given output
+         */
+        State getOutputState(Port output) const;
+
+        /**
+         * @brief Changes state of specified output.
+         *
+         * @param output output port of this gate
+         * @param state new state to be set on given output
+         */
+        void setOutputState(Port output, State state);
+
+        /**
+         * @brief Check if specified port is connected with anything.
+         * @param output output port of this gate
+         * @return true if given port is not connected with anything, false otherwise
+         */
+        bool isOutputEmpty(Port output) const;
+
+        /**
+        * @brief Checks if given output is connected with given gate at given port.
+        *
+        * @param output output port of this gate
+        * @param otherId ID of the connected gate
+        * @param otherPort input port of the connected gate
+        * @return true if connection this:index -> otherId:otherPort exists, false otherwise
+        */
+        bool isOutputConnectedWith(Port output, ID otherId, Port otherPort) const;
+
+        /**
+        * @brief Returns list of all connections at specified port.
+        *
+        * @note Multiple connections outgoing from single port can exist.
+        *
+        * @param output output port of this gate
+        * @return iterable container of connections at given output port
+        */
+        const PortConnectionList_ &getOutputConnections(Port output);
+
+        /**
+        * @brief Adds another output connection at given output port.
+        * @note If connection exists, operation is cancelled.
+        *
+        * @warning It won't check if connection is valid, it will just set the fields!
+        *
+        * @param output output port of this gate
+        * @param otherId ID of the connected gate
+        * @param otherPort input port of the connected gate
+        */
+        void addOutputConnection(Port output, ID otherId, Port otherPort);
+
+        /**
+        * @brief Finds and removes specified connection from given output port.
+        *
+        * @note If connection doesn't exist, nothing happens.
+        *
+        * @param output output port of this gate
+        * @param otherId ID of the connected gate
+        * @param otherPort input port of the connected gate
+        */
+        void removeOutputConnection(Port output, ID otherId, Port otherPort);
+
+        /**
+         * @brief Removes all connections from given output
+         */
+        void clearOutputConnections(Port output);
+
+        // =======
+        // GENERAL
+        // =======
+
+        /**
+         * @brief Sets all inputs and outputs to initial state.
+         */
+        void reset();
+
+        /**
+         * @brief Clears all connections in inputs[] and outputs[].
+         */
+        void clear();
+
+        /**
+         * @brief Calculates states of outputs according to block's logic.
          */
         virtual void update()=0;
 
@@ -59,93 +235,6 @@ namespace Logicon {
          * @brief Defines behavior of gate when the gate is `clicked`.
          */
         virtual void clickAction() {};
-
-        /**
-         * @brief Returns state of specified input.
-         *
-         * @param index index of input which state we want
-         * @return PortState_ representing state of given input
-         */
-        PortState getInputState(PortIndex index);
-
-        /**
-         * @brief Changes state of specified input.
-         *
-         * @param index index of input which state we want to change
-         * @param state new state for given input
-         */
-        void setInputState(PortIndex index, PortState state);
-
-        /**
-         * @brief Returns pair describing witch which element specified input is connected to.
-         *
-         * Only one one connection at given input exists.
-         *
-         * @param index index of input which info we want
-         * @return pair <ID, PortIndex> identifying other end of connection
-         */
-        Connection getInputConnection(PortIndex index);
-
-        /**
-         * @brief Changes information about connection at specified input.
-         *
-         * @warning It won't check if connection is valid, it will just set the fields!
-         *
-         * @param index index of input which info we want to change
-         * @param otherId ID of block we connect to
-         * @param otherPort index of block's port we connect to
-         */
-        void setInputConnection(PortIndex index, ID otherId, PortIndex otherPort);
-
-        /**
-         * @brief Returns state of specified output.
-         *
-         * @param index index of output which state we want
-         * @return PortState_ representing state of given output
-         */
-        PortState getOutputState(PortIndex index);
-
-        /**
-         * @brief Changes state of specified output.
-         *
-         * @param index index of output which state we want to change
-         * @param state new state for given output
-         */
-        void setOutputState(PortIndex index, PortState state);
-
-        /**
-         * @brief Adds another output connection at given output port.
-         * If connection exists, operation is cancelled.
-         *
-         * @warning It won't check if connection is valid, it will just set the fields!
-         *
-         * @param index index of output to which new connection should be added
-         * @param other_id ID of block we connect to
-         * @param other_port index of block's port we connect to
-         */
-        void addOutputConnection(PortIndex index, ID other_id, PortIndex other_port);
-
-        /**
-         * @brief Finds and removes given connection from specified output.
-         *
-         * If connection doesn't exist, operation is cancelled.
-         *
-         * @param index index of output from which we want to remove connection
-         * @param other_id ID of block we are currently connected and want to disconnect
-         * @param other_port index of connected block's port we are currently connected and want to disconnect
-         */
-        void removeOutputConnection(PortIndex index, ID other_id, PortIndex other_port);
-
-        /**
-         * @brief Returns list of all connections at specified port.
-         *
-         * Multiple connections outgoing from single port can exist.
-         *
-         * @param index index of output which connections list we want
-         * @return container with connections outgoing from given output
-         */
-        PortConnectionsList_ getOutputConnections(PortIndex index);
-
     };
 } // namespace Logicon
 

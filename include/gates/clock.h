@@ -22,7 +22,7 @@ namespace Logicon {
      * right on time axis.
      *
      */
-    class Clock : Gate {
+    class Clock : public Gate {
 
     private:
         /// how long in ticks should the ON state be transmitted
@@ -33,7 +33,8 @@ namespace Logicon {
         Tick phase;
 
     public:
-        explicit Clock(ID id, Circuit parent);
+        /// Constructor: default onPeriod=1 offPeriod=1 phase=0
+        explicit Clock(ID id);
 
         /**
          * Changes state of output according to onState, offState and delay

@@ -2,50 +2,186 @@
 // Created by rufus on 11.12.17.
 //
 
+#include <exceptions/wrongPortException.h>
+#include <algorithm>
+#include <iostream>
 #include "gates/gate.h"
 
 namespace Logicon {
-    Gate::Gate(ID id, Circuit parent) {
-
+    Gate::Gate(ID id, unsigned int inputsCount, unsigned int outputsCount) : id(id) {
+        // initialize inputs array
+        this->inputs.resize(inputsCount);
+        for (auto input: inputs) {
+            input.first = 0;
+        }
+        // initialize outputs array
+        this->outputs.resize(outputsCount);
+        for (auto output: outputs)
+            output.first = 0;
     }
 
     ID Gate::getID() const {
-        return 0;
+        return id;
     }
 
-    PortState Gate::getInputState(PortIndex index) {
-        return 0;
+    // ======
+    // INPUTS
+    // ======
+
+    int Gate::getInputsCount() const {
+        return this->inputs.size();
     }
 
-    void Gate::setInputState(PortIndex index, PortState state) {
+    State Gate::getInputState(Port input) const {
+        if (input < 0 || input >= this->inputs.size())
+            throw wrongPortException(this->id, input, true);
+
+        return this->inputs[input].first;
+    }
+
+    void Gate::setInputState(Port input, State state) {
+        if (input < 0 || input >= inputs.size())
+            throw wrongPortException(this->id, input, true);
+
+        inputs[input].first = state;
+    }
+
+    bool Gate::isInputEmpty(Port input) const {
+        if (input < 0 || input >= inputs.size())
+            throw wrongPortException(this->id, input, true);
+
+        return inputs[input].second.empty();
+    }
+
+    bool Gate::isInputConnectedWith(Port input, ID otherId, Port otherPort) {
+        if (input < 0 || input >= inputs.size())
+            throw wrongPortException(this->id, input, true);
+
+        return std::find(inputs[input].second.begin(),
+                         inputs[input].second.end(),
+                         Connection(otherId, otherPort))
+               != inputs[input].second.end();
+    }
+
+    const Gate::PortConnectionList_ &Gate::getInputConnections(Port input) const {
+        if (input < 0 || input >= inputs.size())
+            throw wrongPortException(this->id, input, true);
+
+        return inputs[input].second;
+    }
+
+    void Gate::setInputConnection(Port input, ID otherId, Port otherPort) {
+        if (input < 0 || input >= inputs.size())
+            throw wrongPortException(this->id, input, true);
+
+        // single connection only
+        if (!inputs[input].second.empty()) { // if it is connected, modify the connection
+            inputs[input].second.back().id = otherId;
+            inputs[input].second.back().port = otherPort;
+        } else // array is empty, construct new element at the end
+            inputs[input].second.emplace_back(Connection(otherId, otherPort));
+    }
+
+    void Gate::clearInputConnections(Port input) {
+        if (input < 0 || input >= inputs.size())
+            throw wrongPortException(this->id, input, true);
+
+        inputs[input].second.clear();
+    }
+
+    // =======
+    // OUTPUTS
+    // =======
+
+    int Gate::getOutputsCount() const {
+        return outputs.size();
+    }
+
+    State Gate::getOutputState(Port output) const {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
+
+        return outputs[output].first;
+    }
+
+    void Gate::setOutputState(Port output, State state) {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
+
+        outputs[output].first = state;
+    }
+
+    bool Gate::isOutputEmpty(Port output) const {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
+
+        return outputs[output].second.empty();
+    }
+
+    bool Gate::isOutputConnectedWith(Port output, ID otherId, Port otherPort) const {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
+
+        return std::find(outputs[output].second.begin(),
+                         outputs[output].second.end(),
+                         Connection(otherId, otherPort)) != outputs[output].second.end();
 
     }
 
-    Connection Gate::getInputConnection(PortIndex index) {
-        return Logicon::Connection();
+    const Gate::PortConnectionList_ &Gate::getOutputConnections(Port output) {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
+
+        return outputs[output].second;
     }
 
-    void Gate::setInputConnection(PortIndex index, ID otherId, PortIndex otherPort) {
+    void Gate::addOutputConnection(Port output, ID otherId, Port otherPort) {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
 
+        if (isOutputConnectedWith(output, otherId, otherPort)) // TODO log connect abort
+            return;
+
+        outputs[output].second.emplace_back(Connection(otherId, otherPort));
     }
 
-    PortState Gate::getOutputState(PortIndex index) {
-        return 0;
+    void Gate::removeOutputConnection(Port output, ID otherId, Port otherPort) {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
+
+        if (!isOutputConnectedWith(output, otherId, otherPort)) // TODO log disconnect abort
+            return;
+
+        auto found = std::find(outputs[output].second.begin(),
+                               outputs[output].second.end(),
+                               Connection(otherId, otherPort));
+
+        outputs[output].second.erase(found);
     }
 
-    void Gate::setOutputState(PortIndex index, PortState state) {
+    void Gate::clearOutputConnections(Port output) {
+        if (output < 0 || output >= outputs.size())
+            throw wrongPortException(this->id, output, false);
 
+        outputs[output].second.clear();
     }
 
-    void Gate::addOutputConnection(PortIndex index, ID other_id, PortIndex other_port) {
+    // =======
+    // GENERAL
+    // =======
 
+    void Gate::reset() {
+        for (auto &input : inputs)
+            input.first = Logicon::initialState;
+        for (auto &output:outputs)
+            output.first = Logicon::initialState;
     }
 
-    void Gate::removeOutputConnection(PortIndex index, ID other_id, PortIndex other_port) {
-
+    void Gate::clear() {
+        for (auto &input : inputs)
+            input.second.clear();
+        for (auto &output : outputs)
+            output.second.clear();
     }
 
-    Gate::PortConnectionsList_ Gate::getOutputConnections(PortIndex index) {
-        return Logicon::Gate::PortConnectionsList_();
-    }
 } // namespace Logicon

@@ -17,10 +17,11 @@ namespace Logicon {
      * Input changes it's state if it is `clicked`.
      * Default state is LOW
      */
-    class Input : Gate {
+    class Input : public Gate {
 
     public:
-        explicit Input(ID id, Circuit parent);
+        /// Constructor: default state is LOW
+        explicit Input(ID id);
 
         /**
          * If the state flag is HIGH outputs HIGH, otherwise outputs LOW

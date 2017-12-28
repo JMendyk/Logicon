@@ -14,10 +14,11 @@ namespace Logicon{
      * Gate works on the same principle as light switch - if it is switched, it sends input to output,
      * if it isn't, then the output is LOW
      */
-    class Switch : Gate {
+    class Switch : public Gate {
 
     public:
-        explicit Switch(ID id, Circuit parent);
+        /// Constructor: default state is LOW
+        explicit Switch(ID id);
 
         /**
          * OUT = IN if switched, LOW otherwise

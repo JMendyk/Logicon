@@ -3,15 +3,22 @@
 //
 
 #include <exceptions/wrongPortException.h>
-#include <exceptions/otherException.h>
 #include <exceptions/idNotFoundException.h>
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #include "circuit.h"
 
 namespace Logicon {
 
-    Circuit::Circuit(ID id) : id(id) {}
+    Circuit::Circuit(ID id) : id(id) {
+        gates.clear();
+    }
+
+    ID Circuit::currentId = 0;
+
+    Logicon::ID Circuit::nextID() {
+        return currentId++;
+    }
 
     void Circuit::connect(ID idFrom, Port output, ID idTo, Port input) {
 
@@ -39,13 +46,15 @@ namespace Logicon {
                 gateFrom->addOutputConnection(output, idTo, input);
                 gateTo->setInputConnection(input, idFrom, output);
             } else // TODO pass ID:port to exception
-                throw Logicon::otherException("Information about connection isn't present in both gates!");
-        } catch (std::exception &e) { // TODO log
-            std::cerr << "Error while connecting blocks '"
-                      << idFrom << ":" << output
-                      << "' -> '"
-                      << idTo << ":" << input << "'.";
-            std::cerr << e.what();
+                throw Logicon::logiconException("Information about connection isn't present in both gates!");
+        } catch (Logicon::logiconException &e) { // TODO log
+            std::string circumstances = "while connecting blocks '" +
+                                        std::to_string(idFrom) + ":" + std::to_string(output) +
+                                        "' -> '" +
+                                        std::to_string(idTo) + ":" + std::to_string(input) +
+                                        "':\n";
+            e.when(circumstances);
+            std::cerr << e.what(); // TODO fix windows SEH problems on rethrow
             return;
         }
     }
@@ -76,20 +85,22 @@ namespace Logicon {
                 gateFrom->removeOutputConnection(output, idTo, input);
                 gateTo->clearInputConnections(input);
             } else // TODO pass ID:port to exception
-                throw Logicon::otherException("Information about connection isn't present in both gates!");
-        } catch (std::exception &e) { // TODO log
-            std::cerr << "Error while disconnecting blocks '"
-                      << idFrom << ":" << output
-                      << "' -> '"
-                      << idTo << ":" << input << "'.";
-            std::cerr << e.what();
+                throw Logicon::logiconException("Information about connection isn't present in both gates!");
+        } catch (Logicon::logiconException &e) { // TODO log
+            std::string circumstances = "while disconnecting blocks '" +
+                                        std::to_string(idFrom) + ":" + std::to_string(output) +
+                                        "' -> '" +
+                                        std::to_string(idTo) + ":" + std::to_string(input) +
+                                        "':\n";
+            e.when(circumstances);
+            std::cerr << e.what(); // TODO fix windows SEH problems on rethrow
             return;
         }
     }
 
-    void Circuit::add(const std::shared_ptr<Gate> &gate) {
+    void Circuit::add(std::shared_ptr<Gate> gate) {
         if (gates.count(gate->getID()) > 0)
-            throw otherException("Gates with the same ID cannot be in the same circuit!");
+            throw logiconException("Gates with the same ID cannot be in the same circuit!");
         gates.insert(std::pair<ID, std::shared_ptr<Gate>>(gate->getID(), gate));
     }
 
@@ -99,7 +110,7 @@ namespace Logicon {
         auto erased = gates[id];
         try {
             // erase input connections
-            for (int port = 0; port < erased->getInputsCount(); ++port) { // for all input ports
+            for (Port port = 0; port < erased->getInputsCount(); ++port) { // for all input ports
                 auto inputConnections = erased->getInputConnections(port);
                 for (auto connection : inputConnections) { // for all input connections at given port
                     auto connected = this->find(connection.id); // connection with other block
@@ -107,7 +118,7 @@ namespace Logicon {
                 }
             }
             // erase output connections
-            for (int port = 0; port < erased->getOutputsCount(); ++port) { // for all outputs
+            for (Port port = 0; port < erased->getOutputsCount(); ++port) { // for all outputs
                 auto outputsConnections = erased->getOutputConnections(port);
                 for (auto connection : outputsConnections) { // for all output connections at given port
                     auto connected = this->find(connection.id); // find specified connection
@@ -116,9 +127,11 @@ namespace Logicon {
 
             }
         } catch (wrongPortException &e) {
-            std::cerr << "Error while removing gate with ID:`"
-                      << id << "` from circuit.";
-            std::cerr << e.what();
+            std::string circumstances = "Error while removing gate with ID:`" +
+                                        std::to_string(id) + "` from circuit.";
+            e.when(circumstances);
+            std::cerr << e.what(); // TODO fix windows SEH problems on rethrow
+            return;
         }
 
         gates.erase(id);
@@ -127,17 +140,19 @@ namespace Logicon {
     std::shared_ptr<Gate> Circuit::find(ID id) {
         auto it = gates.find(id);
         if (it == gates.end())
-            nullptr;
+            return nullptr;
         return it->second;
     }
 
     std::list<std::shared_ptr<Gate>> Circuit::getGates() {
         std::list<std::shared_ptr<Gate>> gatesList;
+
         // constructs list from map
         std::transform(gates.begin(),
                        gates.end(),
                        std::back_inserter(gatesList),
                        [](const std::map<ID, std::shared_ptr<Gate>>::value_type &entry) { return entry.second; });
 
+        return gatesList;
     }
 } // namespace Logicon

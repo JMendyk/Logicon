@@ -8,7 +8,7 @@ namespace Logicon {
     And::And(ID id) : Gate(id, 2, 1) {}
 
     void And::update() {
-
+        this->setOutputState(0, this->getInputState(0) & this->getInputState(1));
     }
 } // namespace Logicon
 

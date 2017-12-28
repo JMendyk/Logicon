@@ -12,12 +12,12 @@ namespace Logicon {
         // initialize inputs array
         this->inputs.resize(inputsCount);
         for (auto input: inputs) {
-            input.first = false;
+            input.first = 0;
         }
         // initialize outputs array
         this->outputs.resize(outputsCount);
         for (auto output: outputs)
-            output.first = false;
+            output.first = 0;
     }
 
     ID Gate::getID() const {
@@ -101,7 +101,7 @@ namespace Logicon {
         if (output < 0 || output >= outputs.size())
             throw wrongPortException(this->id, output, false);
 
-        outputs[output].first;
+        return outputs[output].first;
     }
 
     void Gate::setOutputState(Port output, State state) {
@@ -149,7 +149,7 @@ namespace Logicon {
         if (output < 0 || output >= outputs.size())
             throw wrongPortException(this->id, output, false);
 
-        if (isOutputConnectedWith(output, otherId, otherPort)) // TODO log disconnect abort
+        if (!isOutputConnectedWith(output, otherId, otherPort)) // TODO log disconnect abort
             return;
 
         auto found = std::find(outputs[output].second.begin(),
@@ -164,6 +164,24 @@ namespace Logicon {
             throw wrongPortException(this->id, output, false);
 
         outputs[output].second.clear();
+    }
+
+    // =======
+    // GENERAL
+    // =======
+
+    void Gate::reset() {
+        for (auto input : inputs)
+            input.first = Logicon::initialState;
+        for (auto output:outputs)
+            output.first = Logicon::initialState;
+    }
+
+    void Gate::clear() {
+        for (auto input : inputs)
+            input.second.clear();
+        for (auto output : outputs)
+            output.second.clear();
     }
 
 } // namespace Logicon

@@ -136,25 +136,25 @@ namespace Logicon {
         // =======
 
         /**
-* @brief Returns outputs count.
-* @return number of outputs
-*/
+         * @brief Returns outputs count.
+         * @return number of outputs
+         */
         int getOutputsCount() const;
 
         /**
-        * @brief Returns state of specified output.
-        *
-        * @param output output port of this gate
-        * @return State representing state of given output
-        */
+         * @brief Returns state of specified output.
+         *
+         * @param output output port of this gate
+         * @return State representing state of given output
+         */
         State getOutputState(Port output) const;
 
         /**
-        * @brief Changes state of specified output.
-        *
-        * @param output output port of this gate
-        * @param state new state to be set on given output
-        */
+         * @brief Changes state of specified output.
+         *
+         * @param output output port of this gate
+         * @param state new state to be set on given output
+         */
         void setOutputState(Port output, State state);
 
         /**
@@ -211,6 +211,20 @@ namespace Logicon {
          * @brief Removes all connections from given output
          */
         void clearOutputConnections(Port output);
+
+        // =======
+        // GENERAL
+        // =======
+
+        /**
+         * @brief Sets all inputs and outputs to initial state.
+         */
+        void reset();
+
+        /**
+         * @brief Clears all connections in inputs[] and outputs[].
+         */
+        void clear();
 
         /**
          * @brief Calculates states of outputs according to block's logic.

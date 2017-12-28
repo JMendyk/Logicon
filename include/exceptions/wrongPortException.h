@@ -5,29 +5,22 @@
 #ifndef LOGICON_MISSINGINPUTEXCEPTION_H
 #define LOGICON_MISSINGINPUTEXCEPTION_H
 
-#include <exception>
 #include <types.h>
+#include "logiconException.h"
 
 namespace Logicon {
 
     /**
      * Exception returned when trying to access wrong port
      */
-    class wrongPortException : std::exception {
-        ID id;
-        Port port;
-        bool input;
+    class wrongPortException : public Logicon::logiconException {
 
     public:
-        explicit wrongPortException(ID id, Port port, bool isInput) : id(id), port(port), input(isInput) {}
-
-        const char *what() const throw() override {
+        explicit wrongPortException(ID id, Port port, bool isInput) : logiconException("") {
             std::string err = "Couldn't access ";
-            err += input ? "input" : "output";
-            err += " port '" + std::to_string(id);
-            err += "':'" + std::to_string(port);
-            err += "'\n";
-            return err.c_str();
+            err += isInput ? "input" : "output";
+            err += " port '" + std::to_string(id) + "':'" + std::to_string(port) + "'\n";
+            this->details(err);
         }
     };
 } // namespace Logicon

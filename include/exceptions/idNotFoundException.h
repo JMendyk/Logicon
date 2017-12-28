@@ -15,17 +15,12 @@ namespace Logicon {
     /**
      * Exception returned if block with given ID was not found
      */
-    class idNotFoundException : std::exception {
-        ID id;
+    class idNotFoundException : public Logicon::logiconException {
 
     public:
-        explicit idNotFoundException(ID id) : id(id) {}
-
-        const char *what() const throw() override {
-            std::string err = "Couldn't find a gate with ID:'";
-            err += std::to_string(id);
-            err += "'\n";
-            return err.c_str();
+        explicit idNotFoundException(ID id) : logiconException("") {
+            std::string desc = "Couldn't find a gate with ID:'" + std::to_string(id) + "'\n";
+            this->details(desc);
         }
 
     };

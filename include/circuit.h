@@ -22,9 +22,18 @@ namespace Logicon {
         std::map<ID, std::shared_ptr<Gate>> gates;
         Data data;
 
+        /// holds shared across all elements value of current free ID
+        static Logicon::ID currentId;
     public:
         /// Constructor
         explicit Circuit(ID id);
+
+
+        /**
+         * @brief Generates next unique ID in range [0, MAX_UINT] for elements
+         * @return new uniqe ID
+         */
+        static Logicon::ID nextID();
 
         /**
          * @brief Connects gates with specified IDs on specified ports
@@ -56,7 +65,7 @@ namespace Logicon {
          *
          * @param gate shared pointer to the newly created Gate object
          */
-        void add(const std::shared_ptr<Gate> &gate);
+        void add(std::shared_ptr<Gate> gate);
 
         /**
          * @brief Removes gate with specified ID from the circuit.

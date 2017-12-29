@@ -2,16 +2,16 @@
 // Created by JMendyk on 18.12.17.
 //
 
-#ifndef LOGICON_MENUWIDGET_H
-#define LOGICON_MENUWIDGET_H
+#ifndef LOGICON_FOOTERWIDGET_H
+#define LOGICON_FOOTERWIDGET_H
 
-#include "widgets/gHelpers.h"
+#include "gui/gHelpers.h"
 
 #include <GLFW/glfw3.h>
 
 namespace Logicon {
 
-    class MenuWidget {
+    class FooterWidget {
 
         GLFWwindow* window;
 
@@ -23,4 +23,4 @@ namespace Logicon {
 
 };
 
-#endif //LOGICON_MENUWIDGET_H
+#endif //LOGICON_FOOTERWIDGET_H

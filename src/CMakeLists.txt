@@ -20,11 +20,11 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/gates/and.cpp
         ${SRC_DIR}/gates/delay.cpp
 
-        ${SRC_DIR}/widgets/menu_widget.cpp
-        ${SRC_DIR}/widgets/blocks_widget.cpp
-        ${SRC_DIR}/widgets/footer_widget.cpp
+        ${SRC_DIR}/gui/menu_widget.cpp
+        ${SRC_DIR}/gui/blocks_widget.cpp
+        ${SRC_DIR}/gui/footer_widget.cpp
 
-        ${SRC_DIR}/widgets/gHelpers.cpp
+        ${SRC_DIR}/gui/gHelpers.cpp
 
         ${SRC_DIR}/exceptions/logiconException.cpp
         ${SRC_DIR}/exceptions/idNotFoundException.cpp

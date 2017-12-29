@@ -2,7 +2,7 @@
 // Created by JMendyk on 29.12.17.
 //
 
-#include "widgets/gHelpers.h"
+#include "gui/gHelpers.h"
 
 namespace Logicon {
 

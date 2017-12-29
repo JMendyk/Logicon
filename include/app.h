@@ -12,11 +12,11 @@
 
 #include "types.h"
 
-#include "widgets/gHelpers.h"
+#include "gui/gHelpers.h"
 
-#include "widgets/menu_widget.h"
-#include "widgets/blocks_widget.h"
-#include "widgets/footer_widget.h"
+#include "gui/menu_widget.h"
+#include "gui/blocks_widget.h"
+#include "gui/footer_widget.h"
 
 namespace Logicon {
 

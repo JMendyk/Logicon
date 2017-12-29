@@ -2,7 +2,7 @@
 // Created by JMendyk on 18.12.17.
 //
 
-#include "widgets/menu_widget.h"
+#include "gui/menu_widget.h"
 
 // For VerticalSeparator - since re-implementing it
 // would required adding many ImGui's internal functions

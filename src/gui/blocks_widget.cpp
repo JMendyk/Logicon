@@ -2,7 +2,7 @@
 // Created by JMendyk on 18.12.17.
 //
 
-#include "widgets/blocks_widget.h"
+#include "gui/blocks_widget.h"
 
 // For EndColumn - without it ImGui::Columns looks strange
 // However, nesting column layouts is not advised per ImGui documentation

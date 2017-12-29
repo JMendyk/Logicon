@@ -2,7 +2,7 @@
 // Created by JMendyk on 18.12.17.
 //
 
-#include "widgets/footer_widget.h"
+#include "gui/footer_widget.h"
 
 #include <vector>
 #include <iostream>

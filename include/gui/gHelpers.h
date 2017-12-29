@@ -85,12 +85,21 @@ namespace Logicon {
         operator ImRect() const { return ImRect(Min, Max); }
     };
 
+    UIVec2 steppify(UIVec2 vec, UIVec2 step);
+    UIRect steppify(UIRect rect, UIVec2 step);
 
     namespace UI {
         const int MARGIN = 16;
         const int MENU_WIDGET_HEIGHT = 64;
         const int FOOTER_WIDGET_HEIGHT = 32;
         const int BLOCKS_WIDGET_WIDTH = 300;
+
+        const int CANVAS_GRID_SIZE = 48;
+
+        const int GCIRCUIT_CHANNELS_COUNT = 3;
+        const int DEFAULT_GBLOCK_CHANNEL = 0;
+        const int ACTIVE_GBLOCK_CHANNEL = 1;
+        const int CONNECTION_CHANNEL = 2;
     }
 
 }  // namespace Logicon

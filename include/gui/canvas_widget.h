@@ -5,11 +5,17 @@
 #ifndef LOGICON_CANVASWIDGET_H
 #define LOGICON_CANVASWIDGET_H
 
-#include <gui/gHelpers.h>
+#include "gui/gHelpers.h"
+
+#include "gui/gCircuit.h"
+
+#include <memory>
 
 namespace Logicon {
 
     class CanvasWidget {
+
+        std::shared_ptr<GCircuit> gCircuit;
 
       public:
         bool init();

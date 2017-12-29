@@ -8,10 +8,17 @@ namespace Logicon {
 
     bool CanvasWidget::init() {
 
+        this->gCircuit = std::make_shared<GCircuit>();
+        if(!this->gCircuit->init())
+            return false;
+
         return true;
     }
 
     bool CanvasWidget::close() {
+
+        if(!this->gCircuit->close())
+            return false;
 
         return true;
     }
@@ -26,6 +33,13 @@ namespace Logicon {
         {
             ImGui::SetWindowPos(window_pos, ImGuiCond_Always);
             ImGui::SetWindowSize(window_size, ImGuiCond_Always);
+
+            /*
+             * GCircuit
+             */
+            const UIVec2 g_circuit_pos = UIVec2(0,0);
+            const UIVec2 g_circuit_size = UIVec2(ImGui::GetContentRegionAvail());
+            this->gCircuit->render_ui(g_circuit_pos, g_circuit_size);
         }
         ImGui::End();
     }

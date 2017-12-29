@@ -25,6 +25,9 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/gui/canvas_widget.cpp
         ${SRC_DIR}/gui/footer_widget.cpp
 
+        ${SRC_DIR}/gui/gCircuit.cpp
+        ${SRC_DIR}/gui/gBlock.cpp
+
         ${SRC_DIR}/gui/gHelpers.cpp
 
         ${SRC_DIR}/exceptions/logiconException.cpp

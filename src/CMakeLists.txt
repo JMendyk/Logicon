@@ -5,9 +5,9 @@ target_sources(${EXECUTABLE_NAME}
     PUBLIC
         ${SRC_DIR}/main.cpp
 
-        ${SRC_DIR}/data.cpp
+        # ${SRC_DIR}/data.cpp
         ${SRC_DIR}/app.cpp
-        ${SRC_DIR}/engine.cpp
+        # ${SRC_DIR}/engine.cpp
         ${SRC_DIR}/fileController.cpp
         ${SRC_DIR}/circuit.cpp
         ${SRC_DIR}/graphics.cpp
@@ -19,6 +19,12 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/gates/input.cpp
         ${SRC_DIR}/gates/and.cpp
         ${SRC_DIR}/gates/delay.cpp
+
+        ${SRC_DIR}/gui/menu_widget.cpp
+        ${SRC_DIR}/gui/blocks_widget.cpp
+        ${SRC_DIR}/gui/footer_widget.cpp
+
+        ${SRC_DIR}/gui/gHelpers.cpp
 
         ${SRC_DIR}/exceptions/logiconException.cpp
         ${SRC_DIR}/exceptions/idNotFoundException.cpp

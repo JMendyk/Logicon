@@ -2,14 +2,18 @@
 // Created by rufus on 12.12.17.
 //
 
+#include <logger.h>
 #include "app.h"
 
 void run_shell();
 
-int main(int argv, char *args[]) {
+int main(int argc, char *argv[]) {
 
-    if(argv == 2 && std::string(args[1]) == "shell") {
+    if(argc == 2 && std::string(argv[1]) == "shell") {
         run_shell();
+    } else {
+        Logicon::Logger::init();
+        Logicon::App().run();
     }
 
     return 0;

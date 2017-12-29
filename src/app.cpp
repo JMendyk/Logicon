@@ -118,11 +118,11 @@ namespace Logicon {
         /*
          * Menu Widget
          */
-        const ImVec2 menu_widget_pos = ImVec2(
+        const UIVec2 menu_widget_pos = UIVec2(
                 UI::MARGIN,
                 UI::MARGIN
         );
-        const ImVec2 menu_widget_size = ImVec2(
+        const UIVec2 menu_widget_size = UIVec2(
                 canvas_w - 2*UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
                 UI::MENU_WIDGET_HEIGHT
         );
@@ -131,11 +131,11 @@ namespace Logicon {
         /*
          * Blocks Widget
          */
-        const ImVec2 blocks_widget_pos = ImVec2(
+        const UIVec2 blocks_widget_pos = UIVec2(
                 canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
                 UI::MARGIN
         );
-        const ImVec2 blocks_widget_size = ImVec2(
+        const UIVec2 blocks_widget_size = UIVec2(
                 UI::BLOCKS_WIDGET_WIDTH,
                 canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)
         );
@@ -144,11 +144,11 @@ namespace Logicon {
         /*
          * Footer Widget
          */
-        const ImVec2 footer_widget_pos = ImVec2(
+        const UIVec2 footer_widget_pos = UIVec2(
                 0,
                 canvas_h - (UI::FOOTER_WIDGET_HEIGHT)
         );
-        const ImVec2 footer_widget_size = ImVec2(
+        const UIVec2 footer_widget_size = UIVec2(
                 canvas_w,
                 UI::FOOTER_WIDGET_HEIGHT
         );

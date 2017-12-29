@@ -19,7 +19,7 @@ namespace Logicon {
         return true;
     }
 
-    void BlocksWidget::render_ui(const ImVec2 &window_pos, const ImVec2 &window_size) {
+    void BlocksWidget::render_ui(const UIVec2 &window_pos, const UIVec2 &window_size) {
         ImGuiWindowFlags window_flags = 0
             | ImGuiWindowFlags_NoTitleBar
             | ImGuiWindowFlags_NoResize
@@ -43,7 +43,7 @@ namespace Logicon {
 
             for(int i = 0; i < 12; i++) {
                 ImGui::PushID(i);
-                ImGui::Button("1,1", ImVec2(size, size));
+                ImGui::Button("1,1", UIVec2(size, size));
                 ImGui::Spacing();
                 ImGui::NextColumn();
                 ImGui::PopID();

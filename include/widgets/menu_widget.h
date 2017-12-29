@@ -5,7 +5,9 @@
 #ifndef LOGICON_MENUWIDGET_H
 #define LOGICON_MENUWIDGET_H
 
-#include <widgets/widget_commons.h>
+#include "widgets/gHelpers.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Logicon {
 
@@ -15,7 +17,7 @@ namespace Logicon {
 
     public:
         bool init(GLFWwindow* window);
-        void render_ui(const ImVec2 &window_pos, const ImVec2 &window_size);
+        void render_ui(const UIVec2 &window_pos, const UIVec2 &window_size);
         bool close();
     };
 

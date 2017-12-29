@@ -22,7 +22,7 @@ namespace Logicon {
         return true;
     }
 
-    void FooterWidget::render_ui(const ImVec2 &window_pos, const ImVec2 &window_size) {
+    void FooterWidget::render_ui(const UIVec2 &window_pos, const UIVec2 &window_size) {
         ImGuiWindowFlags window_flags =
                 0
                 | ImGuiWindowFlags_NoTitleBar

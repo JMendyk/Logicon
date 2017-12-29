@@ -24,6 +24,8 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/widgets/blocks_widget.cpp
         ${SRC_DIR}/widgets/footer_widget.cpp
 
+        ${SRC_DIR}/widgets/gHelpers.cpp
+
         ${SRC_DIR}/exceptions/logiconException.cpp
         ${SRC_DIR}/exceptions/idNotFoundException.cpp
         ${SRC_DIR}/exceptions/wrongPortException.cpp

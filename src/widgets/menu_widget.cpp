@@ -6,7 +6,6 @@
 
 // For VerticalSeparator - since re-implementing it
 // would required adding many ImGui's internal functions
-#include <imgui_internal.h>
 
 namespace Logicon {
 
@@ -27,7 +26,7 @@ namespace Logicon {
         return true;
     }
 
-    void MenuWidget::render_ui(const ImVec2 &window_pos, const ImVec2 &window_size) {
+    void MenuWidget::render_ui(const UIVec2 &window_pos, const UIVec2 &window_size) {
         ImGuiWindowFlags window_flags =
                 0
                 | ImGuiWindowFlags_NoTitleBar
@@ -41,21 +40,21 @@ namespace Logicon {
 
             const int sz = static_cast<int>(window_size.y - 16);
 
-            ImGui::Button("New", ImVec2(sz, sz));
+            ImGui::Button("New", UIVec2(sz, sz));
             ImGui::SameLine();
-            ImGui::Button("Open", ImVec2(sz, sz));
+            ImGui::Button("Open", UIVec2(sz, sz));
             ImGui::SameLine();
-            ImGui::Button("Save", ImVec2(sz, sz));
+            ImGui::Button("Save", UIVec2(sz, sz));
             ImGui::SameLine();
 
             ImGui::VerticalSeparator();
             ImGui::SameLine();
 
-            ImGui::Button("Play", ImVec2(sz, sz));
+            ImGui::Button("Play", UIVec2(sz, sz));
             ImGui::SameLine();
-            ImGui::Button("Stop", ImVec2(sz, sz));
+            ImGui::Button("Stop", UIVec2(sz, sz));
             ImGui::SameLine();
-            ImGui::Button("Reset", ImVec2(sz, sz));
+            ImGui::Button("Reset", UIVec2(sz, sz));
             ImGui::SameLine();
 
             ImGui::VerticalSeparator();
@@ -65,14 +64,14 @@ namespace Logicon {
 
             ImGui::PushItemWidth(256);
             ImGui::PushFont(myFont);
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 8));
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, UIVec2(8, 8));
             ImGui::InputInt("", &tickrate, NULL, NULL);
             ImGui::PopStyleVar();
             ImGui::PopFont();
             ImGui::PopItemWidth();
 
             ImGui::SameLine();
-            ImGui::Button("Step-by-step", ImVec2(sz, sz));
+            ImGui::Button("Step-by-step", UIVec2(sz, sz));
             ImGui::SameLine();
         }
         ImGui::End();

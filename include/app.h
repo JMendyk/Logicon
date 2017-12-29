@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-#include "widgets/widget_commons.h"
+#include "widgets/gHelpers.h"
 
 #include "widgets/menu_widget.h"
 #include "widgets/blocks_widget.h"

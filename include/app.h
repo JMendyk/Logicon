@@ -16,6 +16,7 @@
 
 #include "gui/menu_widget.h"
 #include "gui/blocks_widget.h"
+#include <gui/canvas_widget.h>
 #include "gui/footer_widget.h"
 
 namespace Logicon {
@@ -28,7 +29,7 @@ namespace Logicon {
     class App {
         static std::string APP_TITLE;
         /*
-         * Clock, Time, Engine, Canvas and GCircuit are temporarily commented-out
+         * Clock, Time, Engine are temporarily commented-out
          * since they aren't implemented yet nor are they possible to compile in the current state.
          */
         //Clock clock;
@@ -38,9 +39,7 @@ namespace Logicon {
         MenuWidget menuWidget;
         BlocksWidget blocksWidget;
         FooterWidget footerWidget;
-        //Canvas canvas;
-        //
-        //GCircuit gCircuit;
+        CanvasWidget canvasWidget;
 
         enum State {
             UNINITIALIZED, RUNNING, PAUSED, STEP_BY_STEP

@@ -55,6 +55,10 @@ namespace Logicon {
         if(!this->blocksWidget.init(this->window))
             return false;
 
+        this->canvasWidget = CanvasWidget();
+        if(!this->canvasWidget.init())
+            return false;
+
         this->footerWidget = FooterWidget();
         if(!this->footerWidget.init(this->window))
             return false;
@@ -95,6 +99,9 @@ namespace Logicon {
             return false;
 
         if(!this->blocksWidget.close())
+            return false;
+
+        if(!this->canvasWidget.close())
             return false;
 
         if(!this->footerWidget.close())
@@ -140,6 +147,19 @@ namespace Logicon {
                 canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)
         );
         this->blocksWidget.render_ui(blocks_widget_pos, blocks_widget_size);
+
+        /*
+         * Canvas Widget
+         */
+        const UIVec2 canvas_widget_pos = UIVec2(
+            UI::MARGIN,
+            UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN
+        );
+        const UIVec2 canvas_widget_size = UIVec2(
+            canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+            canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN - UI::FOOTER_WIDGET_HEIGHT
+        );
+        this->canvasWidget.render_ui(canvas_widget_pos, canvas_widget_size);
 
         /*
          * Footer Widget

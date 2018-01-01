@@ -20,7 +20,7 @@ namespace Logicon {
         Texture loaded_texture;
 
         int channels_count;
-        unsigned char *data = stbi_load(filename, &loaded_texture.width, &loaded_texture.height, &channels_count, 0);
+        unsigned char *data = stbi_load(filename, &loaded_texture.width, &loaded_texture.height, &channels_count, STBI_rgb_alpha);
 
         if(data == nullptr) {
             std::cerr << "Image load failed - stb_image reports error: " << stbi_failure_reason() << "\n";
@@ -42,12 +42,10 @@ namespace Logicon {
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        GLint image_format = channels_count == 3 ? GL_RGB : GL_RGBA;
-
-        glTexImage2D(target, 0, image_format,
+        glTexImage2D(target, 0, GL_RGBA,
                      loaded_texture.width,
                      loaded_texture.height,
-                     0, image_format,
+                     0, GL_RGBA,
                      GL_UNSIGNED_BYTE, data);
 
         // Because we have already copied image data into texture data we can release memory used by image.

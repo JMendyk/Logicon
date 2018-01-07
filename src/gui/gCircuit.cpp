@@ -78,18 +78,29 @@ namespace Logicon {
 
             dragging();
 
-            // TODO: Update content_size based on most right-bottom block's position
+
             static UIVec2 content_size = UIVec2(2048, 2048);
+
+            // FIXME: This solution can be improved by only updating content_size if new GBlock is added or existing one was moved.
+            std::for_each(blocks.begin(), blocks.end(), [](const std::pair<ID, std::shared_ptr<GBlock>> gBlock) {
+              UIVec2 br = gBlock.second->getRect().getBR();
+              content_size.x = fmaxf(content_size.x, br.x);
+              content_size.y = fmaxf(content_size.y, br.y);
+            });
+
+            static const UIVec2 canvas_botom_right_margin = ImVec2(128, 128);
+            UIVec2 canvas_size = content_size + canvas_botom_right_margin;
+
             {
                 /*
                  * Render grid
                  */
                 ImU32 GRID_COLOR = ImColor(200, 200, 200, 40);
 
-                for (float x = 0; x < content_size.x; x += UI::CANVAS_GRID_SIZE)
-                    dl->AddLine(UIVec2(x, 0.0f) + dl_origin, UIVec2(x, content_size.y) + dl_origin, GRID_COLOR);
-                for (float y = 0; y < content_size.y; y += UI::CANVAS_GRID_SIZE)
-                    dl->AddLine(UIVec2(0.0f, y) + dl_origin, UIVec2(content_size.x, y) + dl_origin, GRID_COLOR);
+                for (float x = 0; x < canvas_size.x; x += UI::CANVAS_GRID_SIZE)
+                    dl->AddLine(UIVec2(x, 0.0f) + dl_origin, UIVec2(x, canvas_size.y) + dl_origin, GRID_COLOR);
+                for (float y = 0; y < canvas_size.y; y += UI::CANVAS_GRID_SIZE)
+                    dl->AddLine(UIVec2(0.0f, y) + dl_origin, UIVec2(canvas_size.x, y) + dl_origin, GRID_COLOR);
             }
 
             ImGui::GetWindowDrawList()->ChannelsSplit(UI::GCIRCUIT_CHANNELS_COUNT);
@@ -107,7 +118,7 @@ namespace Logicon {
             }
             ImGui::GetWindowDrawList()->ChannelsMerge();
 
-            ImGui::SetCursorPos(content_size);
+            ImGui::SetCursorPos(canvas_size);
         }
         ImGui::EndChild();
         ImGui::PopStyleVar(2);

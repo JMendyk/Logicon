@@ -18,3 +18,5 @@ include(src/CMakeLists.txt) # sources
 # Copy assets to build directory
 set(ASSETS_DIR ${CMAKE_SOURCE_DIR}/assets)
 file(COPY ${ASSETS_DIR} DESTINATION ${CMAKE_BINARY_DIR})
+
+include(CreateDist.cmake) # Redistributable package generation

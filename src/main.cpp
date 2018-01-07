@@ -27,7 +27,6 @@ int main(int argc, char *argv[]) {
 #include <gates/and.h>
 #include <gates/input.h>
 #include <exceptions/logiconException.h>
-#include <logger.h>
 
 namespace Logicon {
     void infoGate(const std::shared_ptr<Gate> &gate) {

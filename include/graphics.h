@@ -5,7 +5,7 @@
 #ifndef LOGICON_GRAPHICS_H
 #define LOGICON_GRAPHICS_H
 
-#include <GL/gl.h>
+#include <GL/gl3w.h>
 
 namespace Logicon {
 

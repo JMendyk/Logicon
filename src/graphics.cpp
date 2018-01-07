@@ -35,8 +35,8 @@ namespace Logicon {
         glBindTexture(target, loaded_texture.textureId);
 
         // Set texture clamping method
-        glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         // Set texture interpolation method to use linear interpolation (no MIPMAPS)
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

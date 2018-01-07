@@ -5,6 +5,7 @@
 #include "app.h"
 
 #include <imgui_impl_glfw_gl3.h>
+#include "assetLoader.h"
 
 #include <iostream> // for error printing
 
@@ -34,8 +35,6 @@ namespace Logicon {
         // Setup ImGui binding
         ImGui_ImplGlfwGL3_Init(this->window, true);
 
-        this->state = State::UNINITIALIZED;
-
         /*
          * Add default app font
          * This must happen before initialization of any other app components
@@ -46,6 +45,11 @@ namespace Logicon {
         io.Fonts->AddFontFromFileTTF("../dependencies/imgui/extra_fonts/Roboto-Medium.ttf", 15.0f, &defaultFontConfig);
 
         ImGui::GetStyle().WindowRounding = 0.0f;
+
+        // Load assets: images
+        AssetLoader::loadAssets();
+
+        this->state = State::UNINITIALIZED;
 
         this->menuWidget = MenuWidget();
         if(!this->menuWidget.init(this->window))

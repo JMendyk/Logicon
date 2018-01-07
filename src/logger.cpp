@@ -3,6 +3,7 @@
 //
 
 #include <ctime>
+#include <utility>
 #include "logger.h"
 
 namespace Logicon {
@@ -22,7 +23,9 @@ namespace Logicon {
     }
 
     void Logger::logEntry(std::string entry_type, const char *format, va_list args) {
-        assert(logger != nullptr && "Logger must be initialized using Logger::init before usage");
+        // if not initialized, initialize with default settings;
+        if (logger == nullptr)
+            Logger::init();
 
         int log_msg_len = vsnprintf(nullptr, 0, format, args) + 1;
         char *log_msg = new char[log_msg_len];
@@ -70,8 +73,8 @@ namespace Logicon {
     }
 
     Logger::Logger(std::string filename) {
-        logFileName = filename;
-        logFile.rdbuf()->pubsetbuf(0, 0); // disable buffering
+        logFileName = std::move(filename);
+        logFile.rdbuf()->pubsetbuf(nullptr, 0); // disable buffering
         logFile.open(logFileName, std::ios::out | std::ios::app);
     }
 
@@ -80,7 +83,7 @@ namespace Logicon {
     }
 
     void Logger::init(std::string filename) {
-        assert(logger == nullptr && "Logger must not be initalized multiple times");
-        Logger::logger = new Logger(filename);
+        if (logger == nullptr)
+            Logger::logger = new Logger(std::move(filename));
     }
 } // namespace Logicon

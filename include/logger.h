@@ -9,7 +9,6 @@
 #include <iostream>
 #include <cstdarg>
 #include <string>
-#include <cassert>
 
 namespace Logicon {
 /**
@@ -20,25 +19,29 @@ namespace Logicon {
     class Logger {
     public:
         /**
-        *   @brief Logs debug message
+        *   @brief Logs debug message.
+        *   @note Don't pass the newline symbol at the end of the message.
         *   @param format string for the message to be logged.
         */
         static void debug(const char *format, ...);
 
         /**
-        *   @brief Logs info message
+        *   @brief Logs info message.
+        *   @note Don't pass the newline symbol at the end of the message.
         *   @param format string for the message to be logged.
         */
         static void info(const char *format, ...);
 
         /**
-        *   @brief Logs warning message
+        *   @brief Logs warning message.
+        *   @note Don't pass the newline symbol at the end of the message.
         *   @param format string for the message to be logged.
         */
         static void warn(const char *format, ...);
 
         /**
-        *   @brief Logs error message
+        *   @brief Logs error message.
+        *   @note Don't pass the newline symbol at the end of the message.
         *   @param format string for the message to be logged.
         */
         static void err(const char *format, ...);
@@ -54,7 +57,7 @@ namespace Logicon {
         */
         static void init(std::string filename);
 
-    private:
+    private: // TODO change singleton constructors from private to public = delete
         /**
         *   Singleton logger class object pointer.
         **/

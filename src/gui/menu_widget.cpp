@@ -17,7 +17,7 @@ namespace Logicon {
         static ImFontConfig imFontConfig = ImFontConfig();
         imFontConfig.SizePixels = 32.0f;
         imFontConfig.RasterizerMultiply = 4;
-        myFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../dependencies/imgui/extra_fonts/Roboto-Medium.ttf", 32.0f, &imFontConfig);
+        myFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Medium.ttf", 32.0f, &imFontConfig);
 
         return true;
     }

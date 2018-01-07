@@ -90,26 +90,26 @@ namespace Logicon {
     }
 
     void AssetLoader::_loadAssets() {
-        _gate_and = load_texture("../assets/gate_and.png");
-        _gate_clock = load_texture("../assets/gate_clock.png");
-        _gate_delay = load_texture("../assets/gate_delay.png");
-        _gate_input_high = load_texture("../assets/gate_input_high.png");
-        _gate_input_low = load_texture("../assets/gate_input_low.png");
-        _gate_nand = load_texture("../assets/gate_nand.png");
-        _gate_nor = load_texture("../assets/gate_nor.png");
-        _gate_not = load_texture("../assets/gate_not.png");
-        _gate_or = load_texture("../assets/gate_or.png");
-        _gate_switch_off = load_texture("../assets/gate_switch_off.png");
-        _gate_switch_on = load_texture("../assets/gate_switch_on.png");
-        _gate_xnor = load_texture("../assets/gate_xnor.png");
-        _gate_xor = load_texture("../assets/gate_xor.png");
-        _icon_new = load_texture("../assets/icon_new.png");
-        _icon_open = load_texture("../assets/icon_open.png");
-        _icon_pause = load_texture("../assets/icon_pause.png");
-        _icon_play = load_texture("../assets/icon_play.png");
-        _icon_restart = load_texture("../assets/icon_restart.png");
-        _icon_save = load_texture("../assets/icon_save.png");
-        _icon_step = load_texture("../assets/icon_step.png");
+        _gate_and = load_texture("assets/gates/gate_and.png");
+        _gate_clock = load_texture("assets/gates/gate_clock.png");
+        _gate_delay = load_texture("assets/gates/gate_delay.png");
+        _gate_input_high = load_texture("assets/gates/gate_input_high.png");
+        _gate_input_low = load_texture("assets/gates/gate_input_low.png");
+        _gate_nand = load_texture("assets/gates/gate_nand.png");
+        _gate_nor = load_texture("assets/gates/gate_nor.png");
+        _gate_not = load_texture("assets/gates/gate_not.png");
+        _gate_or = load_texture("assets/gates/gate_or.png");
+        _gate_switch_off = load_texture("assets/gates/gate_switch_off.png");
+        _gate_switch_on = load_texture("assets/gates/gate_switch_on.png");
+        _gate_xnor = load_texture("assets/gates/gate_xnor.png");
+        _gate_xor = load_texture("assets/gates/gate_xor.png");
+        _icon_new = load_texture("assets/icons/icon_new.png");
+        _icon_open = load_texture("assets/icons/icon_open.png");
+        _icon_pause = load_texture("assets/icons/icon_pause.png");
+        _icon_play = load_texture("assets/icons/icon_play.png");
+        _icon_restart = load_texture("assets/icons/icon_restart.png");
+        _icon_save = load_texture("assets/icons/icon_save.png");
+        _icon_step = load_texture("assets/icons/icon_step.png");
     }
 
     AssetLoader *AssetLoader::assetLoader() {

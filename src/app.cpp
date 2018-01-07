@@ -42,7 +42,7 @@ namespace Logicon {
          */
         ImGuiIO& io = ImGui::GetIO();
         static ImFontConfig defaultFontConfig = ImFontConfig();
-        io.Fonts->AddFontFromFileTTF("../dependencies/imgui/extra_fonts/Roboto-Medium.ttf", 15.0f, &defaultFontConfig);
+        io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Medium.ttf", 15.0f, &defaultFontConfig);
 
         ImGui::GetStyle().WindowRounding = 0.0f;
 

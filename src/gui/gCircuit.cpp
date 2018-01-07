@@ -12,7 +12,7 @@ namespace Logicon {
 
         // TODO: Remove hard-coded GBlock's when adding GBlock's will be possible
         UIVec2 size = UIVec2(2 * UI::CANVAS_GRID_SIZE, UI::CANVAS_GRID_SIZE);
-        Texture tex = load_texture("../assets/gblock_dummy.png");
+        Texture tex = load_texture("assets/gates/gblock_dummy.png");
 
         std::shared_ptr<GBlock> bl = std::make_shared<GBlock>(size, tex, Data());
 

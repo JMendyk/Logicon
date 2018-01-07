@@ -152,6 +152,12 @@ namespace Logicon {
     }
 
     bool GCircuit::isOccupied(ID id, UIRect rect) {
+        // Check for GBlock going out-of-bounds.
+        // GCircuit's canvas is extending towards positive coordinates based on positions of GBlocks,
+        // so we only check if GBlock stays in first quadrant of coordinate system.
+        if(rect.getTL().x < 0 || rect.getTL().y < 0)
+            return true;
+
         return std::find_if(
             blocks.begin(), blocks.end(),
             [&id, &rect] (const std::pair<ID, std::shared_ptr<GBlock>> &p) {

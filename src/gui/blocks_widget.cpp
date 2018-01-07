@@ -23,7 +23,8 @@ namespace Logicon {
         ImGuiWindowFlags window_flags = 0
             | ImGuiWindowFlags_NoTitleBar
             | ImGuiWindowFlags_NoResize
-            | ImGuiWindowFlags_NoMove;
+            | ImGuiWindowFlags_NoMove
+            | ImGuiWindowFlags_AlwaysVerticalScrollbar;
 
         ImGui::Begin("Blocks Widget", nullptr, window_flags);
         {
@@ -37,6 +38,9 @@ namespace Logicon {
              * NOTE: I (@JMendyk) encountered some issues with GetContentRegionAvailWidth that kept changing values
              * every frame. I then decided to statically save this value and use saved one every frame.
              * However, later on this issue disappeared. Let's see how it will unfold.
+             *
+             * NOTE (2018.01.07 22:17): Here we go again...
+             * Let's just always display vertical scrollbar and avoid sophisticated hacks.
              */
 
             float size = ImGui::GetContentRegionAvailWidth();

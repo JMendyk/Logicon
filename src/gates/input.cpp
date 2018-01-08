@@ -5,7 +5,7 @@
 #include "gates/input.h"
 
 namespace Logicon {
-    Input::Input(ID id) : Gate(id, 0, 1) {}
+    Input::Input(ID id) : Gate(GATE_TYPE::INPUT, id) {}
 
 
     void Input::update() {

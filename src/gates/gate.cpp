@@ -8,20 +8,16 @@
 #include "gates/gate.h"
 
 namespace Logicon {
-    Gate::Gate(ID id, unsigned int inputsCount, unsigned int outputsCount) : id(id) {
+    Gate::Gate(GATE_TYPE gateType, ID id) : gateType(gateType), id(id) {
         // initialize inputs array
-        this->inputs.resize(inputsCount);
+        this->inputs.resize(Logicon::gateInputsCount[gateType]);
         for (auto input: inputs) {
             input.first = 0;
         }
         // initialize outputs array
-        this->outputs.resize(outputsCount);
+        this->outputs.resize(Logicon::gateOutputsCount[gateType]);
         for (auto output: outputs)
             output.first = 0;
-    }
-
-    ID Gate::getID() const {
-        return id;
     }
 
     // ======

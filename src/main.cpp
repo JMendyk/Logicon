@@ -32,12 +32,12 @@ int main(int argc, char *argv[]) {
 namespace Logicon {
     void infoGate(const std::shared_ptr<Gate> &gate) {
         std::string gateType;
-        if (std::dynamic_pointer_cast<Logicon::And>(gate) != nullptr)
+        if (gate->gateType == Logicon::AND)
             gateType = "AND";
-        else if (std::dynamic_pointer_cast<Logicon::Input>(gate) != nullptr)
+        else if (gate->gateType == Logicon::INPUT)
             gateType = "INPUT";
 
-        std::cout << gateType << "~" << gate->getID() << " ";
+        std::cout << gateType << "~" << gate->id << " ";
         for (Port i = 0; i < gate->getInputsCount(); ++i) {
             std::cout << "I[" << i << "]=(" << gate->getInputState(i) << "){ ";
             auto inputs = gate->getInputConnections(i);
@@ -58,7 +58,7 @@ namespace Logicon {
     void run_shell() {
         Logicon::Logger::init("ToosterTest");
         Circuit circuit(Logicon::Circuit::nextID());
-        std::cout << "commands: exit, info, add, connect, disconnect" << std::endl;
+        std::cout << "commands: exit, info, add, connect, disconnect, set, update, click, reset, clear" << std::endl;
         while (true) {
             std::string cmd;
             std::cin >> cmd;
@@ -78,8 +78,11 @@ namespace Logicon {
                 std::string type;
                 std::cin >> type;
                 if (type == "AND") {
-                    std::shared_ptr<And> ptr = std::make_shared<And>(Circuit::nextID());
+                    auto ptr = std::make_shared<And>(Circuit::nextID());
                     circuit.add(std::static_pointer_cast<Gate, And>(ptr));
+                } else if (type == "INPUT") {
+                    auto ptr = std::make_shared<Input>(Circuit::nextID());
+                    circuit.add(std::static_pointer_cast<Gate, Input>(ptr));
                 }
             } else if (cmd == "remove") {
                 ID id;
@@ -115,6 +118,12 @@ namespace Logicon {
                 auto g = circuit.find(id);
                 if (g != nullptr)
                     g->update();
+            } else if (cmd == "click") {
+                ID id;
+                std::cin >> id;
+                auto g = circuit.find(id);
+                if (g != nullptr)
+                    g->clickAction();
             } else if (cmd == "reset") {
                 ID id;
                 std::cin >> id;

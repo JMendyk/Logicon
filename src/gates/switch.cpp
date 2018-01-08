@@ -5,7 +5,7 @@
 #include "gates/switch.h"
 
 namespace Logicon {
-    Switch::Switch(ID id) : Gate(id, 1, 1) {}
+    Switch::Switch(ID id) : Gate(GATE_TYPE::SWITCH, id) {}
 
     void Switch::update() {
 

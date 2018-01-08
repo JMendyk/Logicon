@@ -34,6 +34,17 @@ namespace Logicon {
     /// Represents tick type.
     typedef int Tick;
 
+    /// Represents gate type. Used instead of runtime type deduction.
+    enum GATE_TYPE {
+        NOT, DELAY, SWITCH, AND, OR, XOR, NAND, NOR, XNOR, CLOCK, INPUT
+    };
+
+    /// inputs count for GATE_TYPE corresponding gates
+    const unsigned int gateInputsCount[11]{1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0};
+
+    /// outputs count for GATE_TYPE corresponding gates
+    const unsigned int gateOutputsCount[11]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
     /// Represents initial state of port
     static const State initialState = 0;
 

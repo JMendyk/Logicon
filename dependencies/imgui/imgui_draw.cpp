@@ -17,7 +17,6 @@
 #define IMGUI_DEFINE_PLACEMENT_NEW
 #include "imgui_internal.h"
 
-#include <stdio.h>      // vsnprintf, sscanf, printf
 #if !defined(alloca)
 #ifdef _WIN32
 #include <malloc.h>     // alloca
@@ -120,7 +119,8 @@ using namespace IMGUI_STB_NAMESPACE;
 // ImDrawList
 //-----------------------------------------------------------------------------
 
-static const ImVec4 GNullClipRect(-8192.0f, -8192.0f, +8192.0f, +8192.0f); // Large values that are easy to encode in a few bits+shift
+static const ImVec4 GNullClipRect(-8192.0f, -8192.0f, +8192.0f,
+                                  +8192.0f); // Large values that are easy to encode in a few bits+shift
 
 void ImDrawList::Clear()
 {
@@ -416,7 +416,8 @@ void ImDrawList::PrimQuadUV(const ImVec2& a, const ImVec2& b, const ImVec2& c, c
 }
 
 // TODO: Thickness anti-aliased lines cap are missing their AA fringe.
-void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32 col, bool closed, float thickness, bool anti_aliased)
+void ImDrawList::AddPolyline(const ImVec2 *points, const int points_count, ImU32 col, bool closed, float thickness,
+                             bool anti_aliased)
 {
     if (points_count < 2)
         return;
@@ -597,8 +598,7 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
     }
 }
 
-void ImDrawList::AddConvexPolyFilled(const ImVec2* points, const int points_count, ImU32 col, bool anti_aliased)
-{
+void ImDrawList::AddConvexPolyFilled(const ImVec2 *points, const int points_count, ImU32 col, bool anti_aliased) {
     const ImVec2 uv = GImGui->FontTexUvWhitePixel;
     anti_aliased &= GImGui->Style.AntiAliasedShapes;
     //if (ImGui::GetIO().KeyCtrl) anti_aliased = false; // Debug
@@ -685,11 +685,9 @@ void ImDrawList::PathArcToFast(const ImVec2& centre, float radius, int a_min_of_
     static ImVec2 circle_vtx[12];
     static bool circle_vtx_builds = false;
     const int circle_vtx_count = IM_ARRAYSIZE(circle_vtx);
-    if (!circle_vtx_builds)
-    {
-        for (int i = 0; i < circle_vtx_count; i++)
-        {
-            const float a = ((float)i / (float)circle_vtx_count) * 2*IM_PI;
+    if (!circle_vtx_builds) {
+        for (int i = 0; i < circle_vtx_count; i++) {
+            const float a = ((float) i / (float) circle_vtx_count) * 2 * IM_PI;
             circle_vtx[i].x = cosf(a);
             circle_vtx[i].y = sinf(a);
         }
@@ -704,7 +702,7 @@ void ImDrawList::PathArcToFast(const ImVec2& centre, float radius, int a_min_of_
     _Path.reserve(_Path.Size + (a_max_of_12 - a_min_of_12 + 1));
     for (int a = a_min_of_12; a <= a_max_of_12; a++)
     {
-        const ImVec2& c = circle_vtx[a % circle_vtx_count];
+        const ImVec2 &c = circle_vtx[a % circle_vtx_count];
         _Path.push_back(ImVec2(centre.x + c.x * radius, centre.y + c.y * radius));
     }
 }
@@ -756,7 +754,8 @@ void ImDrawList::PathBezierCurveTo(const ImVec2& p2, const ImVec2& p3, const ImV
     if (num_segments == 0)
     {
         // Auto-tessellated
-        PathBezierToCasteljau(&_Path, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, GImGui->Style.CurveTessellationTol, 0);
+        PathBezierToCasteljau(&_Path, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y,
+                              GImGui->Style.CurveTessellationTol, 0);
     }
     else
     {
@@ -781,8 +780,14 @@ void ImDrawList::PathRect(const ImVec2& a, const ImVec2& b, float rounding, int 
     const int corners_left = ImGuiCorner_TopLeft | ImGuiCorner_BotLeft;
     const int corners_right = ImGuiCorner_TopRight | ImGuiCorner_BotRight;
 
-    rounding = ImMin(rounding, fabsf(b.x - a.x) * ( ((rounding_corners & corners_top)  == corners_top)  || ((rounding_corners & corners_bottom) == corners_bottom) ? 0.5f : 1.0f ) - 1.0f);
-    rounding = ImMin(rounding, fabsf(b.y - a.y) * ( ((rounding_corners & corners_left) == corners_left) || ((rounding_corners & corners_right)  == corners_right)  ? 0.5f : 1.0f ) - 1.0f);
+    rounding = ImMin(rounding, fabsf(b.x - a.x) * (((rounding_corners & corners_top) == corners_top) ||
+                                                   ((rounding_corners & corners_bottom) == corners_bottom) ? 0.5f
+                                                                                                           : 1.0f) -
+                               1.0f);
+    rounding = ImMin(rounding, fabsf(b.y - a.y) * (((rounding_corners & corners_left) == corners_left) ||
+                                                   ((rounding_corners & corners_right) == corners_right) ? 0.5f
+                                                                                                         : 1.0f) -
+                               1.0f);
 
     if (rounding <= 0.0f || rounding_corners == 0)
     {
@@ -1187,8 +1192,7 @@ void    ImFontAtlas::ClearTexData()
 
 void    ImFontAtlas::ClearFonts()
 {
-    for (int i = 0; i < Fonts.Size; i++)
-    {
+    for (int i = 0; i < Fonts.Size; i++) {
         Fonts[i]->~ImFont();
         ImGui::MemFree(Fonts[i]);
     }
@@ -1226,11 +1230,11 @@ void    ImFontAtlas::GetTexDataAsRGBA32(unsigned char** out_pixels, int* out_wid
     {
         unsigned char* pixels;
         GetTexDataAsAlpha8(&pixels, NULL, NULL);
-        TexPixelsRGBA32 = (unsigned int*)ImGui::MemAlloc((size_t)(TexWidth * TexHeight * 4));
-        const unsigned char* src = pixels;
-        unsigned int* dst = TexPixelsRGBA32;
+        TexPixelsRGBA32 = (unsigned int *) ImGui::MemAlloc((size_t) (TexWidth * TexHeight * 4));
+        const unsigned char *src = pixels;
+        unsigned int *dst = TexPixelsRGBA32;
         for (int n = TexWidth * TexHeight; n > 0; n--)
-            *dst++ = IM_COL32(255, 255, 255, (unsigned int)(*src++));
+            *dst++ = IM_COL32(255, 255, 255, (unsigned int) (*src++));
     }
 
     *out_pixels = (unsigned char*)TexPixelsRGBA32;
@@ -1245,14 +1249,12 @@ ImFont* ImFontAtlas::AddFont(const ImFontConfig* font_cfg)
     IM_ASSERT(font_cfg->SizePixels > 0.0f);
 
     // Create new font
-    if (!font_cfg->MergeMode)
-    {
-        ImFont* font = (ImFont*)ImGui::MemAlloc(sizeof(ImFont));
+    if (!font_cfg->MergeMode) {
+        ImFont *font = (ImFont *) ImGui::MemAlloc(sizeof(ImFont));
         IM_PLACEMENT_NEW(font) ImFont();
         Fonts.push_back(font);
     }
-    else
-    {
+    else {
         IM_ASSERT(!Fonts.empty()); // When using MergeMode make sure that a font has already been added before. You can use ImGui::GetIO().Fonts->AddFontDefault() to add the default imgui font.
     }
 
@@ -1681,21 +1683,21 @@ static void ImFontAtlasBuildRenderDefaultTexData(ImFontAtlas* atlas)
 
     // Setup mouse cursors
     const ImVec2 cursor_datas[ImGuiMouseCursor_Count_][3] =
-    {
-        // Pos ........ Size ......... Offset ......
-        { ImVec2(0,3),  ImVec2(12,19), ImVec2( 0, 0) }, // ImGuiMouseCursor_Arrow
-        { ImVec2(13,0), ImVec2(7,16),  ImVec2( 4, 8) }, // ImGuiMouseCursor_TextInput
-        { ImVec2(31,0), ImVec2(23,23), ImVec2(11,11) }, // ImGuiMouseCursor_Move
-        { ImVec2(21,0), ImVec2( 9,23), ImVec2( 5,11) }, // ImGuiMouseCursor_ResizeNS
-        { ImVec2(55,18),ImVec2(23, 9), ImVec2(11, 5) }, // ImGuiMouseCursor_ResizeEW
-        { ImVec2(73,0), ImVec2(17,17), ImVec2( 9, 9) }, // ImGuiMouseCursor_ResizeNESW
-        { ImVec2(55,0), ImVec2(17,17), ImVec2( 9, 9) }, // ImGuiMouseCursor_ResizeNWSE
-    };
+            {
+                    // Pos ........ Size ......... Offset ......
+                    {ImVec2(0, 3),   ImVec2(12, 19), ImVec2(0, 0)}, // ImGuiMouseCursor_Arrow
+                    {ImVec2(13, 0),  ImVec2(7, 16),  ImVec2(4, 8)}, // ImGuiMouseCursor_TextInput
+                    {ImVec2(31, 0),  ImVec2(23, 23), ImVec2(11, 11)}, // ImGuiMouseCursor_Move
+                    {ImVec2(21, 0),  ImVec2(9, 23),  ImVec2(5, 11)}, // ImGuiMouseCursor_ResizeNS
+                    {ImVec2(55, 18), ImVec2(23, 9),  ImVec2(11, 5)}, // ImGuiMouseCursor_ResizeEW
+                    {ImVec2(73, 0),  ImVec2(17, 17), ImVec2(9, 9)}, // ImGuiMouseCursor_ResizeNESW
+                    {ImVec2(55, 0),  ImVec2(17, 17), ImVec2(9, 9)}, // ImGuiMouseCursor_ResizeNWSE
+            };
 
     for (int type = 0; type < ImGuiMouseCursor_Count_; type++)
     {
         ImGuiMouseCursorData& cursor_data = GImGui->MouseCursorData[type];
-        ImVec2 pos = cursor_datas[type][0] + ImVec2((float)r.X, (float)r.Y);
+        ImVec2 pos = cursor_datas[type][0] + ImVec2((float) r.X, (float) r.Y);
         const ImVec2 size = cursor_datas[type][1];
         cursor_data.Type = type;
         cursor_data.Size = size;
@@ -2026,7 +2028,7 @@ void ImFont::AddRemapChar(ImWchar dst, ImWchar src, bool overwrite_dst)
     IndexAdvanceX[dst] = (src < index_size) ? IndexAdvanceX.Data[src] : 1.0f;
 }
 
-const ImFontGlyph* ImFont::FindGlyph(unsigned short c) const
+const ImFontGlyph *ImFont::FindGlyph(unsigned short c) const
 {
     if (c < IndexLookup.Size)
     {

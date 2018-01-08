@@ -155,7 +155,7 @@ void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow*, int button, int action, 
 
 void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow*, double /*xoffset*/, double yoffset)
 {
-    g_MouseWheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
+    g_MouseWheel += (float) yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
 
 void ImGui_ImplGlfwGL3_KeyCallback(GLFWwindow*, int key, int, int action, int mods)
@@ -391,7 +391,8 @@ void ImGui_ImplGlfwGL3_NewFrame()
         {
             double mouse_x, mouse_y;
             glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
-            io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);   // Get mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
+            io.MousePos = ImVec2((float) mouse_x,
+                                 (float) mouse_y);   // Get mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
         }
     }
     else

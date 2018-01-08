@@ -1,5 +1,5 @@
 //
-// Created by rufus on 11.12.17.
+// Created by kralizekmd on 09.01.2018
 //
 
 #ifndef LOGICON_CLOCK_H
@@ -34,6 +34,7 @@ namespace Logicon {
 
     public:
         /// Constructor: default onPeriod=1 offPeriod=1 phase=0
+        /// at the beginning the clock is ON
         explicit Clock(ID id);
 
         /**
@@ -48,7 +49,17 @@ namespace Logicon {
          * @param phase new value for delay in Ticks
          */
         void changeSettings(Tick onPeriod, Tick offPeriod, Tick phase);
+
+        /// get onPeriod
+        Tick getOnPeriod();
+
+        /// get offPeriod
+        Tick getOffPeriod();
+
+        /// get phase/actual time for clock
+        Tick getPhase();
     };
 }  // namespace Logicon
 
 #endif //LOGICON_CLOCK_H
+

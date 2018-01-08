@@ -29,8 +29,6 @@ namespace Logicon {
         /// MEMBERS
         /// =======
 
-        /// ID representing gate
-        const ID id;
         /// ordered container of all inputs the gate has as tuples <state, container of input collections>
         std::vector<std::pair<State, PortConnectionList_> > inputs;
         /// ordered container of all outputs the gat has as tuples <states, containerOfConnections>
@@ -38,24 +36,28 @@ namespace Logicon {
         /// additional data individual for each gate like labels etc.
 
     public:
+        /// Represents gate type
+        const GATE_TYPE gateType;
+        /// ID representing gate
+        const ID id;
+
+        /**
+         * @deprecated
+         * @return returns ID
+         */
+        const ID getId() const;
+
         /**
          * @brief Constructor accepting new unique ID and a number of inputs and outputs.
          * @param ID unique ID identifying block
          * @param inputsCount number of inputs
          * @param outputsCount number of outputs
          */
-        explicit Gate(ID id, unsigned int inputsCount, unsigned int outputsCount);
+        explicit Gate(GATE_TYPE gateType, ID id);
 
         // ======
         // INPUTS
         // ======
-
-        /**
-         * @brief Returns this gate's ID.
-         *
-         * @return ID of this gate
-         */
-        ID getID() const;
 
         /**
         * @brief Returns inputs count.
@@ -113,6 +115,12 @@ namespace Logicon {
         * @return iterable container of connections on given input port
         */
         const PortConnectionList_ &getInputConnections(Port input) const;
+
+        /**
+         * @brief Returns list of inputs.
+         * @return vector of pairs <Statem, portConnections[]>
+         */
+        const std::vector<std::pair<State, PortConnectionList_> > &getInputs() const;
 
         /**
         * @brief Changes information about connection at specified input.
@@ -183,6 +191,12 @@ namespace Logicon {
         * @return iterable container of connections at given output port
         */
         const PortConnectionList_ &getOutputConnections(Port output);
+
+        /**
+         * @brief Returns list of outputs.
+         * @return vector of pairs <Statem, portConnections[]>
+         */
+        const std::vector<std::pair<State, PortConnectionList_>> &getOutputs() const;
 
         /**
         * @brief Adds another output connection at given output port.

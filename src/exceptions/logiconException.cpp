@@ -9,20 +9,23 @@ namespace Logicon {
     void logiconException::update() {
         this->message = "Logicon encountered an exception:";
         if (!circumstances.empty())
-            this->message += "\n  circumstances:" + this->circumstances;
+            this->message += "\n > circumstances:" + this->circumstances;
         if (!description.empty())
-            this->message += "\n  details:" + this->description;
+            this->message += "\n > details:" + this->description;
     }
 
-    logiconException::logiconException(std::string details) : description(std::move(details)) { update(); }
+    logiconException::logiconException(std::string details) {
+        this->details(details);
+        update();
+    }
 
     void logiconException::when(const std::string &circumstances) {
-        this->circumstances += "\n    " + circumstances;
+        this->circumstances += "\n   | " + circumstances;
         update();
     }
 
     void logiconException::details(const std::string &details) {
-        this->description += "\n    " + details;
+        this->description += "\n   | " + details;
         update();
     }
 

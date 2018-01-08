@@ -1,18 +1,25 @@
 //
-// Created by rufus on 11.12.17.
+// Created by kralizekmd on 09.01.2018
 //
 
 #include "gates/input.h"
 
 namespace Logicon {
-    Input::Input(ID id) : Gate(id, 0, 1) {}
-
+    Input::Input(ID id) : Gate(GATE_TYPE::INPUT, id), STATE_FLAG(false) {}
 
     void Input::update() {
-
+        this->setOutputState(0, STATE_FLAG);
     }
 
     void Input::clickAction() {
-        Gate::clickAction();
+        STATE_FLAG ^= 1;
+    }
+
+    bool Input::isClicked() const {
+        return STATE_FLAG;
+    }
+
+    void Input::setClicked(bool clicked) {
+        STATE_FLAG = clicked;
     }
 } // namespace Logicon

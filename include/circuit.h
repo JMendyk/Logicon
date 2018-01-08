@@ -20,20 +20,18 @@ namespace Logicon {
     private:
         const ID id;
         std::map<ID, std::shared_ptr<Gate>> gates;
-        Data data;
 
-        /// holds shared across all elements value of current free ID
-        static Logicon::ID currentId;
     public:
-        /// Constructor
-        explicit Circuit(ID id);
-
-
+        Data data;                                      /// public access data
+        bool INITIALIZED_FLAG;                          /// true if circuit was calculated for the first time, false otherwise.
         /**
          * @brief Generates next unique ID in range [0, MAX_UINT] for elements
          * @return new uniqe ID
          */
         static Logicon::ID nextID();
+
+        /// Constructor
+        explicit Circuit(ID id);
 
         /**
          * @brief Connects gates with specified IDs on specified ports
@@ -76,16 +74,29 @@ namespace Logicon {
         void remove(ID id);
 
         /**
+         * @deprecated
          * @brief Returns share pointer to gate object from the circuit based on the ID
          * @return existing shared pointer to found gate or nullptr if gate with given ID is not found
          */
-        std::shared_ptr<Gate> find(ID id);
+        std::shared_ptr<Gate> find(const ID &id) const;
+
+        /**
+         * @brief Returns share pointer to gate object from the circuit based on the ID
+         * @note same as find, changed name to more intuitive
+         * @return existing shared pointer to found gate or nullptr if gate with given ID is not found
+         */
+        std::shared_ptr<Gate> getGateById(ID id) const;
 
         /**
          * @brief Returns iterable list of shared pointers to gates associated with circuit
          * @return iterable container of pointers to gates.
          */
         std::list<std::shared_ptr<Gate>> getGates();
+
+        /**
+         * @brief Clears circuit deleting all gates
+         */
+        void clear();
 
     };
 } // namespace Logicon

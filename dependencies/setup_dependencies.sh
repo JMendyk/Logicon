@@ -54,11 +54,11 @@ cd gl3w
 cd ..
 
 ##### ImGUI #####
-git clone https://github.com/ocornut/imgui.git imgui_repo
+git clone https://github.com/Flix01/imgui.git imgui_repo
 mkdir imgui_impl_glfw_gl3
 cd imgui_repo
-    git checkout v1.52
-    log_dependency imgui
+    git checkout master
+    log_dependency "imgui + addons"
     cp examples/opengl3_example/imgui_impl_glfw_gl3.h \
        examples/opengl3_example/imgui_impl_glfw_gl3.cpp \
        ../imgui_impl_glfw_gl3

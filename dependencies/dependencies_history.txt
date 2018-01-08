@@ -40,3 +40,29 @@ Dependency: stb_image
 555efbe, Sun Jul 23 14:09:39 2017 -0700 : Update version numbers
 ------------------------------------------------------
 
+Updating dependencies - Mon Jan 08 15:54:39 2018 +0100
+Dependency: glfw
+999f355, Wed Aug 17 16:48:22 2016 +0200 : Documentation work
+Dependency: gl3w
+8f7f459, Thu Dec 14 14:01:25 2017 +0200 : dlopen with RTLD_LOCAL.
+Dependency: imgui
+ecbfdd3, Thu Jan 4 11:06:12 2018 +0100 : Added extraneous initialization to NULL. (#1527).
+Dependency: json
+9ff0cc0, Sat Feb 25 16:43:15 2017 +0100 : :memo: updated documentation
+Dependency: stb_image
+555efbe, Sun Jul 23 14:09:39 2017 -0700 : Update version numbers
+------------------------------------------------------
+
+Updating dependencies - Mon Jan 08 16:01:40 2018 +0100
+Dependency: glfw
+999f355, Wed Aug 17 16:48:22 2016 +0200 : Documentation work
+Dependency: gl3w
+8f7f459, Thu Dec 14 14:01:25 2017 +0200 : dlopen with RTLD_LOCAL.
+Dependency: imgui + addons
+cd03433, Fri Jan 5 14:30:35 2018 +0100 : addons/imguifilesystem/imguifilesystem.cpp: Manually merged issue 38. Fixes https://github.com/Flix01/imgui/issues/38.
+Dependency: json
+9ff0cc0, Sat Feb 25 16:43:15 2017 +0100 : :memo: updated documentation
+Dependency: stb_image
+555efbe, Sun Jul 23 14:09:39 2017 -0700 : Update version numbers
+------------------------------------------------------
+

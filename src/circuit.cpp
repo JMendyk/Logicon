@@ -101,12 +101,12 @@ namespace Logicon {
 
     void Circuit::add(std::shared_ptr<Gate> gate) {
         try {
-            if (gates.count(gate->getID()) > 0)
+            if (gates.count(gate->id) > 0)
                 throw logiconException("Gates with the same ID cannot be in the same circuit!");
-            gates.insert(std::pair<ID, std::shared_ptr<Gate>>(gate->getID(), gate));
+            gates.insert(std::pair<ID, std::shared_ptr<Gate>>(gate->id, gate));
         } catch (Logicon::logiconException &e) { // TODO #1
             std::string circumstances = "While adding gate with ID:'"
-                                        + std::to_string(gate->getID())
+                                        + std::to_string(gate->id)
                                         + "'.";
             e.when(circumstances);
             Logicon::Logger::warn(e.what());
@@ -125,7 +125,7 @@ namespace Logicon {
                 auto inputConnections = erased->getInputConnections(port);
                 for (auto connection : inputConnections) { // for all input connections at given port
                     auto connected = this->find(connection.id); // connection with other block
-                    connected->removeOutputConnection(connection.port, erased->getID(), port); // remove from other
+                    connected->removeOutputConnection(connection.port, erased->id, port); // remove from other
                 }
             }
             // erase output connections

@@ -5,7 +5,7 @@
 #include "gates/delay.h"
 
 namespace Logicon {
-    Delay::Delay(ID id) : Gate(id, 1, 1) {}
+    Delay::Delay(ID id) : Gate(GATE_TYPE::DELAY, id) {}
 
 
     void Delay::update() {

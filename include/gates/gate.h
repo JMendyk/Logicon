@@ -29,8 +29,6 @@ namespace Logicon {
         /// MEMBERS
         /// =======
 
-        /// ID representing gate
-        const ID id;
         /// ordered container of all inputs the gate has as tuples <state, container of input collections>
         std::vector<std::pair<State, PortConnectionList_> > inputs;
         /// ordered container of all outputs the gat has as tuples <states, containerOfConnections>
@@ -38,24 +36,21 @@ namespace Logicon {
         /// additional data individual for each gate like labels etc.
 
     public:
+        /// Represents gate type
+        const GATE_TYPE gateType;
+        /// ID representing gate
+        const ID id;
         /**
          * @brief Constructor accepting new unique ID and a number of inputs and outputs.
          * @param ID unique ID identifying block
          * @param inputsCount number of inputs
          * @param outputsCount number of outputs
          */
-        explicit Gate(ID id, unsigned int inputsCount, unsigned int outputsCount);
+        explicit Gate(GATE_TYPE gateType, ID id);
 
         // ======
         // INPUTS
         // ======
-
-        /**
-         * @brief Returns this gate's ID.
-         *
-         * @return ID of this gate
-         */
-        ID getID() const;
 
         /**
         * @brief Returns inputs count.

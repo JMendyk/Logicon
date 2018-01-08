@@ -5,7 +5,7 @@
 #include "gates/and.h"
 
 namespace Logicon {
-    And::And(ID id) : Gate(id, 2, 1) {}
+    And::And(ID id) : Gate(GATE_TYPE::AND, id) {}
 
     void And::update() {
         this->setOutputState(0, this->getInputState(0) & this->getInputState(1));

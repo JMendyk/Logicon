@@ -5,7 +5,7 @@
 #include "gates/clock.h"
 
 namespace Logicon {
-    Clock::Clock(ID id) : Gate(id, 0, 1) {
+    Clock::Clock(ID id) : Gate(GATE_TYPE::CLOCK, id) {
     }
 
     void Clock::update() {

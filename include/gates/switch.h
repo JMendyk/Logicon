@@ -1,5 +1,5 @@
 //
-// Created by rufus on 11.12.17.
+// Created by kralizekmd on 09.01.2018
 //
 
 #ifndef LOGICON_SWITCH_H
@@ -15,6 +15,10 @@ namespace Logicon{
      * if it isn't, then the output is LOW
      */
     class Switch : public Gate {
+
+    private:
+        /// switch state
+        int flag;
 
     public:
         /// Constructor: default state is LOW

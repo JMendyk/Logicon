@@ -1,11 +1,12 @@
 //
-// Created by rufus on 12.12.17.
+// Created by inverb on 09.01.18.
 //
 
 #include "engine.h"
 
 namespace Logicon{
     void Engine::restart(Circuit c) {
+        i=0;
         graph = c.getGates();
         for(auto gate : graph){
             m.insert(std::pair<ID, int>(gate->getID(), 0));
@@ -22,49 +23,44 @@ namespace Logicon{
                 }
             }
 
+            ///counts plugged inputs
             for(Port port=0; port<gate->getOutputsCount(); port++)
             {
                 if(!gate->isOutputEmpty(port))
                 {
                     con=gate->getOutputConnections(port);
-                    for(int i=0; i<con.size(); i++) {
-                        co = con[i];
+                    for(int j=0; j<con.size(); j++) {
+                        co = con[j];
                         m[co.id]++;
                     }
                 }
             }
         }
 
+
+        ///Algorithm finding proper order of updating
+
         for (std::shared_ptr <Gate> gate : graph) {
-            if (m[gate->getID()] == 0) {
+            if (m[gate->getID()] == 0)
                 q.push_back(gate->getID());
-                gate->update();
-                for(Port port=0; port<gate->getOutputsCount(); port++){
-                    con=gate->getOutputConnections(port);
-                    for(int i=0; i<con.size(); i++) {
-                        co = con[i];
-                        m[co.id]--;
-                    }
-                }
-            }
         }
 
-        while(q.size() != graph.size()) {
-            for (i=0; i<q.size(); i++) {
+        while(q.size() != graph.size() || i<q.size()) {
+            for ( ; i<q.size(); i++) {
                 id = q[i];
                 auto gates = c.find(id);
+                gates->update();
                 for(Port port=0; port<gates->getOutputsCount(); port++)
                 {
                     if(!gates->isOutputEmpty(port)) {
                         con = gates->getOutputConnections(port);
-                        for(int i=0; i<con.size(); i++) {
-                            co = con[i];
+                        for(int j=0; j<con.size(); j++) {
+                            co = con[j];
+                            auto gates1 = c.find(co.id);
+                            gates1->setInputState(co.port, gates->getOutputState(port));
                             m[co.id]--;
-                            if (m[co.id] == 0) {
+                            if (m[co.id] == 0)
                                 q.push_back(co.id);
-                                auto gates1 = c.find(co.id);
-                                gates1->update();
-                            }
                         }
                     }
                 }
@@ -75,25 +71,9 @@ namespace Logicon{
                     {
                         for(Port port=0; port<gate->getInputsCount(); port++)
                         {
-                            if(gate->isInputEmpty(port)) gate->setInputState(port,0);
+                            if(gate->getInputState(port) != 1) gate->setInputState(port,0);
                         }
                         m[gate->getID()] = 0;
-                        for(Port port=0; port<gate->getOutputsCount(); port++)
-                        {
-                            if(!gate->isOutputEmpty(port)) {
-                                con = gate->getOutputConnections(port);
-                                for(int i=0; i<con.size(); i++) {
-                                    co = con[i];
-                                    m[co.id]--;
-                                    if (m[co.id] == 0) {
-                                        q.push_back(co.id);
-                                        auto gates1 = c.find(co.id);
-                                        gates1->update();
-                                    }
-                                }
-                            }
-                        }
-                        gate->update();
                         q.push_back(gate->getID());
                         break;
                     }
@@ -103,17 +83,95 @@ namespace Logicon{
     }
 
     void Engine::calcTree(Circuit c) {
+        i=0;
+        graph = c.getGates();
+        for(auto gate : graph){
+            m.insert(std::pair<ID, int>(gate->getID(), 0));
+        }
 
-        //TODO
-    }
+        for(std::shared_ptr<Gate> gate : graph){
 
-    void Engine::calcLogic(Circuit c) {
-        for (i=0; i<q.size(); i++) {
+            ///finds unplugged inputs
+            if(gate->getInputsCount()!=0)
             {
+                for(Port port=0; port<gate->getInputsCount(); port++)
+                {
+                    if(gate->isInputEmpty(port)) gate->setInputState(port,0);
+                }
+            }
+
+            ///counts plugged inputs
+            for(Port port=0; port<gate->getOutputsCount(); port++)
+            {
+                if(!gate->isOutputEmpty(port))
+                {
+                    con=gate->getOutputConnections(port);
+                    for(int j=0; j<con.size(); j++) {
+                        co = con[j];
+                        m[co.id]++;
+                    }
+                }
+            }
+        }
+
+
+        ///Algorithm finding proper order of updating
+
+        for (std::shared_ptr <Gate> gate : graph) {
+            if (m[gate->getID()] == 0)
+                q.push_back(gate->getID());
+        }
+
+        while(q.size() != graph.size() || i<q.size()) {
+            for ( ; i<q.size(); i++) {
                 id = q[i];
-                auto gate = c.find(id);
-                gate->update();
+                auto gates = c.find(id);
+                for(Port port=0; port<gates->getOutputsCount(); port++)
+                {
+                    if(!gates->isOutputEmpty(port)) {
+                        con = gates->getOutputConnections(port);
+                        for(int j=0; j<con.size(); j++) {
+                            co = con[j];
+                            m[co.id]--;
+                            if (m[co.id] == 0)
+                                q.push_back(co.id);
+                        }
+                    }
+                }
+            }
+            if(q.size() != graph.size()) {
+                for(std::shared_ptr<Gate> gate : graph){
+                    if(m[gate->getID()] != 0)
+                    {
+                        m[gate->getID()] = 0;
+                        q.push_back(gate->getID());
+                        break;
+                    }
+                }
             }
         }
     }
+
+    void Engine::calcLogic(Circuit c) {
+        i=0;
+        for ( ; i<q.size(); i++) {
+            {
+                id = q[i];
+                auto gates = c.find(id);
+                gates->update();
+                for(Port port=0; port<gates->getOutputsCount(); port++)
+                {
+                    if(!gates->isOutputEmpty(port)) {
+                        con = gates->getOutputConnections(port);
+                        for(int j=0; j<con.size(); j++) {
+                            co = con[j];
+                            auto gates1 = c.find(co.id);
+                            gates1->setInputState(co.port, gates->getOutputState(port));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 } // namespace Logicon

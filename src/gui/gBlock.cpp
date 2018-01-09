@@ -122,33 +122,51 @@ namespace Logicon {
         // draw wires TODO: ptimize to not draw same beziers two times
         // draw beziers from inputs
 
+        ImGui::PushID("wire_inputs");
         for (int input = 0; input < gate->getInputsCount(); ++input)
             for (Connection connection : gate->getInputConnections(input))
                 renderWire(gInputs[input], connection.id, connection.port);
+        ImGui::PopID();
         // draw beziers from outputs
+        ImGui::PushID("wire_outputs");
         for (int output = 0; output < gate->getOutputsCount(); ++output)
             for (Connection connection : gate->getOutputConnections(output))
                 renderWire(gOutptus[output], connection.id, connection.port);
-
         ImGui::PopID();
 
+        // IsItemHovered doesn't check what is at the top of mouse cursor - it may be GPort
+        bool mouse_is_clicked_over_me = false;
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
-            DRAGGING_FLAG = true;
+            mouse_is_clicked_over_me = true;
             //dragDeltaExact = position;
         }
 
         ImGui::GetWindowDrawList()->ChannelsSetCurrent(
                 DRAGGING_FLAG ? UI::ACTIVE_GPORT_CHANNEL : UI::DEFAULT_GPORT_CHANNEL);
 
+        bool is_any_gport_dragged = false;
+
         // draw GPorts
-        for (auto gInput : gInputs)
+        ImGui::PushID("gport_inputs");
+        for (auto gInput : gInputs) {
             gInput->render(position + UI::toGridCoordinates(dragDeltaExact));
-        for (auto gOutput : gOutptus)
+            is_any_gport_dragged |= gInput->isDragged();
+        }
+        ImGui::PopID();
+
+        ImGui::PushID("gport_outputs");
+        for (auto gOutput : gOutptus) {
             gOutput->render(position + UI::toGridCoordinates(dragDeltaExact));
+            is_any_gport_dragged |= gOutput->isDragged();
+        }
+        ImGui::PopID();
 
-
+        if(mouse_is_clicked_over_me && !is_any_gport_dragged) {
+            DRAGGING_FLAG = true;
+        }
 
         //ImGui::EndGroup();
+        ImGui::PopID(); // Pop's GBlock ID, *ALL GBLOCK GUI ELEMENTS MUST BE RENDERED BEFORE THIS LINE!*
         ImGui::GetWindowDrawList()->ChannelsSetCurrent(UI::DEFAULT_GBLOCK_CHANNEL);
     }
 

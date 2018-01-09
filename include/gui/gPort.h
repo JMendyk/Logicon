@@ -15,6 +15,10 @@ namespace Logicon {
 
     class GPort {
         std::string uniqeElemId;
+
+        static constexpr const char *DRAGDROP_FROM_INPUT = "gp_f_i";
+        static constexpr const char *DRAGDROP_FROM_OUTPUT = "gp_f_o";
+
     public:
 
         const std::weak_ptr<GCircuit> parentCircuit;        /// weak pointer to parent circuit (to enable usage of connect, disconnect)
@@ -22,6 +26,8 @@ namespace Logicon {
         const Port index;                                   /// index of port it represents
         const bool isInput;                                 /// represents type of port
         const UI::Vec2 relativePosition;                            /// Position in GCircuit in grid coordinates
+
+        bool DRAGGING_FLAG;                                        /// flag saying the block is dragged
 
         /**
          * @brief Constructor for GPort.
@@ -48,6 +54,8 @@ namespace Logicon {
          * @return AABB of GPort in grid coordinates
          */
         UI::Rect getRect();
+
+        bool isDragged() const;
     };
 } // namespace Logicon
 

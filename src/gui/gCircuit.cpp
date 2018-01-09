@@ -26,16 +26,17 @@ namespace Logicon {
         auto g4 = std::make_shared<And>(Circuit::nextID());
         circuit->add(std::static_pointer_cast<Gate, And>(g4));
 
-        circuit->connect(g1->id, 0, g2->id, 1);
-        circuit->find(g1->id)->setOutputState(0, 1);
-        circuit->find(g2->id)->setInputState(1, 1);
-        circuit->connect(g3->id, 0, g2->id, 0);
-        circuit->connect(g3->id, 0, g1->id, 0);
-        circuit->connect(g2->id, 0, g4->id, 1);
 
-        insert(g1, UI::Vec2(7, 6));
-        insert(g2, UI::Vec2(15, 3));
-        insert(g3, UI::Vec2(1, 1));
+         //connect(g1->id, 0, g2->id, 1);
+         circuit->find(g1->id)->setOutputState(0, 1);
+         circuit->find(g2->id)->setInputState(1, 1);
+         //connect(g3->id, 0, g2->id, 0);
+         connect(g3->id, 0, g4->id, 0);
+         //connect(g2->id, 0, g4->id, 1);
+
+        insert(g1, UI::Vec2(5, 1));
+        insert(g2, UI::Vec2(15, 1));
+        insert(g3, UI::Vec2(1, 6));
         insert(g4, UI::Vec2(20, 9));
         return true;
     }

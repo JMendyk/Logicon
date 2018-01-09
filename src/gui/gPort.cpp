@@ -13,8 +13,9 @@ Logicon::GPort::GPort(bool isInput, std::shared_ptr<GCircuit> parentCircuit, ID 
         parentCircuit(parentCircuit),
         gateId(gateId),
         index(index),
-        relativePosition(relativePosition) {
-    uniqeElemId = std::to_string(gateId) + "###" + std::to_string(index);
+        relativePosition(relativePosition),
+        DRAGGING_FLAG(false) {
+    uniqeElemId = std::to_string(gateId) + "###" + std::to_string(isInput) + "###" + std::to_string(index);
 }
 
 void Logicon::GPort::dragging() {
@@ -22,17 +23,41 @@ void Logicon::GPort::dragging() {
 }
 
 void Logicon::GPort::render(const UI::Vec2 &gBlockPos) {
-    ImGui::PushID(uniqeElemId.c_str());
+    ImGui::PushID(index);
+
     ImGui::SetCursorPos(
             UI::toCanvasCoordinates(gBlockPos + relativePosition) +
             UI::Vec2(UI::GPORT_PADDING, UI::GPORT_PADDING));
     std::string text = isInput ? "I" : "O";
     ImGui::Button(text.c_str(), UI::Vec2(UI::GPORT_SIZE, UI::GPORT_SIZE));
-    if (ImGui::IsItemClicked(0) && ImGui::IsItemActive()) {
-        /* DEBUG printf("dragging\n"); */
-    }
-    ImGui::PopID();
 
+    DRAGGING_FLAG = ImGui::IsItemHovered() && ImGui::IsMouseClicked(0);
+
+    struct GPortDragDropData { ID idFrom; Port output; };
+    
+    if(ImGui::BeginDragDropSource()) {
+        GPortDragDropData* gport_cp = new GPortDragDropData({ gateId, index });
+
+        ImGui::SetDragDropPayload(isInput ? DRAGDROP_FROM_INPUT : DRAGDROP_FROM_OUTPUT, gport_cp, sizeof(gport_cp));
+
+        ImGui::EndDragDropSource();
+    }
+
+    if(ImGui::BeginDragDropTarget()) {
+        auto payload = ImGui::AcceptDragDropPayload(!isInput ? DRAGDROP_FROM_INPUT : DRAGDROP_FROM_OUTPUT);
+        if(payload != nullptr && payload->IsDelivery()) {
+            auto *data = (GPortDragDropData *) payload->Data;
+
+            if(isInput) {
+                parentCircuit.lock()->connect(data->idFrom, data->output, gateId, index);
+            } else {
+                parentCircuit.lock()->connect(gateId, index, data->idFrom, data->output);
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+
+    ImGui::PopID();
 }
 
 Logicon::UI::Rect Logicon::GPort::getRect() {
@@ -40,4 +65,8 @@ Logicon::UI::Rect Logicon::GPort::getRect() {
                     relativePosition + UI::toGridCoordinates(UI::Vec2(UI::GPORT_PADDING, UI::GPORT_PADDING)) +
                     UI::toGridCoordinates(UI::Vec2(UI::GPORT_SIZE, UI::GPORT_SIZE))
     );
+}
+
+bool Logicon::GPort::isDragged() const {
+    return DRAGGING_FLAG;
 }

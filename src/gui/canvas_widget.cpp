@@ -2,28 +2,22 @@
 // Created by JMendyk on 28.12.17.
 //
 
-#include "gui/canvas_widget.h"
+#include <app.h>
 
 namespace Logicon {
 
-    bool CanvasWidget::init() {
+    bool CanvasWidget::init(App *app) {
+        this->app = app;
+        this->gCircuit = std::make_shared<GCircuit>(app->circuit); // create new gCircuit and init with apps model
+        return this->gCircuit->init();
 
-        this->gCircuit = std::make_shared<GCircuit>();
-        if(!this->gCircuit->init())
-            return false;
-
-        return true;
     }
 
     bool CanvasWidget::close() {
-
-        if(!this->gCircuit->close())
-            return false;
-
-        return true;
+        return this->gCircuit->close();
     }
 
-    void CanvasWidget::render_ui(const UIVec2 &window_pos, const UIVec2 &window_size) {
+    void CanvasWidget::render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size) {
         ImGuiWindowFlags window_flags = 0
             | ImGuiWindowFlags_NoTitleBar
             | ImGuiWindowFlags_NoResize
@@ -37,9 +31,9 @@ namespace Logicon {
             /*
              * GCircuit
              */
-            const UIVec2 g_circuit_pos = UIVec2(0,0);
-            const UIVec2 g_circuit_size = UIVec2(ImGui::GetContentRegionAvail());
-            this->gCircuit->render_ui(g_circuit_pos, g_circuit_size);
+            const UI::Vec2 g_circuit_pos = UI::Vec2(0, 0);
+            const UI::Vec2 g_circuit_size = UI::Vec2(ImGui::GetContentRegionAvail());
+            this->gCircuit->render(g_circuit_pos, g_circuit_size);
         }
         ImGui::End();
     }

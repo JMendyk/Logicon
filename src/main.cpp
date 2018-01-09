@@ -23,7 +23,6 @@ int main(int argc, char *argv[]) {
  * Shell for testing by @T3sT3ro
  */
 
-#include <circuit.h>
 #include <gates/and.h>
 #include <gates/clock.h>
 #include <gates/delay.h>

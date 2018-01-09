@@ -4,16 +4,15 @@
 
 #include "gui/footer_widget.h"
 
-#include <vector>
 #include <iostream>
 
 // For VerticalSeparator - since re-implementing it
 // would required adding many ImGui's internal functions
-#include <imgui_internal.h>
 
 namespace Logicon {
 
-    bool FooterWidget::init(GLFWwindow* window) {
+    bool FooterWidget::init(App *app, GLFWwindow *window) {
+        this->app = app;
         this->window = window;
         return true;
     }
@@ -22,12 +21,12 @@ namespace Logicon {
         return true;
     }
 
-    void FooterWidget::render_ui(const UIVec2 &window_pos, const UIVec2 &window_size) {
-        ImGuiWindowFlags window_flags =
-                0
-                | ImGuiWindowFlags_NoTitleBar
-                | ImGuiWindowFlags_NoResize
-                | ImGuiWindowFlags_NoMove;
+    // TODO: Update footer dummy text
+    void FooterWidget::render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size) {
+        ImGuiWindowFlags window_flags = 0
+                                        | ImGuiWindowFlags_NoTitleBar
+                                        | ImGuiWindowFlags_NoResize
+                                        | ImGuiWindowFlags_NoMove;
 
         ImGui::Begin("Footer Widget", nullptr, window_flags);
         {

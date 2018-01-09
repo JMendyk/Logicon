@@ -5,15 +5,14 @@
 #ifndef LOGICON_G_CIRCUIT_H
 #define LOGICON_G_CIRCUIT_H
 
-#include "iGCircuit.h"
-
-#include "gui/gHelpers.h"
-
+#include "types.h"
+#include "gui/gUtils.h"
 #include "gBlock.h"
 
 #include <set>
 #include <map>
 #include <memory>
+#include <circuit.h>
 
 namespace Logicon {
 
@@ -21,43 +20,98 @@ namespace Logicon {
      * @remarks Currently some of the methods return ID, which required defining special "NOT FOUND" value of ID.
      * Maybe methods should be reconsidered and return pointers.
      */
-    class GCircuit : public IGCircuit {
+    class GCircuit : public std::enable_shared_from_this<GCircuit> {
 
-        // TODO: Add Circuit integration
-        // Circuit circuit;
+        // local typedef for container
+        typedef std::list<std::shared_ptr<GBlock>> _GBLOCK_CONTAINER_TYPE;
 
-        std::map<ID, std::shared_ptr<GBlock>> blocks;
+        std::shared_ptr<Circuit> circuit;
+        _GBLOCK_CONTAINER_TYPE gBlocks; // list with positions and blocks, TODO: spatial data struct
 
-        std::set<std::pair<Connection, Connection>> connections;
+    public:
+
+        GCircuit(std::shared_ptr<Circuit> circuit);
+
+/**
+         * Initialize GCircuit
+         * @return
+         */
+        bool init();
 
         /**
-         * @brief Inserts GBlock at position
-         * @param x position's x value
-         * @param y position's y value
-         * @param gBlock GBlock to be inserted
+         * @brief Run while app closes or opens new file
+         * @return true if close was successful
          */
-        void insert(UIVec2 pos, ID id, std::shared_ptr<GBlock> gBlock);
+        bool close();
 
         /**
-         * @brief Removes GBlock
-         * @param gBlockID ID of GBlock that should be removed
+         * @brief Returns this circuit
+         * @return this
          */
-        void remove(ID gBlockID);
+        const std::shared_ptr<Circuit> getCircuit() const;
+
+        /**
+         * @brief Returns container holding gBlocks
+         * @return
+         */
+        const _GBLOCK_CONTAINER_TYPE &getGBlocks() const;
+
+        /**
+         * @breif Returns pointer to GBlock at given position
+         * @param pos position to check for
+         * @return pointer to GBlock or nullptr if block at given pos doesn't exist
+         */
+        std::shared_ptr<GBlock> getGBlockAt(UI::Vec2 &pos);
+
+        /**
+         * @breif Returns pointer to GBlock by ID
+         * @param id GBlock's ID
+         * @return GBlock pointer
+         */
+        std::shared_ptr<GBlock> getGBlockByID(ID &id);
+
+        /**
+         * @brief Inserts given gate at given position.
+         * @details Creates new GBlock based on gate at given position.
+         * @warning Doesn't check if the place is occupied!
+         * @param gate gate to be inserted
+         * @param pos position to where put a gate
+         */
+        void insert(std::shared_ptr<Gate> gate, UI::Vec2 pos);
+
+        /**
+         * @brief Removes GBlock and corresponding gate from model
+         * @param id ID of GBlock that should be removed
+         */
+        void remove(ID &id);
+
+        /**
+         * @brief clears GCircuit and model
+         */
+        void clear();
+
+        /**
+         * @breif Checks if in the rectangle all cells are either free or belong to GBlock
+         * @param id ID of GBlock
+         * @param rect Rectangle to check
+         * @return false if all cells are either free or belong to GBlock
+         */
+        bool isOccupied(ID id, UI::Rect rect);
 
         /**
          * @brief Moves existing GBlock to new position
-         * @details Returns true if where was free space to fit GBlock
-         * @param gBlockID ID of GBlock that should be moves
-         * @param pos new position
+         *
+         * @param id ID of GBlock that should be moved
+         * @param pos new position as vector of integer values
          * @return true if move operation was successful
          */
-        bool move(ID gBlockID, UIVec2 pos);
+        bool move(ID &id, UI::Vec2 pos);
 
         /**
          * @brief Connects two GBlocks
-         * @param idFrom ID of GBlock where connections starts
+         * @param idFrom ID of GBlock where connection starts
          * @param output Output port of the starting GBlock
-         * @param idTo ID of GBlock where connections ends
+         * @param idTo ID of GBlock where connection ends
          * @param input Input port of the ending GBlock
          */
         void connect(ID idFrom, Port output, ID idTo, Port input);
@@ -72,43 +126,21 @@ namespace Logicon {
         void disconnect(ID idFrom, Port output, ID idTo, Port input);
 
         /**
-         * @breif Checks if in the rectangle all cells are either free or belong to GBlock
-         * @param id ID of GBlock
-         * @param rect Rectangle to check
-         * @return false if all cells are either free or belong to GBlock
+         * @brief Updates graphical information based on circuit: changes images, cable colors, input colors etc.
          */
-        bool isOccupied(ID id, UIRect rect);
+        void update();
 
         /**
-         * @breif Returns ID of GBlock that is present in position
-         * @param x position's x value
-         * @param y position's y value
-         * @return ID of GBlock that is present in position
+         * @brief Renders GCircuit
+         * @param window_pos
+         * @param window_size
          */
-        ID getGBlockIDAt(UIVec2 pos);
+        void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
 
-        /**
-         * @breif Returns GBlock by ID
-         * @param gBlockID GBlock's ID
-         * @return GBlock
-         */
-        std::shared_ptr<GBlock> getGBlockByID(ID gBlockID);
+    private:
 
-        /**
-         * @brief Returns pair of GBlock's ID and it's Port that is present in position
-         * @param pos position
-         * @return pair of GBlock's ID and it's Port that is present in position
-         */
-        std::pair<ID, Port> getPortAt(UIVec2 pos);
-
-
-      public:
-
-        bool init();
-        void render_ui(const UIVec2 &window_pos, const UIVec2 &window_size);
-        bool close();
-        bool i_move(ID id, UIVec2 pos) override;
-        bool i_isOccupied(ID id, UIRect rect) override;
+        // TODO: move responsibility to Canvas widget
+        void scrollCanvas();
     };
 
 } // namespace Logicon

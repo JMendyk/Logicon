@@ -6,8 +6,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
-
-#include <iostream> // for error printing
+#include <logger.h>
 
 namespace Logicon {
 
@@ -23,7 +22,7 @@ namespace Logicon {
         unsigned char *data = stbi_load(filename, &loaded_texture.width, &loaded_texture.height, &channels_count, STBI_rgb_alpha);
 
         if(data == nullptr) {
-            std::cerr << "Image load failed - stb_image reports error: " << stbi_failure_reason() << "\n";
+            Logger::err("Image load failed - stb_image reports error: %s", stbi_failure_reason());
             exit(-1);
         }
 

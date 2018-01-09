@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-#include "gui/gHelpers.h"
+#include "gui/gUtils.h"
 
 #include "gui/menu_widget.h"
 #include "gui/blocks_widget.h"
@@ -27,55 +27,55 @@ namespace Logicon {
      * Main program loop is located in here.
      */
     class App {
-        static std::string APP_TITLE;
-        /*
-         * Clock, Time, Engine are temporarily commented-out
-         * since they aren't implemented yet nor are they possible to compile in the current state.
-         */
         //Clock clock;
-        //Time tickrate;
         //Engine engine;
+
+        /// GL Window used as GUI root container
+        GLFWwindow *window;
+
+    public:
+        static std::string APP_TITLE;
 
         MenuWidget menuWidget;
         BlocksWidget blocksWidget;
         FooterWidget footerWidget;
         CanvasWidget canvasWidget;
 
-        enum State {
+        Tick tickrate;                                      /// how often engine calculates logic
+        std::shared_ptr<Circuit> circuit;                   /// current circuit
+        enum State {                                        /// Represents current mode in which app is running TODO: Move UNINITIALIZED state inside CIRCUIT
             UNINITIALIZED, RUNNING, PAUSED, STEP_BY_STEP
-        };
+        } state;
 
-        State state;
-
-        GLFWwindow* window;
+        /// Constructor creates new Circuit
+        App();
 
         /**
+         * @brief Starts the app.
+         */
+        void run();
+
+    private:
+
+        /**
+         * @brief Initializes app - opens config, images, reads values from config, initializes public members
          * Called once by App::run when app starts
          * @return true if initialization was successful
          */
         bool init();
 
         /**
+         * @brief Renders imgui widgets.
          * Called by App::run once per frame
          */
-        void render_ui();
+        void render();
 
         /**
+         * @brief Simmilar to init() - closes proper files etc.
          * Called once by App::run when app is about to close
          * @return true if everything was closed successfuly
          */
         bool close();
-
-        /**
-         * @return next unique identifier
-         */
-        ID nextID();
-
-    public:
-        /**
-         * Call to start the app.
-         */
-        void run();
     };
 
 } // namespace Logicon

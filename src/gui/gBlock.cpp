@@ -2,105 +2,246 @@
 // Created by JMendyk on 29.12.17.
 //
 
+#include <assetLoader.h>
+#include <gates/switch.h>
 #include "gui/gBlock.h"
+#include "gui/gCircuit.h"
 
 namespace Logicon {
 
-    GBlock::GBlock(const UIVec2 &size, const Texture &texture, const Data &data)
-        : size(size), texture(texture), data(data), is_dragged(false) {}
+    GBlock::GBlock(std::shared_ptr<GCircuit> parentCircuit, std::shared_ptr<Gate> gate, UI::Vec2 relativePosition) :
+            parentCircuit(parentCircuit), gate(gate), position(relativePosition), DRAGGING_FLAG(false) {
 
-    GBlock::GBlock(GBlock *other) {
-        if (this == other)
-            return;
+        // deduce type (rectangle or square) based on gate type
+        if (gate->gateType <= Logicon::XNOR)
+            this->dimension = UI::Vec2(5, 3);
+        else
+            this->dimension = UI::Vec2(3, 3);
 
-        this->size = other->size;
-        this->texture = other->texture;
-        this->data = other->data;
-        this->is_dragged = other->is_dragged;
-        // TODO: Copy parent, id, pos, etc. ?
+        // initialize GPorts
+        gInputs.resize(gateInputsCount[gate->gateType]);
+        for (int inputIndex = 0; inputIndex < gateInputsCount[gate->gateType]; ++inputIndex)
+            gInputs[inputIndex] = std::make_shared<GPort>(true, parentCircuit, gate->id, inputIndex,
+                                                          UI::gPortInputPositions[gate->gateType][inputIndex]);
+
+        gOutptus.resize(gateOutputsCount[gate->gateType]);
+        for (int outputIndex = 0; outputIndex < gateOutputsCount[gate->gateType]; ++outputIndex)
+            gOutptus[outputIndex] = std::make_shared<GPort>(false, parentCircuit, gate->id, outputIndex,
+                                                            UI::gPortOutputPositions[gate->gateType][outputIndex]);
+
+        // set image
+        switch (gate->gateType) {
+
+            case NOT:
+                texture = Logicon::AssetLoader::gate_not();
+                break;
+            case DELAY:
+                texture = Logicon::AssetLoader::gate_delay();
+                break;
+            case SWITCH:
+                texture = Logicon::AssetLoader::gate_switch_off();
+                break;
+            case AND:
+                texture = Logicon::AssetLoader::gate_and();
+                break;
+            case OR:
+                texture = Logicon::AssetLoader::gate_or();
+                break;
+            case XOR:
+                texture = Logicon::AssetLoader::gate_xor();
+                break;
+            case NAND:
+                texture = Logicon::AssetLoader::gate_nand();
+                break;
+            case NOR:
+                texture = Logicon::AssetLoader::gate_nor();
+                break;
+            case XNOR:
+                texture = Logicon::AssetLoader::gate_xnor();
+                break;
+            case CLOCK:
+                texture = Logicon::AssetLoader::gate_clock();
+                break;
+            case INPUT:
+                texture = Logicon::AssetLoader::gate_input_low();
+                break;
+        }
     }
 
-    void GBlock::place(std::shared_ptr<IGCircuit> parent, ID id, UIVec2 pos) {
-        this->parent = parent;
-        this->id = id;
-        this->pos = pos;
-    }
 
     void GBlock::render() {
-        UIVec4 color = UIVec4(1, 1, 1, 1);
+        ImColor color(255, 255, 255);
 
-        {
-            /*
-             * Dragging GBlock
-             */
-            if (is_dragged) {
-                if (ImGui::IsMouseDown(0)) {
-                    drag_pos = drag_pos + ImGui::GetIO().MouseDelta;
-                    UIVec2 drag_pos_gridded = steppify(drag_pos, UIVec2(UI::CANVAS_GRID_SIZE, UI::CANVAS_GRID_SIZE));
-                    if (parent->i_isOccupied(id, UIRect(drag_pos_gridded, drag_pos_gridded + size))) {
-                        color = UIVec4(1, 0, 0, 1);
-                    } else {
-                        color = UIVec4(0, 1, 0, 1);
-                    }
-                }
-                if (ImGui::IsMouseReleased(0)) {
-                    UIVec2 drag_pos_gridded = steppify(drag_pos, UIVec2(UI::CANVAS_GRID_SIZE, UI::CANVAS_GRID_SIZE));
-                    if (!parent->i_isOccupied(id, UIRect(drag_pos_gridded, drag_pos_gridded + size))
-                        && parent->i_move(id, drag_pos_gridded)) {
-                        pos = drag_pos_gridded;
-                    }
-                    is_dragged = false;
-                }
+        assert(!parentCircuit.expired());
+
+
+        // Dragging GBlock
+        if (DRAGGING_FLAG) {
+            if (ImGui::IsMouseDown(0)) { // LPM is down
+                dragDeltaExact = ImGui::GetMouseDragDelta(); // Add delta vector
+                UI::Vec2 dragDeltaGrid = UI::toGridCoordinates(steppify(dragDeltaExact, UI::CANVAS_GRID_SIZE));
+
+                if (parentCircuit.lock()->isOccupied(gate->id, getRect() + dragDeltaGrid)) // Color
+                    color = ImColor(255, 0, 0, 255); // RED
+                else
+                    color = ImColor(0, 255, 0, 255); // GREEN
+            }
+            if (ImGui::IsMouseReleased(0)) {
+                UI::Vec2 dragDeltaGrid = UI::toGridCoordinates(steppify(dragDeltaExact, UI::CANVAS_GRID_SIZE));
+
+                if (!parentCircuit.lock()->isOccupied(gate->id, getRect() + dragDeltaGrid))
+                    this->move(position + dragDeltaGrid); // override position
+
+                dragDeltaExact = UI::Vec2(0, 0);
+                DRAGGING_FLAG = false;
             }
         }
 
-        /*
-         * If GBlock is dragged, we want it to draw above all other GBlocks
-         */
-        ImGui::GetWindowDrawList()->ChannelsSetCurrent(is_dragged ? UI::ACTIVE_GBLOCK_CHANNEL : UI::DEFAULT_GBLOCK_CHANNEL);
-        ImGui::PushID(id);
+        ImGui::PushID(gate->id);
         //ImGui::BeginGroup(); // TODO: Creating group causes issues when dragging, needs investigation before usage
-        {
-            /*
-             * Rendering GBlock
-             */
-            ImGui::SetCursorPos(is_dragged ? drag_pos : pos);
-            if(ImGui::ImageButton((ImTextureID) texture.textureId,
-                               size,
-                               UIVec2(0, 0),
-                               UIVec2(1, 1),
-                               0,
-                               UIVec4(0, 0, 0, 0),
-                               color)) {
-            }
 
+        // If GBlock is dragged, we want it to draw above all other GBlocks
+        ImGui::GetWindowDrawList()->ChannelsSetCurrent(
+                DRAGGING_FLAG ? UI::ACTIVE_GBLOCK_CHANNEL : UI::DEFAULT_GBLOCK_CHANNEL);
+
+        // Rendering GBlock
+        ImGui::SetCursorPos(UI::toCanvasCoordinates(position) + dragDeltaExact);
+        if (ImGui::ImageButton((ImTextureID) texture.textureId,
+                               dimension * UI::CANVAS_GRID_SIZE,
+                               UI::Vec2(0, 0),
+                               UI::Vec2(1, 1),
+                               0,
+                               ImColor(0, 0, 0, 0),
+                               color)) {
+            // TODO clickAction
         }
-        //ImGui::EndGroup();
+
+        // Allow overlap for port buttons
+        ImGui::SetItemAllowOverlap();
+
+        // draw wires TODO: ptimize to not draw same beziers two times
+        // draw beziers from inputs
+
+        for (int input = 0; input < gate->getInputsCount(); ++input)
+            for (Connection connection : gate->getInputConnections(input))
+                renderWire(gInputs[input], connection.id, connection.port);
+        // draw beziers from outputs
+        for (int output = 0; output < gate->getOutputsCount(); ++output)
+            for (Connection connection : gate->getOutputConnections(output))
+                renderWire(gOutptus[output], connection.id, connection.port);
+
         ImGui::PopID();
-        ImGui::GetWindowDrawList()->ChannelsSetCurrent(UI::DEFAULT_GBLOCK_CHANNEL);
 
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
-            is_dragged = true;
-            drag_pos = pos;
+            DRAGGING_FLAG = true;
+            //dragDeltaExact = position;
         }
 
+        ImGui::GetWindowDrawList()->ChannelsSetCurrent(
+                DRAGGING_FLAG ? UI::ACTIVE_GPORT_CHANNEL : UI::DEFAULT_GPORT_CHANNEL);
+
+        // draw GPorts
+        for (auto gInput : gInputs)
+            gInput->render(position + UI::toGridCoordinates(dragDeltaExact));
+        for (auto gOutput : gOutptus)
+            gOutput->render(position + UI::toGridCoordinates(dragDeltaExact));
+
+
+
+        //ImGui::EndGroup();
+        ImGui::GetWindowDrawList()->ChannelsSetCurrent(UI::DEFAULT_GBLOCK_CHANNEL);
+    }
+
+    // TODO: move to gPort
+    void GBlock::renderWire(std::shared_ptr<GPort> thisGPort, ID otherId, Port otherPort) {
+        /// TODO: fix double rendering
+        bool isHigh = (bool) (thisGPort->isInput ? this->gate->getInputState(thisGPort->index)
+                                                 : this->gate->getOutputState(
+                        thisGPort->index));
+
+        auto otherGBlock = parentCircuit.lock()->getGBlockByID(otherId);
+        // don't draw twice if other block is dragged
+        if (otherGBlock->isDragged())
+            return;
+
+        ImColor color = isHigh ? ImColor(255, 195, 17) : ImColor(68, 74, 121);
+
+        // upper left corner of the window
+        UI::Vec2 shift = ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
+
+        UI::Vec2 begin(this->position + thisGPort->relativePosition);
+        UI::Vec2 end(otherGBlock->position + otherGBlock->getGPort(!thisGPort->isInput, otherPort)->relativePosition);
+
+
+        // center square
+        shift = shift + UI::Vec2(UI::CANVAS_GRID_SIZE / 2, UI::CANVAS_GRID_SIZE / 2);
+
+        begin = UI::toCanvasCoordinates(begin) + shift + dragDeltaExact;
+        UI::Vec2 beginControl = begin + (thisGPort->isInput ?
+                                         UI::Vec2(-UI::BEZIER_CONTROL_DISTANCE, 0) :
+                                         UI::Vec2(UI::BEZIER_CONTROL_DISTANCE, 0));
+        end = UI::toCanvasCoordinates(end) + shift;
+        UI::Vec2 endControl = end + (thisGPort->isInput ?
+                                     UI::Vec2(UI::BEZIER_CONTROL_DISTANCE, 0) :
+                                     UI::Vec2(-UI::BEZIER_CONTROL_DISTANCE, 0));
+
+        ImGui::GetWindowDrawList()->AddBezierCurve(begin, beginControl, endControl, end, color, UI::BEZIER_THICKNESS,
+                                                   UI::BEZIER_SEGMENTS);
+    }
+
+    const ID &GBlock::getId() const {
+        return gate->id;
+    }
+
+    UI::Rect GBlock::getRect() const {
+        return UI::Rect(position, position + dimension);
+    }
+
+    std::shared_ptr<GPort> GBlock::getGPort(bool isInput, Port port) {
+        //TODO throw
+        if (port < 0 || (isInput && port >= gate->getInputsCount()) || (!isInput && port >= gate->getOutputsCount()))
+            return nullptr;
+        return isInput ? gInputs[port] : gOutptus[port];
+    }
+
+    // TODO: test the function
+    std::shared_ptr<GPort> GBlock::getGPortAt(UI::Vec2 &pos) const {
+        UI::Vec2 gridPos = UI::toGridCoordinates(pos);
+        if (!this->getRect().contains(gridPos))
+            return nullptr;
+        for (auto gPort : gInputs)
+            if (gPort->getRect().contains(gridPos))
+                return gPort;
+        return nullptr;
+    }
+
+    const std::shared_ptr<Gate> &GBlock::getGate() const {
+        return gate;
+    }
+
+    const UI::Vec2 &GBlock::getPosition() const {
+        return position;
+    }
+
+    const UI::Vec2 &GBlock::getDimension() const {
+        return dimension;
+    }
+
+    void GBlock::move(const UI::Vec2 pos) {
+        this->position = pos;
     }
 
     void GBlock::update() {
+        if (gate->gateType == SWITCH) {
+            // cast(parent->getCircuit()->find(this->id))->isOn == true ... texture = switch_on ...
+        } else if (gate->gateType == INPUT) {
+            // std::static_pointer_cast<Logicon::Switch>(parent->getCircuit()->find(this->id))->isOn() ? texture = ... :
+        }
         // TODO: Implement
     }
 
-    Port GBlock::getPortAt(UIVec2 port_pos) {
-        // TODO: Implement
-    }
-
-    ID GBlock::getId() const {
-        return id;
-    }
-
-    UIRect GBlock::getRect() const {
-        UIVec2 p = is_dragged ? drag_pos : pos;
-        return UIRect(p, p + size);
+    bool GBlock::isDragged() const {
+        return DRAGGING_FLAG;
     }
 
 } // namespace Logicon

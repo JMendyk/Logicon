@@ -6,11 +6,11 @@
 
 // For EndColumn - without it ImGui::Columns looks strange
 // However, nesting column layouts is not advised per ImGui documentation
-#include <imgui_internal.h>
 
 namespace Logicon {
 
-    bool BlocksWidget::init(GLFWwindow* window) {
+    bool BlocksWidget::init(App *app, GLFWwindow *window) {
+        this->app = app;
         this->window = window;
         return true;
     }
@@ -19,7 +19,7 @@ namespace Logicon {
         return true;
     }
 
-    void BlocksWidget::render_ui(const UIVec2 &window_pos, const UIVec2 &window_size) {
+    void BlocksWidget::render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size) {
         ImGuiWindowFlags window_flags = 0
             | ImGuiWindowFlags_NoTitleBar
             | ImGuiWindowFlags_NoResize
@@ -45,9 +45,9 @@ namespace Logicon {
 
             float size = ImGui::GetContentRegionAvailWidth();
 
-            for(int i = 0; i < 12; i++) {
+            for (int i = 0; i < 12; i++) {
                 ImGui::PushID(i);
-                ImGui::Button("1,1", UIVec2(size, size));
+                ImGui::Button("1,1", UI::Vec2(size, size));
                 ImGui::Spacing();
                 ImGui::NextColumn();
                 ImGui::PopID();

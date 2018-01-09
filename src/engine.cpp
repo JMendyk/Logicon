@@ -5,85 +5,96 @@
 #include "engine.h"
 
 namespace Logicon{
-    void restart(Circuit c) {
+    void Engine::restart(Circuit c) {
         graph = c.getGates();
-        for(shared_ptr<Gate> gate : graph){
-            m.insert(std::pair<id, int>(gate.getID(), 0));
+        for(auto gate : graph){
+            m.insert(std::pair<ID, int>(gate->getID(), 0));
         }
 
-        for(shared_ptr<Gate> gate : graph){
+        for(std::shared_ptr<Gate> gate : graph){
 
             ///finds unplugged inputs
-            if(gate.getInputsCount()!=0)
+            if(gate->getInputsCount()!=0)
             {
-                for(Port port=0; port<gate.getInputsCount(); port++)
+                for(Port port=0; port<gate->getInputsCount(); port++)
                 {
-                    if(gate.isInputEmpty(port)) gate.setInputState(port,0);
+                    if(gate->isInputEmpty(port)) gate->setInputState(port,0);
                 }
             }
 
-            for(Port port=0; port<gate.getOutputsCount(); port++)
+            for(Port port=0; port<gate->getOutputsCount(); port++)
             {
-                if(!gate.isOutputEmpty(port))
+                if(!gate->isOutputEmpty(port))
                 {
-                    con=gate.PortConnectionList_ &getOutputConnections(port);
-                    for(Connection co=con.begin(); co<con.end(); con++)
+                    con=gate->getOutputConnections(port);
+                    for(int i=0; i<con.size(); i++) {
+                        co = con[i];
                         m[co.id]++;
+                    }
                 }
             }
         }
 
-        for (shared_ptr <Gate> gate : graph) {
-            if (m[gate.getID()] == 0) {
-                q.push(gate.getID());
-                gate.update();
+        for (std::shared_ptr <Gate> gate : graph) {
+            if (m[gate->getID()] == 0) {
+                q.push_back(gate->getID());
+                gate->update();
+                for(Port port=0; port<gate->getOutputsCount(); port++){
+                    con=gate->getOutputConnections(port);
+                    for(int i=0; i<con.size(); i++) {
+                        co = con[i];
+                        m[co.id]--;
+                    }
+                }
             }
         }
 
-        while(q.size() != graf.size()) {
+        while(q.size() != graph.size()) {
             for (i=0; i<q.size(); i++) {
                 id = q[i];
-                gates = find(id);
-                for(Port port=0; port<gates.getOutputsCount(); port++)
+                auto gates = c.find(id);
+                for(Port port=0; port<gates->getOutputsCount(); port++)
                 {
-                    if(!gates.isOutputEmpty(port)) {
-                        con = gates.PortConnectionList_ & getOutputConnections(port);
-                        for (Connection co = con.begin(); co < con.end(); con++) {
+                    if(!gates->isOutputEmpty(port)) {
+                        con = gates->getOutputConnections(port);
+                        for(int i=0; i<con.size(); i++) {
+                            co = con[i];
                             m[co.id]--;
                             if (m[co.id] == 0) {
-                                q.push(co.id);
-                                gates1 = find(co.id);
-                                gates1.update();
+                                q.push_back(co.id);
+                                auto gates1 = c.find(co.id);
+                                gates1->update();
                             }
                         }
                     }
                 }
             }
-            if(q.size() != graf.size()) {
-                for(shared_ptr<Gate> gate : graph){
-                    if(m[gate.getID()] != 0)
+            if(q.size() != graph.size()) {
+                for(std::shared_ptr<Gate> gate : graph){
+                    if(m[gate->getID()] != 0)
                     {
-                        for(Port port=0; port<gate.getInputsCount(); port++)
+                        for(Port port=0; port<gate->getInputsCount(); port++)
                         {
-                            if(gate.isInputEmpty(port)) gate.setInputState(port,0);
+                            if(gate->isInputEmpty(port)) gate->setInputState(port,0);
                         }
-                        m[gate.getID()] = 0;
-                        for(Port port=0; port<gate.getOutputsCount(); port++)
+                        m[gate->getID()] = 0;
+                        for(Port port=0; port<gate->getOutputsCount(); port++)
                         {
-                            if(!gate.isOutputEmpty(port)) {
-                                con = gate.PortConnectionList_ & getOutputConnections(port);
-                                for (Connection co = con.begin(); co < con.end(); con++) {
+                            if(!gate->isOutputEmpty(port)) {
+                                con = gate->getOutputConnections(port);
+                                for(int i=0; i<con.size(); i++) {
+                                    co = con[i];
                                     m[co.id]--;
                                     if (m[co.id] == 0) {
-                                        q.push(co.id);
-                                        gates1 = find(co.id);
-                                        gates1.update();
+                                        q.push_back(co.id);
+                                        auto gates1 = c.find(co.id);
+                                        gates1->update();
                                     }
                                 }
                             }
                         }
-                        gate.update();
-                        q.push(gate.getID());
+                        gate->update();
+                        q.push_back(gate->getID());
                         break;
                     }
                 }
@@ -91,12 +102,17 @@ namespace Logicon{
         }
     }
 
-    void calcLogic(Circuit c) {
+    void Engine::calcTree(Circuit c) {
+
+        //TODO
+    }
+
+    void Engine::calcLogic(Circuit c) {
         for (i=0; i<q.size(); i++) {
             {
                 id = q[i];
-                gate = find(id);
-                gate.update();
+                auto gate = c.find(id);
+                gate->update();
             }
         }
     }

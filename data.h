@@ -19,6 +19,8 @@ namespace Logicon {
         	g.gateType = j.at("type").get<GATE_TYPE>();
         	int n = g.getInputsCount();
         	for(int i=0;i<n;i++) g.setInputState(j["inputs"][i]["state"]);
+        	int m = g.getOutputsCount();
+        	for(int i=0;i<m;i++) g.setOutputState(j["outputs"][i]["state"]);
 		}
 		
         void to_json(const Gate& g, json& j){
@@ -26,6 +28,8 @@ namespace Logicon {
 			j ["type"] = g.gateType;
         	int n = g.getInputsCount();
         	for(int i=0;i<n;i++) j["inputs"][i]["state"] = g.getInputState(i);
+        	int m = g.getOutputsCount();
+        	for(int i=0;i<m;i++) j["outputs"][i]["state"] = g.getOutputsCount(i);
 		}
         
     };

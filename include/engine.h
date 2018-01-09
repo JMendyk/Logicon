@@ -1,5 +1,5 @@
 //
-// Created by rufus on 12.12.17.
+// Created by inverb on 09.01.18.
 //
 
 #ifndef LOGICON_ENGINE_H

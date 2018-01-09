@@ -16,15 +16,18 @@ namespace Logicon {
     class Engine{
 
     private:
-        std::list<std::shared_ptr<Gate>> graph;
+
+        ///LOCAL VARIABLES
+        std::list<std::shared_ptr<Gate> > graph;
         int i;
         ID id;
-        Gate gates, gates1;
-        map<id, int> m;
-        vector<Connection> con;
+        std::map<ID, int> m;
+        std::vector<Connection> con;
+        Connection co;
+        ///===========================
 
-        ///order of updating the gates
-        vector<ID> q;
+        ///Order of updating the gates
+        std::vector<ID> q;
 
     public:
         /**
@@ -34,10 +37,16 @@ namespace Logicon {
         void restart(Circuit c);
 
         /**
+         * Calculates order of updating WITHOUT setting states of any gates.
+         * Used when downloading previously used circut.
+         */
+        void calcTree(Circuit c);
+
+        /**
          * Calculates state of circut based on the previous one.
          */
         void calcLogic(Circuit c);
-    }
+    };
 } // namespace Logicon
 
 #endif //LOGICON_ENGINE_H

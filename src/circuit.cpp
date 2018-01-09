@@ -11,15 +11,13 @@
 
 namespace Logicon {
 
-    Circuit::Circuit(ID id) : id(id) {
-        gates.clear();
-    }
-
-    ID Circuit::currentId = 0;
-
     Logicon::ID Circuit::nextID() {
+        /// holds shared across all elements value of current free ID
+        static Logicon::ID currentId = 0;
         return currentId++;
     }
+
+    Circuit::Circuit(ID id) : id(id), INITIALIZED_FLAG(false) {}
 
     void Circuit::connect(ID idFrom, Port output, ID idTo, Port input) {
 
@@ -146,11 +144,15 @@ namespace Logicon {
         }
     }
 
-    std::shared_ptr<Gate> Circuit::find(ID id) {
+    std::shared_ptr<Gate> Circuit::find(const ID &id) const {
         auto it = gates.find(id);
         if (it == gates.end())
             return nullptr;
         return it->second;
+    }
+
+    std::shared_ptr<Gate> Circuit::getGateById(ID id) const {
+        return find(id);
     }
 
     std::list<std::shared_ptr<Gate>> Circuit::getGates() {
@@ -163,6 +165,10 @@ namespace Logicon {
                        [](const std::map<ID, std::shared_ptr<Gate>>::value_type &entry) { return entry.second; });
 
         return gatesList;
+    }
+
+    void Circuit::clear() {
+        gates.clear();
     }
 
 } // namespace Logicon

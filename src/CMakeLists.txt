@@ -14,10 +14,18 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/logger.cpp
 
         ${SRC_DIR}/gates/gate.cpp
+
+        ${SRC_DIR}/gates/and.cpp
+        ${SRC_DIR}/gates/nand.cpp
+        ${SRC_DIR}/gates/nor.cpp
+        ${SRC_DIR}/gates/not.cpp
+        ${SRC_DIR}/gates/or.cpp
+        ${SRC_DIR}/gates/xor.cpp
+        ${SRC_DIR}/gates/xnor.cpp
+
         ${SRC_DIR}/gates/clock.cpp
         ${SRC_DIR}/gates/switch.cpp
         ${SRC_DIR}/gates/input.cpp
-        ${SRC_DIR}/gates/and.cpp
         ${SRC_DIR}/gates/delay.cpp
 
         ${SRC_DIR}/exceptions/logiconException.cpp

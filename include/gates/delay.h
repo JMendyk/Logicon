@@ -1,5 +1,5 @@
 //
-// Created by rufus on 12.12.17.
+// Created by kralizekmd on 09.01.2018
 //
 
 #ifndef LOGICON_DELAY_H
@@ -25,18 +25,22 @@ namespace Logicon {
     private:
         /// how much the input signal is shifted into the future. can't be less than 0.
         Tick delay;
+        /// list of waiting signals
+        std::list<int> signals;
 
     public:
-        /// Constructor constructs default 1 tick delay
+        /// Constructor constructs default 1 tick delay and list contains one element equal 0
         explicit Delay(ID id);
 
         /**
-         * Replays input function on output with specified delay
+         * @brief Replays input function on output with specified delay
          */
         void update() override;
 
         /**
-         * Changes settings for delay.
+         * @brief Changes settings for delay.
+         * if new delay is smaller than former the oldest signals are lost
+         * If new delay is bigger than former signals LOW will be transmitted for this excess time
          * @param delay new value for delay in Ticks
          */
         void changeSettings(Tick delay);

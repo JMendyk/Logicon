@@ -24,6 +24,10 @@ namespace Logicon {
     // INPUTS
     // ======
 
+    const ID Gate::getId() const {
+        return id;
+    }
+
     int Gate::getInputsCount() const {
         return this->inputs.size();
     }
@@ -64,6 +68,10 @@ namespace Logicon {
             throw wrongPortException(this->id, input, true);
 
         return inputs[input].second;
+    }
+
+    const std::vector<std::pair<State, Gate::PortConnectionList_>> &Gate::getInputs() const {
+        return outputs;
     }
 
     void Gate::setInputConnection(Port input, ID otherId, Port otherPort) {
@@ -129,6 +137,10 @@ namespace Logicon {
             throw wrongPortException(this->id, output, false);
 
         return outputs[output].second;
+    }
+
+    const std::vector<std::pair<State, Gate::PortConnectionList_>> &Gate::getOutputs() const {
+        return outputs;
     }
 
     void Gate::addOutputConnection(Port output, ID otherId, Port otherPort) {

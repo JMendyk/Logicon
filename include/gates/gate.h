@@ -40,6 +40,13 @@ namespace Logicon {
         const GATE_TYPE gateType;
         /// ID representing gate
         const ID id;
+
+        /**
+         * @deprecated
+         * @return returns ID
+         */
+        const ID getId() const;
+
         /**
          * @brief Constructor accepting new unique ID and a number of inputs and outputs.
          * @param ID unique ID identifying block
@@ -110,6 +117,12 @@ namespace Logicon {
         const PortConnectionList_ &getInputConnections(Port input) const;
 
         /**
+         * @brief Returns list of inputs.
+         * @return vector of pairs <Statem, portConnections[]>
+         */
+        const std::vector<std::pair<State, PortConnectionList_> > &getInputs() const;
+
+        /**
         * @brief Changes information about connection at specified input.
         *
         * @warning It won't check if connection is valid, it will just set the fields!
@@ -178,6 +191,12 @@ namespace Logicon {
         * @return iterable container of connections at given output port
         */
         const PortConnectionList_ &getOutputConnections(Port output);
+
+        /**
+         * @brief Returns list of outputs.
+         * @return vector of pairs <Statem, portConnections[]>
+         */
+        const std::vector<std::pair<State, PortConnectionList_>> &getOutputs() const;
 
         /**
         * @brief Adds another output connection at given output port.

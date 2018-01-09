@@ -1,5 +1,5 @@
 //
-// Created by rufus on 11.12.17.
+// Created by kralizekmd on 09.01.2018
 //
 
 #ifndef LOGICON_SWITCH_H
@@ -16,19 +16,29 @@ namespace Logicon{
      */
     class Switch : public Gate {
 
+    private:
+        /// switch state
+        bool SWITCHED_FLAG;
+
     public:
         /// Constructor: default state is LOW
         explicit Switch(ID id);
 
         /**
-         * OUT = IN if switched, LOW otherwise
+         * @brief OUT = IN if switched, LOW otherwise
          */
         void update() override;
 
         /**
-         * Changes state on `click` between switched and not switched
+         * @brief Changes state on `click` between switched and not switched
          */
         void clickAction() override;
+
+        /**
+         * @brief Returns true if the switch is ON, false otherwise
+         * @return SWITCHED_FLAG
+         */
+        bool isClicked() const;
 
     };
 } // namespace Logicon

@@ -1,5 +1,5 @@
 //
-// Created by rufus on 11.12.17.
+// Created by kralizekmd on 09.01.2018
 //
 
 #ifndef LOGICON_INPUT_H
@@ -18,6 +18,10 @@ namespace Logicon {
      * Default state is LOW
      */
     class Input : public Gate {
+
+    private:
+        /// state of input
+        int flag;
 
     public:
         /// Constructor: default state is LOW

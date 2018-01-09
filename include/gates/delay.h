@@ -33,13 +33,14 @@ namespace Logicon {
         explicit Delay(ID id);
 
         /**
-         * Replays input function on output with specified delay
+         * @brief Replays input function on output with specified delay
          */
         void update() override;
 
         /**
-         * Changes settings for delay.
-         * if new delay is smaller the oldest signals are lost
+         * @brief Changes settings for delay.
+         * if new delay is smaller than former the oldest signals are lost
+         * If new delay is bigger than former signals LOW will be transmitted for this excess time
          * @param delay new value for delay in Ticks
          */
         void changeSettings(Tick delay);

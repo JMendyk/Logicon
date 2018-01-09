@@ -18,21 +18,27 @@ namespace Logicon{
 
     private:
         /// switch state
-        int flag;
+        bool SWITCHED_FLAG;
 
     public:
         /// Constructor: default state is LOW
         explicit Switch(ID id);
 
         /**
-         * OUT = IN if switched, LOW otherwise
+         * @brief OUT = IN if switched, LOW otherwise
          */
         void update() override;
 
         /**
-         * Changes state on `click` between switched and not switched
+         * @brief Changes state on `click` between switched and not switched
          */
         void clickAction() override;
+
+        /**
+         * @brief Returns true if the switch is ON, false otherwise
+         * @return SWITCHED_FLAG
+         */
+        bool isClicked() const;
 
     };
 } // namespace Logicon

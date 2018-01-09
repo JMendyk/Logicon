@@ -21,21 +21,27 @@ namespace Logicon {
 
     private:
         /// state of input
-        int flag;
+        int STATE_FLAG;
 
     public:
         /// Constructor: default state is LOW
         explicit Input(ID id);
 
         /**
-         * If the state flag is HIGH outputs HIGH, otherwise outputs LOW
+         * @brief If the state flag is HIGH outputs HIGH, otherwise outputs LOW
          */
         void update() override;
 
         /**
-         * Changes state flag for block when it is `clicked`
+         * @brief Changes state flag for block when it is `clicked`
          */
         void clickAction() override;
+
+        /**
+         * @brief Returns state of input
+         * @return state of CLICKED_FLAG
+         */
+        bool isClicked() const;
     };
 } // namespace Logicon
 

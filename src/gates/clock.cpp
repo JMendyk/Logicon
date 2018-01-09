@@ -5,23 +5,20 @@
 #include "gates/clock.h"
 
 namespace Logicon {
-    Clock::Clock(ID id) : Gate(GATE_TYPE::CLOCK, id) {
-        this->onPeriod=1;
-        this->offPeriod=1;
-        this->phase=0;
-    }
+    Clock::Clock(ID id) : Gate(GATE_TYPE::CLOCK, id), onPeriod(1), offPeriod(1), phase(0) {}
 
     void Clock::update() {
-        this->phase++;
-        if(this->phase>=(this->onPeriod+this->offPeriod)) this->phase-=(this->onPeriod+this->offPeriod);
-        if(this->phase<this->onPeriod) this->setOutputState(0,1);
-        else this->setOutputState(0,0);
+        phase++;
+        if (phase >= (onPeriod + offPeriod))
+            phase -= (onPeriod + offPeriod);
+        if (phase < onPeriod)setOutputState(0, 1);
+        else setOutputState(0, 0);
     }
 
     void Clock::changeSettings(Tick onPeriod, Tick offPeriod, Tick phase) {
-        this->onPeriod=onPeriod;
-        this->offPeriod=offPeriod;
-        this->phase=phase%(onPeriod+offPeriod);
+        this->onPeriod = onPeriod;
+        this->offPeriod = offPeriod;
+        this->phase = phase % (onPeriod + offPeriod);
     }
 
 } // namespace Logicon

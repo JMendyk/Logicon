@@ -5,15 +5,17 @@
 #include "gates/input.h"
 
 namespace Logicon {
-    Input::Input(ID id) : Gate(GATE_TYPE::INPUT, id) {
-        this->flag=0;
-    }
+    Input::Input(ID id) : Gate(GATE_TYPE::INPUT, id), STATE_FLAG(false) {}
 
     void Input::update() {
-        this->setOutputState(0,flag);
+        this->setOutputState(0, STATE_FLAG);
     }
 
     void Input::clickAction() {
-        this->flag^=1;
+        STATE_FLAG ^= 1;
+    }
+
+    bool Input::isClicked() const {
+        return STATE_FLAG;
     }
 } // namespace Logicon

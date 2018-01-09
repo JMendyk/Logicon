@@ -5,15 +5,18 @@
 #include "gates/switch.h"
 
 namespace Logicon {
-    Switch::Switch(ID id) : Gate(GATE_TYPE::SWITCH, id) {
-        this->flag=0;
+    Switch::Switch(ID id) : Gate(GATE_TYPE::SWITCH, id), SWITCHED_FLAG(false) {
     }
 
     void Switch::update() {
-        this->setOutputState(0,this->getInputState(0));
+        this->setOutputState(0, SWITCHED_FLAG ? this->getInputState(0) : 0);
     }
 
     void Switch::clickAction() {
-        this->flag^=1;
+        SWITCHED_FLAG ^= 1;
+    }
+
+    bool Switch::isClicked() const {
+        return SWITCHED_FLAG;
     }
 } // namespace Logicon

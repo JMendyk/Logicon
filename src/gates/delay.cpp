@@ -5,17 +5,16 @@
 #include "gates/delay.h"
 
 namespace Logicon {
-    Delay::Delay(ID id) : Gate(GATE_TYPE::DELAY, id) {
-        this->delay=1;
-        this->signals.push_back(0);
+    Delay::Delay(ID id) : Gate(GATE_TYPE::DELAY, id), delay(1) {
+        signals.push_back(0);
     }
 
     void Delay::update() {
-        if(this->delay==0) this->setOutputState(0,this->getInputState(0));
+        if (delay == 0) setOutputState(0, getInputState(0));
         else{
-            this->setOutputState(0,this->signals.back());
-            this->signals.pop_back();
-            this->signals.push_front(this->getInputState(0));
+            setOutputState(0, signals.back());
+            signals.pop_back();
+            signals.push_front(getInputState(0));
         }
     }
 

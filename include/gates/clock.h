@@ -1,5 +1,5 @@
 //
-// Created by rufus on 11.12.17.
+// Created by kralizekmd on 09.01.2018
 //
 
 #ifndef LOGICON_CLOCK_H
@@ -34,6 +34,7 @@ namespace Logicon {
 
     public:
         /// Constructor: default onPeriod=1 offPeriod=1 phase=0
+        /// at the beginning the clock is ON
         explicit Clock(ID id);
 
         /**

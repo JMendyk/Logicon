@@ -20,7 +20,13 @@ namespace Logicon {
         	int n = g.getInputsCount();
         	for(int i=0;i<n;i++) g.setInputState(j["inputs"][i]["state"]);
 		}
-        
+		
+        void to_json(const Gate& g, json& j){
+        	j ["id"] = g.id
+			j ["type"] = g.gateType;
+        	int n = g.getInputsCount();
+        	for(int i=0;i<n;i++) j["inputs"][i]["state"] = g.getInputState(i);
+		}
         
     };
 } // namespace Logicon

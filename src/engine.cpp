@@ -159,6 +159,13 @@ namespace Logicon{
                 id = q[i];
                 auto gates = c.find(id);
                 gates->update();
+            }
+        }
+        i=0;
+        for ( ; i<q.size(); i++) {
+            {
+                id = q[i];
+                auto gates = c.find(id);
                 for(Port port=0; port<gates->getOutputsCount(); port++)
                 {
                     if(!gates->isOutputEmpty(port)) {

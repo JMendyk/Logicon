@@ -57,7 +57,7 @@ cd ..
 git clone https://github.com/ocornut/imgui.git imgui_repo
 mkdir imgui_impl_glfw_gl3
 cd imgui_repo
-    git checkout v1.52
+    git checkout master
     log_dependency imgui
     cp examples/opengl3_example/imgui_impl_glfw_gl3.h \
        examples/opengl3_example/imgui_impl_glfw_gl3.cpp \

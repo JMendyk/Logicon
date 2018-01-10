@@ -23,7 +23,10 @@ namespace Logicon {
         	int m = g.getOutputsCount();
         	for(int i=0;i<m;i++) g.setOutputState(j["outputs"][i]["state"]);
         	//Delay
-        	
+        	Tick Jdelay = j.at("delay").get<Tick>();
+        	std::list<State> Jsignals = j.at("signals").get< std::list<State> >();
+        	g.setDelay( Jdelay );
+        	g.setDelayList( Jsignals );
 		}
 		
         void to_json(const Gate& g, json& j){

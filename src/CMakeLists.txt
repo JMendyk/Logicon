@@ -5,9 +5,9 @@ target_sources(${EXECUTABLE_NAME}
     PUBLIC
         ${SRC_DIR}/main.cpp
 
-        # ${SRC_DIR}/data.cpp
+        ${SRC_DIR}/data.cpp
         ${SRC_DIR}/app.cpp
-        # ${SRC_DIR}/engine.cpp
+        ${SRC_DIR}/engine.cpp
         ${SRC_DIR}/fileController.cpp
         ${SRC_DIR}/circuit.cpp
         ${SRC_DIR}/graphics.cpp

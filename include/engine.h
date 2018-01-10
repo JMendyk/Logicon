@@ -52,9 +52,17 @@ namespace Logicon {
         void calcTree(Circuit c);
 
         /**
-         * Calculates state of circut based on the previous one.
+         * Calculates state of circuit based on the previous one.
+         * Calculates all gates at once and then pushes results through edges.
          */
         void calcLogic(Circuit c);
+
+        /**
+         * Calculates state of circuit based on the previous one.
+         * Calculates state of each gate and immediately pushes it's results.
+         * (Should be better option for gui)
+         */
+        void calcLogicImmediate(Circuit c);
     };
 } // namespace Logicon
 

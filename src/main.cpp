@@ -205,7 +205,7 @@ namespace Logicon {
             } else if (cmd == "restart") {
                 engine->restart(circuit);
             } else if (cmd == "calculate") {
-                engine->calcLogic(circuit);
+                engine->calcLogicImmediate(circuit);
             } else if(cmd == "changeClock"){
                 ID id;
                 Tick onperiod, offperiod, phase;
@@ -221,7 +221,7 @@ namespace Logicon {
                 auto g = circuit.find(id);
                 if(g->gateType != DELAY) continue;
                 auto g1 = std::static_pointer_cast<Delay, Gate>(g);
-                g1->changeSettings(phase);
+                g1->setDelay(phase);
             }
         }
     }

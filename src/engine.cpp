@@ -195,6 +195,18 @@ namespace Logicon{
         }
     }
 
+    void Engine::calcLogicImmediate(Circuit c) {
+        i=0;
+        for ( ; i<q.size(); i++) {
+            {
+                ID id = q[i];
+                auto gates = c.find(id);
+                gates->update();
+                this->propagateSignal(c, gates);
+            }
+        }
+    }
+
     Engine *Engine::getInstance() {
         if (instance == nullptr) {
             instance = new Engine();

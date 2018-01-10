@@ -13,7 +13,12 @@ namespace Logicon {
      * Allows to store values such as: labels, image paths, descriptions, positions of buttons, data about GBlocks etc.
      */
     class Data {
-        //TODO
+        public:
+        	//get Gate from json
+	        void from_json(const json& j, Gate& g)
+			//get json from Gate
+	        void to_json(const Gate& g, json& j)
+        
     };
 } // namespace Logicon
 

@@ -18,7 +18,7 @@ namespace Logicon{
         	std::list<State> Jsignals = j.at("signals").get< std::list<State> >();
         	g.setDelay( Jdelay );
         	g.setDelayList( Jsignals );
-        	//Switch
+        	//Switch and input
         	bool Jclicked = j.at("STATE_FLAG").get< bool >();
         	g.setClicked(Jclicked);
         	//Clock
@@ -39,7 +39,7 @@ namespace Logicon{
         	//Delay
         	j ["delay"] = g.getDelay();
         	j ["signals"] = g.getDelayList();
-        	//Switch
+        	//Switch and input
         	j ["STATE_FLAG"] = g.isClicked();
         	//Clock
         	j ["onPeriod"] = g.getOnPeriod();

@@ -49,7 +49,17 @@ namespace Logicon {
          * @param phase new value for delay in Ticks
          */
         void changeSettings(Tick onPeriod, Tick offPeriod, Tick phase);
+
+        /// get onPeriod
+        Tick getOnPeriod();
+
+        /// get offPeriod
+        Tick getOffPeriod();
+
+        /// get phase/actual time for clock
+        Tick getPhase();
     };
 }  // namespace Logicon
 
 #endif //LOGICON_CLOCK_H
+

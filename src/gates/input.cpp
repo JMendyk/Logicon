@@ -18,4 +18,8 @@ namespace Logicon {
     bool Input::isClicked() const {
         return STATE_FLAG;
     }
+
+    void Input::setClicked(bool clicked) {
+        STATE_FLAG = clicked;
+    }
 } // namespace Logicon

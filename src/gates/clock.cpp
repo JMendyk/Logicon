@@ -21,4 +21,16 @@ namespace Logicon {
         this->phase = phase % (onPeriod + offPeriod);
     }
 
+    Tick Clock::getOnPeriod() {
+        return this->onPeriod;
+    }
+
+    Tick Clock::getOffPeriod() {
+        return this->offPeriod;
+    }
+
+    Tick Clock::getPhase() {
+        return this->phase;
+    }
+
 } // namespace Logicon

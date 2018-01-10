@@ -18,7 +18,7 @@ namespace Logicon{
 
     private:
         /// switch state
-        bool SWITCHED_FLAG;
+        bool STATE_FLAG;
 
     public:
         /// Constructor: default state is LOW
@@ -39,6 +39,12 @@ namespace Logicon{
          * @return SWITCHED_FLAG
          */
         bool isClicked() const;
+
+        /**
+         * @brief Sets state of STATE_FLAG
+         * @param clicked state to set
+         */
+        void setClicked(bool clicked);
 
     };
 } // namespace Logicon

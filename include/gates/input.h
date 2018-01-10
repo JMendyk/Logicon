@@ -28,7 +28,7 @@ namespace Logicon {
         explicit Input(ID id);
 
         /**
-         * @brief If the state flag is HIGH outputs HIGH, otherwise outputs LOW
+         * @brief If the state flag is 1 outputs HIGH, otherwise outputs LOW
          */
         void update() override;
 
@@ -39,9 +39,15 @@ namespace Logicon {
 
         /**
          * @brief Returns state of input
-         * @return state of CLICKED_FLAG
+         * @return state of STATE_FLAG
          */
         bool isClicked() const;
+
+        /**
+         * @brief Sets state of STATE_FLAG
+         * @param clicked state to set
+         */
+        void setClicked(bool clicked);
     };
 } // namespace Logicon
 

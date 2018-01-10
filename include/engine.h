@@ -1,5 +1,5 @@
 //
-// Created by inverb on 09.01.18.
+// Created by inverb on 10.01.18.
 //
 
 #ifndef LOGICON_ENGINE_H
@@ -20,16 +20,22 @@ namespace Logicon {
         ///LOCAL VARIABLES
         std::list<std::shared_ptr<Gate> > graph;
         int i;
-        ID id;
         std::map<ID, int> m;
         std::vector<Connection> con;
-        Connection co;
         ///===========================
 
         ///Order of updating the gates
         std::vector<ID> q;
 
     public:
+
+        explicit Engine();
+        /**
+         * Updates inputs of gates connected with gate gate.
+         *
+         */
+        void propagateSignal(Circuit c, std::shared_ptr<Gate> gate);
+
         /**
          * Initializes new circut.
          * Sets its state on tick 0.

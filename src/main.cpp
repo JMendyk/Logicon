@@ -8,7 +8,7 @@ void run_shell();
 
 int main(int argv, char *args[]) {
 
-    if(argv == 2 && std::string(args[1]) == "shell") {
+    if (argv == 2 && std::string(args[1]) == "shell") {
         run_shell();
     }
 
@@ -21,9 +21,19 @@ int main(int argv, char *args[]) {
 
 #include <circuit.h>
 #include <gates/and.h>
+#include <gates/clock.h>
+#include <gates/delay.h>
 #include <gates/input.h>
+#include <gates/nand.h>
+#include <gates/nor.h>
+#include <gates/not.h>
+#include <gates/or.h>
+#include <gates/switch.h>
+#include <gates/xnor.h>
+#include <gates/xor.h>
 #include <exceptions/logiconException.h>
 #include <logger.h>
+#include <engine.h>
 
 namespace Logicon {
     void infoGate(const std::shared_ptr<Gate> &gate) {
@@ -32,6 +42,16 @@ namespace Logicon {
             gateType = "AND";
         else if (gate->gateType == Logicon::INPUT)
             gateType = "INPUT";
+        else if (gate->gateType == Logicon::OR)
+            gateType = "OR";
+        else if (gate->gateType == Logicon::CLOCK)
+            gateType = "CLOCK";
+        else if (gate->gateType == Logicon::DELAY)
+            gateType = "DELAY";
+        else if (gate->gateType == Logicon::SWITCH)
+            gateType = "SWITCH";
+        else if (gate->gateType == Logicon::NOT)
+            gateType = "NOT";
 
         std::cout << gateType << "~" << gate->id << " ";
         for (Port i = 0; i < gate->getInputsCount(); ++i) {
@@ -54,7 +74,10 @@ namespace Logicon {
     void run_shell() {
         Logicon::Logger::init("ToosterTest");
         Circuit circuit(Logicon::Circuit::nextID());
-        std::cout << "commands: exit, info, add, connect, disconnect, set, update, click, reset, clear" << std::endl;
+        Engine engine;
+        std::cout
+                << "commands: exit, info, add, connect, disconnect, set, update, click, reset, clear, propagate, restart, calculate"
+                << std::endl;
         while (true) {
             std::string cmd;
             std::cin >> cmd;
@@ -79,7 +102,23 @@ namespace Logicon {
                 } else if (type == "INPUT") {
                     auto ptr = std::make_shared<Input>(Circuit::nextID());
                     circuit.add(std::static_pointer_cast<Gate, Input>(ptr));
+                } else if (type == "OR") {
+                    auto ptr = std::make_shared<Or>(Circuit::nextID());
+                    circuit.add(std::static_pointer_cast<Gate, Or>(ptr));
+                } else if (type == "CLOCK") {
+                    auto ptr = std::make_shared<Clock>(Circuit::nextID());
+                    circuit.add(std::static_pointer_cast<Gate, Clock>(ptr));
+                } else if (type == "DELAY") {
+                    auto ptr = std::make_shared<Delay>(Circuit::nextID());
+                    circuit.add(std::static_pointer_cast<Gate, Delay>(ptr));
+                } else if (type == "SWITCH") {
+                    auto ptr = std::make_shared<Switch>(Circuit::nextID());
+                    circuit.add(std::static_pointer_cast<Gate, Switch>(ptr));
+                } else if (type == "NOT") {
+                    auto ptr = std::make_shared<Not>(Circuit::nextID());
+                    circuit.add(std::static_pointer_cast<Gate, Not>(ptr));
                 }
+
             } else if (cmd == "remove") {
                 ID id;
                 std::cin >> id;
@@ -132,6 +171,15 @@ namespace Logicon {
                 auto g = circuit.find(id);
                 if (g != nullptr)
                     g->clear();
+            } else if (cmd == "propagate") {
+                ID id;
+                std::cin >> id;
+                auto gates = circuit.find(id);
+                engine.propagateSignal(circuit, gates);
+            } else if (cmd == "restart") {
+                engine.restart(circuit);
+            } else if (cmd == "calculate") {
+                engine.calcLogic(circuit);
             }
         }
     }

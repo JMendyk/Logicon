@@ -43,12 +43,26 @@ namespace Logicon {
          * If new delay is bigger than former signals LOW will be transmitted for this excess time
          * @param delay new value for delay in Ticks
          */
-        void changeSettings(Tick delay);
+        void setDelay(Tick delay);
 
-        /// return const reference to list od delayed signals
-        const std::list<State> & getDelayList() const;
-
+        /**
+         * @brief Returns currently set delay of the gate
+         * @return delay of this gate
+         */
         Tick getDelay();
+
+        /**
+         * @brief Returns internal history of signals stored in delay
+         * @return list of signals
+         */
+        const std::list<State> &getDelayList() const;
+
+        /**
+         * @brief Sets history in delay to the history passed in delayList.
+         * @param delayList internal history as list to be overwritten
+         */
+        void setDelayList(const std::list<State> &delayList);
+
     };
 } // namespace Logicon
 

@@ -18,7 +18,7 @@ namespace Logicon {
         }
     }
 
-    void Delay::changeSettings(Tick delay) {
+    void Delay::setDelay(Tick delay) {
         this->delay=delay;
         this->signals.resize(delay,0);
     }
@@ -29,5 +29,9 @@ namespace Logicon {
 
     Tick Delay::getDelay() {
         return this->delay;
+    }
+
+    void Delay::setDelayList(const std::list<State> &delayList) {
+        this->signals = delayList;
     }
 } // namespace Logicon

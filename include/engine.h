@@ -1,9 +1,11 @@
 //
-// Created by rufus on 12.12.17.
+// Created by inverb on 10.01.18.
 //
 
 #ifndef LOGICON_ENGINE_H
 #define LOGICON_ENGINE_H
+
+#include "circuit.h"
 
 namespace Logicon {
     /**
@@ -11,8 +13,48 @@ namespace Logicon {
      *
      * Engine allows user to initialize the first state of a circuit and calculate next states based on current.
      */
-    class Engine {
-        //TODO
+    class Engine{
+
+    private:
+
+        static Engine *instance;
+        ///LOCAL VARIABLES
+        std::list<std::shared_ptr<Gate> > graph;
+        int i;
+        std::map<ID, int> m;
+        std::vector<Connection> con;
+        ///===========================
+
+        ///Order of updating the gates
+        std::vector<ID> q;
+
+        Engine();
+
+    public:
+
+        static Engine *getInstance();
+        /**
+         * Updates inputs of gates connected with gate gate.
+         *
+         */
+        void propagateSignal(Circuit c, std::shared_ptr<Gate> gate);
+
+        /**
+         * Initializes new circut.
+         * Sets its state on tick 0.
+         */
+        void restart(Circuit c);
+
+        /**
+         * Calculates order of updating WITHOUT setting states of any gates.
+         * Used when downloading previously used circut.
+         */
+        void calcTree(Circuit c);
+
+        /**
+         * Calculates state of circut based on the previous one.
+         */
+        void calcLogic(Circuit c);
     };
 } // namespace Logicon
 

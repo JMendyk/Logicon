@@ -11,9 +11,14 @@
 
 namespace Logicon {
 
+    FooterWidget *FooterWidget::instance = nullptr;
+
     bool FooterWidget::init(App *app, GLFWwindow *window) {
-        this->app = app;
-        this->window = window;
+        if (instance == nullptr) {
+            instance = new FooterWidget();
+        }
+        instance->app = app;
+        instance->window = window;
         return true;
     }
 
@@ -85,6 +90,13 @@ namespace Logicon {
 
         }
         ImGui::End();
+    }
+
+    FooterWidget *FooterWidget::getInstance() {
+        if (instance == nullptr) {
+            instance = new FooterWidget();
+        }
+        return instance;
     }
 
 } // namespace Logicon

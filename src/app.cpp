@@ -57,20 +57,20 @@ namespace Logicon {
         AssetLoader::loadAssets();
 
         // Widgets
-        this->menuWidget = MenuWidget();
-        if (!this->menuWidget.init(this, this->window))
+        this->menuWidget = MenuWidget::getInstance();
+        if (!this->menuWidget->init(this, this->window))
             return false;
 
-        this->blocksWidget = BlocksWidget();
-        if (!this->blocksWidget.init(this, this->window))
+        this->blocksWidget = BlocksWidget::getInstance();
+        if (!this->blocksWidget->init(this, this->window))
             return false;
 
-        this->canvasWidget = CanvasWidget();
-        if (!this->canvasWidget.init(this))
+        this->canvasWidget = CanvasWidget::getInstance();
+        if (!this->canvasWidget->init(this))
             return false;
 
-        this->footerWidget = FooterWidget();
-        if (!this->footerWidget.init(this, this->window))
+        this->footerWidget = FooterWidget::getInstance();
+        if (!this->footerWidget->init(this, this->window))
             return false;
 
         // TODO: operate on a fresh file called 'circuit' as if it was just created
@@ -114,41 +114,41 @@ namespace Logicon {
         glfwGetFramebufferSize(window, &canvas_w, &canvas_h);
 
         // Menu Widget
-        this->menuWidget.render({UI::MARGIN,
-                                 UI::MARGIN},
-                                {canvas_w - 2 * UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+        this->menuWidget->render({UI::MARGIN,
+                                  UI::MARGIN},
+                                 {canvas_w - 2 * UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
                                  UI::MENU_WIDGET_HEIGHT});
         // Blocks Widget
-        this->blocksWidget.render({canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
-                                   UI::MARGIN},
-                                  {UI::BLOCKS_WIDGET_WIDTH,
+        this->blocksWidget->render({canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
+                                    UI::MARGIN},
+                                   {UI::BLOCKS_WIDGET_WIDTH,
                                    canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)});
 
         // Canvas Widget
-        this->canvasWidget.render({UI::MARGIN,
+        this->canvasWidget->render({UI::MARGIN,
                                    UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN},
-                                  {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+                                   {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
                                    canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
                                    UI::FOOTER_WIDGET_HEIGHT});
 
         // Footer Widget
-        this->footerWidget.render({0,
+        this->footerWidget->render({0,
                                    (float) canvas_h - (UI::FOOTER_WIDGET_HEIGHT)},
-                                  {(float) canvas_w,
+                                   {(float) canvas_w,
                                    UI::FOOTER_WIDGET_HEIGHT});
     }
 
     bool App::close() {
-        if (!this->menuWidget.close())
+        if (!this->menuWidget->close())
             return false;
 
-        if (!this->blocksWidget.close())
+        if (!this->blocksWidget->close())
             return false;
 
-        if (!this->canvasWidget.close())
+        if (!this->canvasWidget->close())
             return false;
 
-        if (!this->footerWidget.close())
+        if (!this->footerWidget->close())
             return false;
 
         ImGui_ImplGlfwGL3_Shutdown();
@@ -158,6 +158,6 @@ namespace Logicon {
     }
 
     void App::set_current_gate_to_place(GATE_TYPE gate_type) {
-        canvasWidget.set_current_gate_to_place(gate_type);
+        canvasWidget->set_current_gate_to_place(gate_type);
     }
 } // namespace Logicon

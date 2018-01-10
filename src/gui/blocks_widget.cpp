@@ -12,10 +12,14 @@
 // However, nesting column layouts is not advised per ImGui documentation
 
 namespace Logicon {
+    BlocksWidget *BlocksWidget::instance = nullptr;
 
     bool BlocksWidget::init(App *app, GLFWwindow *window) {
-        this->app = app;
-        this->window = window;
+        if (instance == nullptr) {
+            instance = new BlocksWidget();
+        }
+        instance->app = app;
+        instance->window = window;
         return true;
     }
 
@@ -100,6 +104,13 @@ namespace Logicon {
 
         }
         ImGui::End();
+    }
+
+    BlocksWidget *BlocksWidget::getInstance() {
+        if (instance == nullptr) {
+            instance = new BlocksWidget();
+        }
+        return instance;
     }
 
 } // namespace Logicon

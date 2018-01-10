@@ -15,11 +15,14 @@ namespace Logicon {
     class App;
 
     class FooterWidget {
-
+        static FooterWidget *instance;
         App *app;
         GLFWwindow *window;
 
+        FooterWidget() = default;
     public:
+        static FooterWidget *getInstance();
+
         bool init(App *app, GLFWwindow *window);
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);

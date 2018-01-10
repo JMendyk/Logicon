@@ -15,11 +15,16 @@ namespace Logicon {
     class App;
 
     class CanvasWidget {
-
+        static CanvasWidget *instance;
         App *app;
         std::shared_ptr<GCircuit> gCircuit;
 
-      public:
+        CanvasWidget() = default;
+
+    public:
+
+        static CanvasWidget *getInstance();
+
         /**
          * Constructor accepting pointer to parent app.
          * @param parent parent app
@@ -28,6 +33,7 @@ namespace Logicon {
         bool init(App *parent);
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
+
         bool close();
 
         /**

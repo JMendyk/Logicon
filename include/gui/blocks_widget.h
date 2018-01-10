@@ -15,11 +15,14 @@ namespace Logicon {
     class App;
 
     class BlocksWidget {
+        static BlocksWidget *instance;
 
         App *app;
         GLFWwindow* window;
 
+        BlocksWidget() = default;
     public:
+        static BlocksWidget *getInstance();
         bool init(App *app, GLFWwindow *window);
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);

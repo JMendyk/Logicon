@@ -10,11 +10,15 @@
 
 namespace Logicon {
 
+    MenuWidget *MenuWidget::instance = nullptr;
     ImFont *myFont = nullptr;
 
     bool MenuWidget::init(App *app, GLFWwindow *window) {
-        this->app = app;
-        this->window = window;
+        if (instance == nullptr) {
+            instance = new MenuWidget();
+        }
+        instance->app = app;
+        instance->window = window;
 
         static ImFontConfig imFontConfig = ImFontConfig();
         imFontConfig.SizePixels = 32.0f;
@@ -109,6 +113,13 @@ namespace Logicon {
             ImGui::SameLine();
         }
         ImGui::End();
+    }
+
+    MenuWidget *MenuWidget::getInstance() {
+        if (instance == nullptr) {
+            instance = new MenuWidget();
+        }
+        return instance;
     }
 
 } // namespace Logicon

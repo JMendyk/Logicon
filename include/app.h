@@ -36,10 +36,10 @@ namespace Logicon {
     public:
         static std::string APP_TITLE;
 
-        MenuWidget menuWidget;
-        BlocksWidget blocksWidget;
-        FooterWidget footerWidget;
-        CanvasWidget canvasWidget;
+        MenuWidget *menuWidget;
+        BlocksWidget *blocksWidget;
+        FooterWidget *footerWidget;
+        CanvasWidget *canvasWidget;
 
         Tick tickrate;                                      /// how often engine calculates logic
         std::shared_ptr<Circuit> circuit;                   /// current circuit

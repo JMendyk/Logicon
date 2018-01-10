@@ -5,11 +5,15 @@
 #include <app.h>
 
 namespace Logicon {
+    CanvasWidget *CanvasWidget::instance = nullptr;
 
     bool CanvasWidget::init(App *app) {
-        this->app = app;
-        this->gCircuit = std::make_shared<GCircuit>(app->circuit); // create new gCircuit and init with apps model
-        return this->gCircuit->init();
+        if (instance == nullptr) {
+            instance = new CanvasWidget();
+        }
+        instance->app = app;
+        instance->gCircuit = std::make_shared<GCircuit>(app->circuit); // create new gCircuit and init with apps model
+        return instance->gCircuit->init();
 
     }
 
@@ -36,6 +40,13 @@ namespace Logicon {
             this->gCircuit->render(g_circuit_pos, g_circuit_size);
         }
         ImGui::End();
+    }
+
+    CanvasWidget *CanvasWidget::getInstance() {
+        if (instance == nullptr) {
+            instance = new CanvasWidget();
+        }
+        return instance;
     }
 
     void CanvasWidget::set_current_gate_to_place(GATE_TYPE gate_type) {

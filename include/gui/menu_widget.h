@@ -15,11 +15,13 @@ namespace Logicon {
     class App;
 
     class MenuWidget {
-
+        static MenuWidget *instance;
         App *app;
         GLFWwindow *window;
 
+        MenuWidget() = default;
     public:
+        static MenuWidget *getInstance();
         bool init(App *app, GLFWwindow *window);
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);

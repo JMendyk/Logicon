@@ -27,6 +27,9 @@ namespace Logicon {
         	std::list<State> Jsignals = j.at("signals").get< std::list<State> >();
         	g.setDelay( Jdelay );
         	g.setDelayList( Jsignals );
+        	//Switch
+        	bool Jclicked = j.at("STATE_FLAG").get< bool >();
+        	g.setClicked(Jclicked);
 		}
 		
         void to_json(const Gate& g, json& j){
@@ -40,6 +43,8 @@ namespace Logicon {
         	//Delay
         	j ["delay"] = g.getDelay();
         	j ["signals"] = g.getDelayList();
+        	//Switch
+        	j ["STATE_FLAG"] = g.isClicked();
 		}
         
     };

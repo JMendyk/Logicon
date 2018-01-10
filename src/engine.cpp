@@ -6,6 +6,8 @@
 
 namespace Logicon{
 
+    Engine *Engine::instance = nullptr;
+
     Engine::Engine() :  i(0) {
     con.clear();
     q.clear();
@@ -191,6 +193,13 @@ namespace Logicon{
                 this->propagateSignal(c, gates);
             }
         }
+    }
+
+    Engine *Engine::getInstance() {
+        if (instance == nullptr) {
+            instance = new Engine();
+        }
+        return instance;
     }
 
 } // namespace Logicon

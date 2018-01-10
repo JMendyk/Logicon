@@ -21,7 +21,6 @@ int main(int argv, char *args[]) {
 
 #include <circuit.h>
 #include <gates/and.h>
-#include <gates/clock.h>
 #include <gates/delay.h>
 #include <gates/input.h>
 #include <gates/nand.h>
@@ -74,7 +73,7 @@ namespace Logicon {
     void run_shell() {
         Logicon::Logger::init("ToosterTest");
         Circuit circuit(Logicon::Circuit::nextID());
-        Engine engine;
+        Engine *engine = Engine::getInstance();
         std::cout
                 << "commands: exit, info, add, connect, disconnect, set, update, click, reset, clear, propagate, restart, calculate"
                 << std::endl;
@@ -175,11 +174,11 @@ namespace Logicon {
                 ID id;
                 std::cin >> id;
                 auto gates = circuit.find(id);
-                engine.propagateSignal(circuit, gates);
+                engine->propagateSignal(circuit, gates);
             } else if (cmd == "restart") {
-                engine.restart(circuit);
+                engine->restart(circuit);
             } else if (cmd == "calculate") {
-                engine.calcLogic(circuit);
+                engine->calcLogic(circuit);
             }
         }
     }

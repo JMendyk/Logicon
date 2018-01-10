@@ -17,6 +17,7 @@ namespace Logicon {
 
     private:
 
+        static Engine *instance;
         ///LOCAL VARIABLES
         std::list<std::shared_ptr<Gate> > graph;
         int i;
@@ -27,9 +28,11 @@ namespace Logicon {
         ///Order of updating the gates
         std::vector<ID> q;
 
+        Engine();
+
     public:
 
-        explicit Engine();
+        static Engine *getInstance();
         /**
          * Updates inputs of gates connected with gate gate.
          *

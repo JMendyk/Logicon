@@ -27,6 +27,7 @@ namespace Logicon{
 
     void Engine::restart(Circuit c) {
         i=0;
+        q.clear();
         graph = c.getGates();
         for(auto gate : graph){
             m.insert(std::pair<ID, int>(gate->getId(), 0));
@@ -104,6 +105,7 @@ namespace Logicon{
 
     void Engine::calcTree(Circuit c) {
         i=0;
+        q.clear();
         graph = c.getGates();
         for(auto gate : graph){
             m.insert(std::pair<ID, int>(gate->getId(), 0));

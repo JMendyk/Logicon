@@ -38,4 +38,8 @@ namespace Logicon {
         ImGui::End();
     }
 
+    void CanvasWidget::set_current_gate_to_place(GATE_TYPE gate_type) {
+        gCircuit->set_current_gate_to_place(gate_type);
+    }
+
 } // namespace Logicon

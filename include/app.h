@@ -55,6 +55,12 @@ namespace Logicon {
          */
         void run();
 
+        /**
+         * Receive information from BlocksWidget which Gate should be placed in GCircuit
+         * @param gate_type gate to place
+         */
+        void set_current_gate_to_place(GATE_TYPE gate_type);
+
     private:
 
         /**

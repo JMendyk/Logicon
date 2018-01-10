@@ -156,4 +156,8 @@ namespace Logicon {
 
         return true;
     }
+
+    void App::set_current_gate_to_place(GATE_TYPE gate_type) {
+        canvasWidget.set_current_gate_to_place(gate_type);
+    }
 } // namespace Logicon

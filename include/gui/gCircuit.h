@@ -25,6 +25,8 @@ namespace Logicon {
         // local typedef for container
         typedef std::list<std::shared_ptr<GBlock>> _GBLOCK_CONTAINER_TYPE;
 
+        GATE_TYPE currentGateToPlace;
+
         std::shared_ptr<Circuit> circuit;
         _GBLOCK_CONTAINER_TYPE gBlocks; // list with positions and blocks, TODO: spatial data struct
 
@@ -136,6 +138,12 @@ namespace Logicon {
          * @param window_size
          */
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
+
+        /**
+         * Receive information from BlocksWidget which Gate should be placed
+         * @param gate_type gate to place
+         */
+        void set_current_gate_to_place(GATE_TYPE gate_type);
 
     private:
 

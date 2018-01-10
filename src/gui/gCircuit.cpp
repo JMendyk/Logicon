@@ -5,39 +5,20 @@
 #include "gui/gCircuit.h"
 
 #include <algorithm>
-#include <gates/and.h> // TODO delete
+
+#include <gates/and.h>
+#include <assetLoader.h>
+#include <gates/delay.h>
+#include <gates/clock.h>
+#include <gates/input.h>
+#include <gates/switch.h>
 
 namespace Logicon {
 
-    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit) {}
+    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit), currentGateToPlace(NO_GATE) {}
 
     bool GCircuit::init() {
-
-        // TODO: Remove hard-coded GBlock's when adding GBlock's will be possible
-
         assert(circuit != nullptr);
-
-        auto g1 = std::make_shared<And>(Circuit::nextID());
-        circuit->add(std::static_pointer_cast<Gate, And>(g1));
-        auto g2 = std::make_shared<And>(Circuit::nextID());
-        circuit->add(std::static_pointer_cast<Gate, And>(g2));
-        auto g3 = std::make_shared<And>(Circuit::nextID());
-        circuit->add(std::static_pointer_cast<Gate, And>(g3));
-        auto g4 = std::make_shared<And>(Circuit::nextID());
-        circuit->add(std::static_pointer_cast<Gate, And>(g4));
-
-
-         //connect(g1->id, 0, g2->id, 1);
-         circuit->find(g1->id)->setOutputState(0, 1);
-         circuit->find(g2->id)->setInputState(1, 1);
-         //connect(g3->id, 0, g2->id, 0);
-         connect(g3->id, 0, g4->id, 0);
-         //connect(g2->id, 0, g4->id, 1);
-
-        insert(g1, UI::Vec2(5, 1));
-        insert(g2, UI::Vec2(15, 1));
-        insert(g3, UI::Vec2(1, 6));
-        insert(g4, UI::Vec2(20, 9));
         return true;
     }
 
@@ -150,7 +131,6 @@ namespace Logicon {
 
             scrollCanvas();
 
-            // TODO: Update content_size based on most right-bottom block's position
             static UI::Vec2 content_size = UI::Vec2(2048, 2048);
 
             // FIXME: This solution can be improved by only updating content_size if new GBlock is added or existing one was moved.
@@ -181,17 +161,151 @@ namespace Logicon {
                 std::for_each(gBlocks.begin(), gBlocks.end(), [](const std::shared_ptr<GBlock> &gBlock) {
                     gBlock->render();
                 });
-
-                /*
-                 * TODO: Render connections (who will render them?)
-                 */
             }
             ImGui::GetWindowDrawList()->ChannelsMerge();
+
+            if (currentGateToPlace != NO_GATE) {
+                Texture tex;
+                switch (currentGateToPlace) {
+
+                    case NOT:tex = Logicon::AssetLoader::gate_not();
+                        break;
+                    case DELAY:tex = Logicon::AssetLoader::gate_delay();
+                        break;
+                    case SWITCH:tex = Logicon::AssetLoader::gate_switch_off();
+                        break;
+                    case AND:tex = Logicon::AssetLoader::gate_and();
+                        break;
+                    case OR:tex = Logicon::AssetLoader::gate_or();
+                        break;
+                    case XOR:tex = Logicon::AssetLoader::gate_xor();
+                        break;
+                    case NAND:tex = Logicon::AssetLoader::gate_nand();
+                        break;
+                    case NOR:tex = Logicon::AssetLoader::gate_nor();
+                        break;
+                    case XNOR:tex = Logicon::AssetLoader::gate_xnor();
+                        break;
+                    case CLOCK:tex = Logicon::AssetLoader::gate_clock();
+                        break;
+                    case INPUT:tex = Logicon::AssetLoader::gate_input_low();
+                        break;
+                    case NO_GATE:
+                        assert(false); // Should not happen since we checked if currentGateToPlace != NO_GATE
+                        break;
+                }
+
+                UI::Vec2 mouse_pos = ImGui::GetIO().MousePos;
+
+                UI::Vec2 dimension;
+                if (currentGateToPlace <= Logicon::XNOR)
+                    dimension = UI::Vec2(5, 3);
+                else
+                    dimension = UI::Vec2(3, 3);
+
+                UI::Vec2 top_left = steppify(mouse_pos - dl_origin - (dimension*UI::CANVAS_GRID_SIZE)/2, UI::CANVAS_GRID_SIZE);
+
+                UI::Rect rect(UI::toGridCoordinates(top_left), UI::toGridCoordinates(top_left) + dimension);
+
+                ImColor color;
+                if (isOccupied(2147483647, rect)) // Color
+                    color = ImColor(255, 0, 0, 255); // RED
+                else
+                    color = ImColor(0, 255, 0, 255); // GREEN
+
+
+                dimension = dimension * UI::CANVAS_GRID_SIZE;
+                ImGui::SetCursorPos(top_left);
+                if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(tex.textureId),
+                                       dimension,
+                                       UI::Vec2(0, 0),
+                                       UI::Vec2(1, 1),
+                                       0,
+                                       ImColor(0, 0, 0, 0),
+                                       color)) {
+
+                    // TODO: Uncomment gates when their implementations will be available
+
+                    switch (currentGateToPlace) {
+
+                        //case NOT: {
+                        //    auto g1 = std::make_shared<Not>(Circuit::nextID());
+                        //    circuit->add(std::static_pointer_cast<Gate, Not>(g1));
+                        //    insert(g1, UI::toGridCoordinates(top_left));
+                        //    break;
+                        //}
+                        case DELAY: {
+                            auto g1 = std::make_shared<Delay>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Delay>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        case SWITCH: {
+                            auto g1 = std::make_shared<Switch>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Switch>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        case AND: {
+                            auto g1 = std::make_shared<And>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, And>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        //case OR: {
+                        //    auto g1 = std::make_shared<Or>(Circuit::nextID());
+                        //    circuit->add(std::static_pointer_cast<Gate, Or>(g1));
+                        //    insert(g1, UI::toGridCoordinates(top_left));
+                        //    break;
+                        //}
+                        //case XOR: {
+                        //    auto g1 = std::make_shared<Xor>(Circuit::nextID());
+                        //    circuit->add(std::static_pointer_cast<Gate, Xor>(g1));
+                        //    insert(g1, UI::toGridCoordinates(top_left));
+                        //    break;
+                        //}
+                        //case NAND: {
+                        //    auto g1 = std::make_shared<Nand>(Circuit::nextID());
+                        //    circuit->add(std::static_pointer_cast<Gate, Nand>(g1));
+                        //    insert(g1, UI::toGridCoordinates(top_left));
+                        //    break;
+                        //}
+                        //case NOR: {
+                        //    auto g1 = std::make_shared<Nor>(Circuit::nextID());
+                        //    circuit->add(std::static_pointer_cast<Gate, Nor>(g1));
+                        //    insert(g1, UI::toGridCoordinates(top_left));
+                        //    break;
+                        //}
+                        //case XNOR: {
+                        //    auto g1 = std::make_shared<Xnor>(Circuit::nextID());
+                        //    circuit->add(std::static_pointer_cast<Gate, Xnor>(g1));
+                        //    insert(g1, UI::toGridCoordinates(top_left));
+                        //    break;
+                        //}
+                        case CLOCK: {
+                            auto g1 = std::make_shared<Clock>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Clock>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        case INPUT: {
+                            auto g1 = std::make_shared<Input>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Input>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                    }
+                }
+            }
 
             ImGui::SetCursorPos(canvas_size);
         }
         ImGui::EndChild();
         ImGui::PopStyleVar(2);
+    }
+
+    void GCircuit::set_current_gate_to_place(GATE_TYPE gate_type) {
+        currentGateToPlace = gate_type;
     }
 
     // =====

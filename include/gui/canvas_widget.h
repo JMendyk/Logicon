@@ -29,6 +29,12 @@ namespace Logicon {
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
         bool close();
+
+        /**
+         * Receive information from BlocksWidget which Gate should be placed in GCircuit
+         * @param gate_type gate to place
+         */
+        void set_current_gate_to_place(GATE_TYPE gate_type);
     };
 
 } // namespace Logicon

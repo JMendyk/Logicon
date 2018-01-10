@@ -56,7 +56,8 @@ namespace Logicon {
     };
 
     enum GATE_TYPE {                                                    /// Represents gate type. Used instead of runtime type deduction.
-        NOT, DELAY, SWITCH, AND, OR, XOR, NAND, NOR, XNOR, CLOCK, INPUT
+        NOT, DELAY, SWITCH, AND, OR, XOR, NAND, NOR, XNOR, CLOCK, INPUT,
+        NO_GATE = -1 /// Used by GCircuit - not in gate-placing mode
     };
 
 } // namespace Logicon

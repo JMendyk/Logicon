@@ -26,7 +26,7 @@ namespace Logicon {
         /// how much the input signal is shifted into the future. can't be less than 0.
         Tick delay;
         /// list of waiting signals
-        std::list<int> signals;
+        std::list<State> signals;
 
     public:
         /// Constructor constructs default 1 tick delay and list contains one element equal 0
@@ -44,7 +44,13 @@ namespace Logicon {
          * @param delay new value for delay in Ticks
          */
         void changeSettings(Tick delay);
+
+        /// return const reference to list od delayed signals
+        const std::list<State> & getDelayList() const;
+
+        Tick getDelay();
     };
 } // namespace Logicon
 
 #endif //LOGICON_DELAY_H
+

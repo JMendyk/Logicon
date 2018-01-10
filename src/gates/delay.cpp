@@ -22,4 +22,12 @@ namespace Logicon {
         this->delay=delay;
         this->signals.resize(delay,0);
     }
+
+    const std::list<State> & Delay::getDelayList() const {
+        return this->signals;
+    }
+
+    Tick Delay::getDelay() {
+        return this->delay;
+    }
 } // namespace Logicon

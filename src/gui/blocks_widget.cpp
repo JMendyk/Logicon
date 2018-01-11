@@ -82,16 +82,16 @@ namespace Logicon {
 
             // TODO: Uncomment gates when their implementations will be available
 
-            //gate_preview(ImGui::GetID("gate_or"), GATE_TYPE::OR, AssetLoader::gate_or(), size);
+            gate_preview(ImGui::GetID("gate_or"), GATE_TYPE::OR, AssetLoader::gate_or(), size);
             gate_preview(ImGui::GetID("gate_and"), GATE_TYPE::AND, AssetLoader::gate_and(), size);
 
-            //gate_preview(ImGui::GetID("gate_nor"), GATE_TYPE::NOR, AssetLoader::gate_nor(), size);
-            //gate_preview(ImGui::GetID("gate_nand"), GATE_TYPE::NAND, AssetLoader::gate_nand(), size);
+            gate_preview(ImGui::GetID("gate_nor"), GATE_TYPE::NOR, AssetLoader::gate_nor(), size);
+            gate_preview(ImGui::GetID("gate_nand"), GATE_TYPE::NAND, AssetLoader::gate_nand(), size);
 
-            //gate_preview(ImGui::GetID("gate_not"), GATE_TYPE::NOT, AssetLoader::gate_not(), size);
-            //gate_preview(ImGui::GetID("gate_xnor"), GATE_TYPE::XNOR, AssetLoader::gate_xnor(), size);
+            gate_preview(ImGui::GetID("gate_not"), GATE_TYPE::NOT, AssetLoader::gate_not(), size);
+            gate_preview(ImGui::GetID("gate_xnor"), GATE_TYPE::XNOR, AssetLoader::gate_xnor(), size);
 
-            //gate_preview(ImGui::GetID("gate_xor"), GATE_TYPE::XOR, AssetLoader::gate_xor(), size);
+            gate_preview(ImGui::GetID("gate_xor"), GATE_TYPE::XOR, AssetLoader::gate_xor(), size);
 
             gate_preview(ImGui::GetID("gate_switch_off"), GATE_TYPE::SWITCH, AssetLoader::gate_switch_off(), size);
             gate_preview(ImGui::GetID("gate_delay"), GATE_TYPE::DELAY, AssetLoader::gate_delay(), size);

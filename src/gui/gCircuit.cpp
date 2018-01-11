@@ -12,6 +12,12 @@
 #include <gates/clock.h>
 #include <gates/input.h>
 #include <gates/switch.h>
+#include <gates/not.h>
+#include <gates/or.h>
+#include <gates/xor.h>
+#include <gates/nand.h>
+#include <gates/nor.h>
+#include <gates/xnor.h>
 
 namespace Logicon {
 
@@ -228,12 +234,12 @@ namespace Logicon {
 
                     switch (currentGateToPlace) {
 
-                        //case NOT: {
-                        //    auto g1 = std::make_shared<Not>(Circuit::nextID());
-                        //    circuit->add(std::static_pointer_cast<Gate, Not>(g1));
-                        //    insert(g1, UI::toGridCoordinates(top_left));
-                        //    break;
-                        //}
+                        case NOT: {
+                            auto g1 = std::make_shared<Not>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Not>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
                         case DELAY: {
                             auto g1 = std::make_shared<Delay>(Circuit::nextID());
                             circuit->add(std::static_pointer_cast<Gate, Delay>(g1));
@@ -252,36 +258,36 @@ namespace Logicon {
                             insert(g1, UI::toGridCoordinates(top_left));
                             break;
                         }
-                        //case OR: {
-                        //    auto g1 = std::make_shared<Or>(Circuit::nextID());
-                        //    circuit->add(std::static_pointer_cast<Gate, Or>(g1));
-                        //    insert(g1, UI::toGridCoordinates(top_left));
-                        //    break;
-                        //}
-                        //case XOR: {
-                        //    auto g1 = std::make_shared<Xor>(Circuit::nextID());
-                        //    circuit->add(std::static_pointer_cast<Gate, Xor>(g1));
-                        //    insert(g1, UI::toGridCoordinates(top_left));
-                        //    break;
-                        //}
-                        //case NAND: {
-                        //    auto g1 = std::make_shared<Nand>(Circuit::nextID());
-                        //    circuit->add(std::static_pointer_cast<Gate, Nand>(g1));
-                        //    insert(g1, UI::toGridCoordinates(top_left));
-                        //    break;
-                        //}
-                        //case NOR: {
-                        //    auto g1 = std::make_shared<Nor>(Circuit::nextID());
-                        //    circuit->add(std::static_pointer_cast<Gate, Nor>(g1));
-                        //    insert(g1, UI::toGridCoordinates(top_left));
-                        //    break;
-                        //}
-                        //case XNOR: {
-                        //    auto g1 = std::make_shared<Xnor>(Circuit::nextID());
-                        //    circuit->add(std::static_pointer_cast<Gate, Xnor>(g1));
-                        //    insert(g1, UI::toGridCoordinates(top_left));
-                        //    break;
-                        //}
+                        case OR: {
+                            auto g1 = std::make_shared<Or>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Or>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        case XOR: {
+                            auto g1 = std::make_shared<Xor>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Xor>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        case NAND: {
+                            auto g1 = std::make_shared<Nand>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Nand>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        case NOR: {
+                            auto g1 = std::make_shared<Nor>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Nor>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
+                        case XNOR: {
+                            auto g1 = std::make_shared<Xnor>(Circuit::nextID());
+                            circuit->add(std::static_pointer_cast<Gate, Xnor>(g1));
+                            insert(g1, UI::toGridCoordinates(top_left));
+                            break;
+                        }
                         case CLOCK: {
                             auto g1 = std::make_shared<Clock>(Circuit::nextID());
                             circuit->add(std::static_pointer_cast<Gate, Clock>(g1));

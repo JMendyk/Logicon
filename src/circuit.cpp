@@ -43,6 +43,9 @@ namespace Logicon {
                 Logicon::Logger::info("Tried connecting already connected gates '%d:%d' -> '%d:%d'!",
                                       idFrom, output, idTo, input);
             else if (!ConnectedAB && !ConnectedBA) { // create new connection - override input, add to output
+                auto connections = gateTo->getInputConnections(input);
+                for (auto connection : connections) // disconnect all input connections at input
+                    disconnect(connection.id, connection.port, idTo, input);
                 gateFrom->addOutputConnection(output, idTo, input);
                 gateTo->setInputConnection(input, idFrom, output);
             } else // TODO #1 fix windows SEH problems on rethrow

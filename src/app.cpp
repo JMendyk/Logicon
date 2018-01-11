@@ -89,8 +89,9 @@ namespace Logicon {
             ImGui_ImplGlfwGL3_NewFrame();
 
             // if (tickrate...) engine.calcLogic(this.canvasWidget.gCircuit.circuit)
+            this->footerWidget->setStr(1, std::to_string((int) ImGui::GetMousePos().x));
+            this->footerWidget->setStr(2, std::to_string((int) ImGui::GetMousePos().y));
             this->render();
-
             int display_w, display_h;
             glfwGetFramebufferSize(window, &display_w, &display_h);
             glViewport(0, 0, display_w, display_h);

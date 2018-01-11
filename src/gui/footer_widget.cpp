@@ -59,7 +59,7 @@ namespace Logicon {
              * thus order of elements is the same as they will appear on the screen
              */
 
-            static const int elements_count = 4;
+            static const int elements_count = 3;
             // The 100.0f is just a guess size for the first frame.
             static std::vector<float> widths(elements_count, {100.0f});
             static const float ItemSpacing = ImGui::GetStyle().ItemSpacing.x;
@@ -70,19 +70,15 @@ namespace Logicon {
                 ImGui::SameLine(ImGui::GetWindowWidth() - pos);
                 ImGui::BeginGroup();
                 if (idx == 0) {
-                    ImGui::Text("In: %d", 1);
+                    ImGui::Text(str1.c_str());
                     ImGui::SameLine();
                     ImGui::VerticalSeparator();
                 } else if (idx == 1) {
-                    ImGui::Text("Out: %d", 0);
+                    ImGui::Text(str2.c_str());
                     ImGui::SameLine();
                     ImGui::VerticalSeparator();
                 } else if (idx == 2) {
-                    ImGui::Text("Gates: %d", 3);
-                    ImGui::SameLine();
-                    ImGui::VerticalSeparator();
-                } else if (idx == 3) {
-                    ImGui::Text("File: %s", "Circuit1");
+                    ImGui::Text(str3.c_str());
                 }
                 ImGui::EndGroup();
                 widths[idx] = ImGui::GetItemRectSize().x;
@@ -97,6 +93,22 @@ namespace Logicon {
             instance = new FooterWidget();
         }
         return instance;
+    }
+
+    void FooterWidget::setStr(int idx, std::string str) {
+        switch (idx) {
+            case 1:
+                str1 = "x:" + str;
+                break;
+            case 2:
+                str2 = "y:" + str;
+                break;
+            case 3:
+                str3 = str;
+                break;
+            default:
+                break;
+        }
     }
 
 } // namespace Logicon

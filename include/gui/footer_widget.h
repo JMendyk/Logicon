@@ -18,7 +18,9 @@ namespace Logicon {
         static FooterWidget *instance;
         App *app;
         GLFWwindow *window;
-
+        std::string str1;
+        std::string str2;
+        std::string str3;
         FooterWidget() = default;
     public:
         static FooterWidget *getInstance();
@@ -28,6 +30,8 @@ namespace Logicon {
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
 
         bool close();
+
+        void setStr(int idx, std::string str);
     };
 
 };

@@ -9,7 +9,7 @@ target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
 ##### GL3W #####
 set(GL3W_DIR ${DEPS_DIR}/gl3w)
 
-add_subdirectory(${GL3W_DIR})
+#add_subdirectory(${GL3W_DIR})
 include_directories(${GL3W_DIR}/include)
 target_sources(${EXECUTABLE_NAME}
     PUBLIC
@@ -23,6 +23,7 @@ set(GLFW_DIR ${DEPS_DIR}/glfw)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(${GLFW_DIR})
 target_link_libraries(${EXECUTABLE_NAME} glfw)

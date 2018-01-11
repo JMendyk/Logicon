@@ -5,28 +5,36 @@
 #include "app.h"
 
 #include <imgui_impl_glfw_gl3.h>
-
-#include <iostream> // for error printing
+#include "assetLoader.h"
+#include "logger.h"
 
 namespace Logicon {
 
     std::string App::APP_TITLE = "Logicon";
 
-    void error_callback(int error, const char* description) {
-        fprintf(stderr, "Error %d: %s\n", error, description);
+    /*
+     * create new empty circuit, set tickrate to hard 1000
+     * TODO: move INITIALIZED/UNINITIALIZED state to Circuit.h, leave the rest in APP. (for serialization)
+     */
+    App::App() : tickrate(1000), state(State::PAUSED) {
+        circuit = std::make_shared<Circuit>(Circuit::nextID());
     }
 
-    bool App::init() {
-        glfwSetErrorCallback(error_callback);
+    bool App::init() { //TODO: Place all app related initialization like logger, assets etc. here
+
+        // TODO: check for flag in init() for SHELL and GUI here instead of main
+        // GL initialization
+        glfwSetErrorCallback(
+                [](int error, const char *description) { Logicon::Logger::err("Error %d: %s", error, description); });
         if (!glfwInit()) {
-            std::cerr << "Failed to initialize GLFW.\n";
+            Logger::err("Cannot initialize GLFW.");
             return false;
         }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        this->window = glfwCreateWindow(1280, 720, App::APP_TITLE.c_str(), NULL, NULL);
+        this->window = glfwCreateWindow(1280, 720, App::APP_TITLE.c_str(), nullptr, nullptr);
         glfwMakeContextCurrent(this->window);
         glfwSwapInterval(1); // Enable vsync
         gl3wInit();
@@ -34,70 +42,114 @@ namespace Logicon {
         // Setup ImGui binding
         ImGui_ImplGlfwGL3_Init(this->window, true);
 
-        this->state = State::UNINITIALIZED;
-
         /*
          * Add default app font
          * This must happen before initialization of any other app components
          * since default app font must be defined as the first one.
          */
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO &io = ImGui::GetIO();
         static ImFontConfig defaultFontConfig = ImFontConfig();
-        io.Fonts->AddFontFromFileTTF("../dependencies/imgui/extra_fonts/Roboto-Medium.ttf", 15.0f, &defaultFontConfig);
+        io.Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Medium.ttf", 15.0f, &defaultFontConfig);
 
         ImGui::GetStyle().WindowRounding = 0.0f;
 
-        this->menuWidget = MenuWidget();
-        if(!this->menuWidget.init(this->window))
+        // Load assets: images
+        AssetLoader::loadAssets();
+
+        // Widgets
+        this->menuWidget = MenuWidget::getInstance();
+        if (!this->menuWidget->init(this, this->window))
             return false;
 
-        this->blocksWidget = BlocksWidget();
-        if(!this->blocksWidget.init(this->window))
+        this->blocksWidget = BlocksWidget::getInstance();
+        if (!this->blocksWidget->init(this, this->window))
             return false;
 
-        this->footerWidget = FooterWidget();
-        if(!this->footerWidget.init(this->window))
+        this->canvasWidget = CanvasWidget::getInstance();
+        if (!this->canvasWidget->init(this))
             return false;
 
+        this->footerWidget = FooterWidget::getInstance();
+        if (!this->footerWidget->init(this, this->window))
+            return false;
+
+        // TODO: operate on a fresh file called 'circuit' as if it was just created
         return true;
     }
 
     void App::run() {
-        if(!init()) {
-            std::cerr << "Failed to initialize the app.\n";
+        if (!init()) { // TODO: close parts that were opened successfully
+            Logicon::Logger::err("Failed to initialize the app.");
             exit(-1);
         }
 
+        // Main app loop
         while (!glfwWindowShouldClose(this->window)) {
             glfwPollEvents();
             ImGui_ImplGlfwGL3_NewFrame();
 
-            this->render_ui();
-
+            // if (tickrate...) engine.calcLogic(this.canvasWidget.gCircuit.circuit)
+            this->footerWidget->setStr(1, std::to_string((int) ImGui::GetMousePos().x));
+            this->footerWidget->setStr(2, std::to_string((int) ImGui::GetMousePos().y));
+            this->render();
             int display_w, display_h;
             glfwGetFramebufferSize(window, &display_w, &display_h);
             glViewport(0, 0, display_w, display_h);
             ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
             glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
             glClear(GL_COLOR_BUFFER_BIT);
+
             ImGui::Render();
+
             glfwSwapBuffers(window);
         }
 
-        if(!close()) {
-            std::cerr << "Failed to properly close the app.\n";
+        if (!close()) {
+            Logicon::Logger::err("Failed to properly close the app.");
             exit(-1);
         }
     }
 
+    void App::render() {
+        int canvas_w, canvas_h;
+        glfwGetFramebufferSize(window, &canvas_w, &canvas_h);
+
+        // Menu Widget
+        this->menuWidget->render({UI::MARGIN,
+                                  UI::MARGIN},
+                                 {canvas_w - 2 * UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+                                 UI::MENU_WIDGET_HEIGHT});
+        // Blocks Widget
+        this->blocksWidget->render({canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
+                                    UI::MARGIN},
+                                   {UI::BLOCKS_WIDGET_WIDTH,
+                                   canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)});
+
+        // Canvas Widget
+        this->canvasWidget->render({UI::MARGIN,
+                                   UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN},
+                                   {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+                                   canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
+                                   UI::FOOTER_WIDGET_HEIGHT});
+
+        // Footer Widget
+        this->footerWidget->render({0,
+                                   (float) canvas_h - (UI::FOOTER_WIDGET_HEIGHT)},
+                                   {(float) canvas_w,
+                                   UI::FOOTER_WIDGET_HEIGHT});
+    }
+
     bool App::close() {
-        if(!this->menuWidget.close())
+        if (!this->menuWidget->close())
             return false;
 
-        if(!this->blocksWidget.close())
+        if (!this->blocksWidget->close())
             return false;
 
-        if(!this->footerWidget.close())
+        if (!this->canvasWidget->close())
+            return false;
+
+        if (!this->footerWidget->close())
             return false;
 
         ImGui_ImplGlfwGL3_Shutdown();
@@ -106,53 +158,7 @@ namespace Logicon {
         return true;
     }
 
-    ID App::nextID() {
-        static unsigned int next_id = 0;
-        return next_id++;
+    void App::set_current_gate_to_place(GATE_TYPE gate_type) {
+        canvasWidget->set_current_gate_to_place(gate_type);
     }
-
-    void App::render_ui() {
-        int canvas_w, canvas_h;
-        glfwGetFramebufferSize(window, &canvas_w, &canvas_h);
-
-        /*
-         * Menu Widget
-         */
-        const UIVec2 menu_widget_pos = UIVec2(
-                UI::MARGIN,
-                UI::MARGIN
-        );
-        const UIVec2 menu_widget_size = UIVec2(
-                canvas_w - 2*UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
-                UI::MENU_WIDGET_HEIGHT
-        );
-        this->menuWidget.render_ui(menu_widget_pos, menu_widget_size);
-
-        /*
-         * Blocks Widget
-         */
-        const UIVec2 blocks_widget_pos = UIVec2(
-                canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
-                UI::MARGIN
-        );
-        const UIVec2 blocks_widget_size = UIVec2(
-                UI::BLOCKS_WIDGET_WIDTH,
-                canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)
-        );
-        this->blocksWidget.render_ui(blocks_widget_pos, blocks_widget_size);
-
-        /*
-         * Footer Widget
-         */
-        const UIVec2 footer_widget_pos = UIVec2(
-                0,
-                canvas_h - (UI::FOOTER_WIDGET_HEIGHT)
-        );
-        const UIVec2 footer_widget_size = UIVec2(
-                canvas_w,
-                UI::FOOTER_WIDGET_HEIGHT
-        );
-        this->footerWidget.render_ui(footer_widget_pos, footer_widget_size);
-    }
-
 } // namespace Logicon

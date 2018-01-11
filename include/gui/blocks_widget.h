@@ -5,19 +5,27 @@
 #ifndef LOGICON_BLOCKSWIDGET_H
 #define LOGICON_BLOCKSWIDGET_H
 
-#include "gui/gHelpers.h"
+#include "gui/gUtils.h"
 
 #include <GLFW/glfw3.h>
 
 namespace Logicon {
 
-    class BlocksWidget {
+    // forward declare App
+    class App;
 
+    class BlocksWidget {
+        static BlocksWidget *instance;
+
+        App *app;
         GLFWwindow* window;
 
+        BlocksWidget() = default;
     public:
-        bool init(GLFWwindow* window);
-        void render_ui(const UIVec2 &window_pos, const UIVec2 &window_size);
+        static BlocksWidget *getInstance();
+        bool init(App *app, GLFWwindow *window);
+
+        void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
         bool close();
     };
 

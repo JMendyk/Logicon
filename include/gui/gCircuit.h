@@ -1,0 +1,156 @@
+//
+// Created by JMendyk on 28.12.17.
+//
+
+#ifndef LOGICON_G_CIRCUIT_H
+#define LOGICON_G_CIRCUIT_H
+
+#include "types.h"
+#include "gui/gUtils.h"
+#include "gBlock.h"
+
+#include <set>
+#include <map>
+#include <memory>
+#include <circuit.h>
+
+namespace Logicon {
+
+    /**
+     * @remarks Currently some of the methods return ID, which required defining special "NOT FOUND" value of ID.
+     * Maybe methods should be reconsidered and return pointers.
+     */
+    class GCircuit : public std::enable_shared_from_this<GCircuit> {
+
+        // local typedef for container
+        typedef std::list<std::shared_ptr<GBlock>> _GBLOCK_CONTAINER_TYPE;
+
+        GATE_TYPE currentGateToPlace;
+
+        std::shared_ptr<Circuit> circuit;
+        _GBLOCK_CONTAINER_TYPE gBlocks; // list with positions and blocks, TODO: spatial data struct
+
+    public:
+
+        GCircuit(std::shared_ptr<Circuit> circuit);
+
+/**
+         * Initialize GCircuit
+         * @return
+         */
+        bool init();
+
+        /**
+         * @brief Run while app closes or opens new file
+         * @return true if close was successful
+         */
+        bool close();
+
+        /**
+         * @brief Returns this circuit
+         * @return this
+         */
+        const std::shared_ptr<Circuit> getCircuit() const;
+
+        /**
+         * @brief Returns container holding gBlocks
+         * @return
+         */
+        const _GBLOCK_CONTAINER_TYPE &getGBlocks() const;
+
+        /**
+         * @breif Returns pointer to GBlock at given position
+         * @param pos position to check for
+         * @return pointer to GBlock or nullptr if block at given pos doesn't exist
+         */
+        std::shared_ptr<GBlock> getGBlockAt(UI::Vec2 &pos);
+
+        /**
+         * @breif Returns pointer to GBlock by ID
+         * @param id GBlock's ID
+         * @return GBlock pointer
+         */
+        std::shared_ptr<GBlock> getGBlockByID(ID &id);
+
+        /**
+         * @brief Inserts given gate at given position.
+         * @details Creates new GBlock based on gate at given position.
+         * @warning Doesn't check if the place is occupied!
+         * @param gate gate to be inserted
+         * @param pos position to where put a gate
+         */
+        void insert(std::shared_ptr<Gate> gate, UI::Vec2 pos);
+
+        /**
+         * @brief Removes GBlock and corresponding gate from model
+         * @param id ID of GBlock that should be removed
+         */
+        void remove(ID &id);
+
+        /**
+         * @brief clears GCircuit and model
+         */
+        void clear();
+
+        /**
+         * @breif Checks if in the rectangle all cells are either free or belong to GBlock
+         * @param id ID of GBlock
+         * @param rect Rectangle to check
+         * @return false if all cells are either free or belong to GBlock
+         */
+        bool isOccupied(ID id, UI::Rect rect);
+
+        /**
+         * @brief Moves existing GBlock to new position
+         *
+         * @param id ID of GBlock that should be moved
+         * @param pos new position as vector of integer values
+         * @return true if move operation was successful
+         */
+        bool move(ID &id, UI::Vec2 pos);
+
+        /**
+         * @brief Connects two GBlocks
+         * @param idFrom ID of GBlock where connection starts
+         * @param output Output port of the starting GBlock
+         * @param idTo ID of GBlock where connection ends
+         * @param input Input port of the ending GBlock
+         */
+        void connect(ID idFrom, Port output, ID idTo, Port input);
+
+        /**
+         * @brief Disconnects two GBlocks that were previously connected
+         * @param idFrom ID of GBlock where connections starts
+         * @param output Output port of the starting GBlock
+         * @param idTo ID of GBlock where connections ends
+         * @param input Input port of the ending GBlock
+         */
+        void disconnect(ID idFrom, Port output, ID idTo, Port input);
+
+        /**
+         * @brief Updates graphical information based on circuit: changes images, cable colors, input colors etc.
+         */
+        void update();
+
+        /**
+         * @brief Renders GCircuit
+         * @param window_pos
+         * @param window_size
+         */
+        void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
+
+        /**
+         * Receive information from BlocksWidget which Gate should be placed
+         * @param gate_type gate to place
+         */
+        void set_current_gate_to_place(GATE_TYPE gate_type);
+
+    private:
+
+        // TODO: move responsibility to Canvas widget
+        void scrollCanvas();
+    };
+
+} // namespace Logicon
+
+#endif //LOGICON_G_CIRCUIT_H

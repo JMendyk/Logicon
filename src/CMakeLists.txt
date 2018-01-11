@@ -12,6 +12,8 @@ target_sources(${EXECUTABLE_NAME}
         ${SRC_DIR}/circuit.cpp
         ${SRC_DIR}/graphics.cpp
         ${SRC_DIR}/logger.cpp
+        ${SRC_DIR}/assetLoader.cpp
+
 
         ${SRC_DIR}/gates/gate.cpp
 
@@ -30,9 +32,12 @@ target_sources(${EXECUTABLE_NAME}
 
         ${SRC_DIR}/gui/menu_widget.cpp
         ${SRC_DIR}/gui/blocks_widget.cpp
+        ${SRC_DIR}/gui/canvas_widget.cpp
         ${SRC_DIR}/gui/footer_widget.cpp
 
-        ${SRC_DIR}/gui/gHelpers.cpp
+        ${SRC_DIR}/gui/gCircuit.cpp
+        ${SRC_DIR}/gui/gBlock.cpp
+        ${SRC_DIR}/gui/gPort.cpp
 
         ${SRC_DIR}/exceptions/logiconException.cpp
         ${SRC_DIR}/exceptions/idNotFoundException.cpp

@@ -12,10 +12,11 @@
 
 #include "types.h"
 
-#include "gui/gHelpers.h"
+#include "gui/gUtils.h"
 
 #include "gui/menu_widget.h"
 #include "gui/blocks_widget.h"
+#include <gui/canvas_widget.h>
 #include "gui/footer_widget.h"
 
 namespace Logicon {
@@ -26,57 +27,61 @@ namespace Logicon {
      * Main program loop is located in here.
      */
     class App {
-        static std::string APP_TITLE;
-        /*
-         * Clock, Time, Engine, Canvas and GCircuit are temporarily commented-out
-         * since they aren't implemented yet nor are they possible to compile in the current state.
-         */
         //Clock clock;
-        //Time tickrate;
         //Engine engine;
 
-        MenuWidget menuWidget;
-        BlocksWidget blocksWidget;
-        FooterWidget footerWidget;
-        //Canvas canvas;
-        //
-        //GCircuit gCircuit;
+        /// GL Window used as GUI root container
+        GLFWwindow *window;
 
-        enum State {
+    public:
+        static std::string APP_TITLE;
+
+        MenuWidget *menuWidget;
+        BlocksWidget *blocksWidget;
+        FooterWidget *footerWidget;
+        CanvasWidget *canvasWidget;
+
+        Tick tickrate;                                      /// how often engine calculates logic
+        std::shared_ptr<Circuit> circuit;                   /// current circuit
+        enum State {                                        /// Represents current mode in which app is running TODO: Move UNINITIALIZED state inside CIRCUIT
             UNINITIALIZED, RUNNING, PAUSED, STEP_BY_STEP
-        };
+        } state;
 
-        State state;
-
-        GLFWwindow* window;
+        /// Constructor creates new Circuit
+        App();
 
         /**
+         * @brief Starts the app.
+         */
+        void run();
+
+        /**
+         * Receive information from BlocksWidget which Gate should be placed in GCircuit
+         * @param gate_type gate to place
+         */
+        void set_current_gate_to_place(GATE_TYPE gate_type);
+
+    private:
+
+        /**
+         * @brief Initializes app - opens config, images, reads values from config, initializes public members
          * Called once by App::run when app starts
          * @return true if initialization was successful
          */
         bool init();
 
         /**
+         * @brief Renders imgui widgets.
          * Called by App::run once per frame
          */
-        void render_ui();
+        void render();
 
         /**
+         * @brief Simmilar to init() - closes proper files etc.
          * Called once by App::run when app is about to close
          * @return true if everything was closed successfuly
          */
         bool close();
-
-        /**
-         * @return next unique identifier
-         */
-        ID nextID();
-
-    public:
-        /**
-         * Call to start the app.
-         */
-        void run();
     };
 
 } // namespace Logicon

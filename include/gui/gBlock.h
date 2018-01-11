@@ -29,7 +29,7 @@ namespace Logicon {
         std::vector<std::shared_ptr<GPort>> gInputs;            /// inputs
         std::vector<std::shared_ptr<GPort>> gOutptus;           /// outputs
 
-        bool DRAGGING_FLAG;                                        /// flag saying the block is dragged
+        bool DRAGGING_FLAG;                                     /// flag saying the block is dragged
         UI::Vec2 dragDeltaExact;                                /// drag delta in canvas coordinates
     public:
 
@@ -80,8 +80,6 @@ namespace Logicon {
          */
         std::shared_ptr<GPort> getGPortAt(UI::Vec2 &pos) const;
 
-        bool isDragged() const;
-
         /**
          * @brief Updates position to new position.
          * @param pos new position for gBlock
@@ -92,6 +90,18 @@ namespace Logicon {
          * @brief updates info about gate from model
          */
         void update();
+
+        /**
+         * @brief Checks if this block is beeing dragged
+         * @return DRAGGED_FLAG
+         */
+        bool isDragged() const;
+
+        /**
+         * @brief Returns exact drag delta in canvas coordinates
+         * @return
+         */
+        const UI::Vec2 &getDragDeltaExact() const;
 
     private:
 

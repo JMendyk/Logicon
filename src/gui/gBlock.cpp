@@ -69,7 +69,7 @@ namespace Logicon {
     }
 
 
-    void GBlock::render() {
+    void GBlock::render(bool should_interact) {
         ImColor color(255, 255, 255);
 
         assert(!parentCircuit.expired());
@@ -112,7 +112,7 @@ namespace Logicon {
                                UI::Vec2(1, 1),
                                0,
                                ImColor(0, 0, 0, 0),
-                               color)) {
+                               color) && should_interact) {
             // TODO clickAction
         }
 
@@ -136,7 +136,7 @@ namespace Logicon {
 
         // IsItemHovered doesn't check what is at the top of mouse cursor - it may be GPort
         bool mouse_is_clicked_over_me = false;
-        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0) && should_interact) {
             mouse_is_clicked_over_me = true;
             //dragDeltaExact = position;
         }
@@ -149,14 +149,14 @@ namespace Logicon {
         // draw GPorts
         ImGui::PushID("gport_inputs");
         for (auto gInput : gInputs) {
-            gInput->render(position + UI::toGridCoordinates(dragDeltaExact));
+            gInput->render(position + UI::toGridCoordinates(dragDeltaExact), should_interact);
             is_any_gport_dragged |= gInput->isDragged();
         }
         ImGui::PopID();
 
         ImGui::PushID("gport_outputs");
         for (auto gOutput : gOutptus) {
-            gOutput->render(position + UI::toGridCoordinates(dragDeltaExact));
+            gOutput->render(position + UI::toGridCoordinates(dragDeltaExact), should_interact);
             is_any_gport_dragged |= gOutput->isDragged();
         }
         ImGui::PopID();

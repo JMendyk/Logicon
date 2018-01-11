@@ -43,8 +43,9 @@ namespace Logicon {
 
         /**
          * @brief Renders the gBlock also checking if it is dragged
+         * @param should_interact suggestion whether GBlock should respond to user interactions
          */
-        void render();
+        void render(bool should_interact);
 
         const std::shared_ptr<Gate> &getGate() const;
 

@@ -46,8 +46,9 @@ namespace Logicon {
 
         /**
          * @brief Renders GPort.
+         * @param should_interact suggestion whether GBlock should respond to user interactions
          */
-        void render(const UI::Vec2 &gBlockPos);
+        void render(const UI::Vec2 &gBlockPos, bool should_interact);
 
         /**
          * @brief Returns bounding box of this GPort in Grid coordinates relative to parent(with floats if GPort Margin is not zero)

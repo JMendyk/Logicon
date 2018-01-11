@@ -22,20 +22,20 @@ void Logicon::GPort::dragging() {
 
 }
 
-void Logicon::GPort::render(const UI::Vec2 &gBlockPos) {
+void Logicon::GPort::render(const UI::Vec2 &gBlockPos, bool should_interact) {
     ImGui::PushID(index);
 
     ImGui::SetCursorPos(
             UI::toCanvasCoordinates(gBlockPos + relativePosition) +
             UI::Vec2(UI::GPORT_PADDING, UI::GPORT_PADDING));
     std::string text = isInput ? "I" : "O";
-    ImGui::Button(text.c_str(), UI::Vec2(UI::GPORT_SIZE, UI::GPORT_SIZE));
+    if(ImGui::Button(text.c_str(), UI::Vec2(UI::GPORT_SIZE, UI::GPORT_SIZE)) && should_interact);
 
-    DRAGGING_FLAG = ImGui::IsItemHovered() && ImGui::IsMouseClicked(0);
+    DRAGGING_FLAG = ImGui::IsItemHovered() && ImGui::IsMouseClicked(0) && should_interact;
 
     struct GPortDragDropData { ID idFrom; Port output; };
     
-    if(ImGui::BeginDragDropSource()) {
+    if(should_interact && ImGui::BeginDragDropSource()) {
         GPortDragDropData* gport_cp = new GPortDragDropData({ gateId, index });
 
         ImGui::SetDragDropPayload(isInput ? DRAGDROP_FROM_INPUT : DRAGDROP_FROM_OUTPUT, gport_cp, sizeof(gport_cp));
@@ -43,7 +43,7 @@ void Logicon::GPort::render(const UI::Vec2 &gBlockPos) {
         ImGui::EndDragDropSource();
     }
 
-    if(ImGui::BeginDragDropTarget()) {
+    if(should_interact && ImGui::BeginDragDropTarget()) {
         auto payload = ImGui::AcceptDragDropPayload(!isInput ? DRAGDROP_FROM_INPUT : DRAGDROP_FROM_OUTPUT);
         if(payload != nullptr && payload->IsDelivery()) {
             auto *data = (GPortDragDropData *) payload->Data;

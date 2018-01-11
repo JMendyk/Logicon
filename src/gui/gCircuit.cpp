@@ -158,8 +158,8 @@ namespace Logicon {
                 /*
                  * Render gBlocks
                  */
-                std::for_each(gBlocks.begin(), gBlocks.end(), [](const std::shared_ptr<GBlock> &gBlock) {
-                    gBlock->render();
+                std::for_each(gBlocks.begin(), gBlocks.end(), [this](const std::shared_ptr<GBlock> &gBlock) {
+                    gBlock->render(currentGateToPlace == NO_GATE);
                 });
             }
             ImGui::GetWindowDrawList()->ChannelsMerge();
@@ -222,7 +222,7 @@ namespace Logicon {
                                        UI::Vec2(1, 1),
                                        0,
                                        ImColor(0, 0, 0, 0),
-                                       color)) {
+                                       color) && !isOccupied(2147483647, rect)) {
 
                     // TODO: Uncomment gates when their implementations will be available
 

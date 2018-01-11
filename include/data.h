@@ -5,7 +5,12 @@
 #ifndef LOGICON_DATA_H
 #define LOGICON_DATA_H
 
+#include "json/json.hpp"
+
+
 namespace Logicon {
+    class GCircuit;
+
     /**
      * @brief Representing data in JSON format.
      *
@@ -13,8 +18,11 @@ namespace Logicon {
      * Allows to store values such as: labels, image paths, descriptions, positions of buttons, data about GBlocks etc.
      */
     class Data {
-        //TODO
+        static void save(std::string path, GCircuit *gCircuit);
+
+        static std::shared_ptr<GCircuit> read(std::string path);
     };
 } // namespace Logicon
+
 
 #endif //LOGICON_DATA_H

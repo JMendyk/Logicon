@@ -70,7 +70,7 @@ namespace Logicon {
          * @param id GBlock's ID
          * @return GBlock pointer
          */
-        std::shared_ptr<GBlock> getGBlockByID(ID &id);
+        std::shared_ptr<GBlock> getGBlockByID(ID id);
 
         /**
          * @brief Inserts given gate at given position.

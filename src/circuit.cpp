@@ -4,8 +4,6 @@
 
 #include <exceptions/wrongPortException.h>
 #include <exceptions/idNotFoundException.h>
-#include <algorithm>
-#include <iostream>
 #include <logger.h>
 #include "circuit.h"
 
@@ -172,6 +170,10 @@ namespace Logicon {
 
     void Circuit::clear() {
         gates.clear();
+    }
+
+    const ID Circuit::getId() const {
+        return id;
     }
 
 } // namespace Logicon

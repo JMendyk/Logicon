@@ -4,8 +4,6 @@
 
 #include "gui/gCircuit.h"
 
-#include <algorithm>
-
 #include <gates/and.h>
 #include <assetLoader.h>
 #include <gates/delay.h>
@@ -55,7 +53,7 @@ namespace Logicon {
         return *found;
     }
 
-    std::shared_ptr<GBlock> GCircuit::getGBlockByID(ID &id) {
+    std::shared_ptr<GBlock> GCircuit::getGBlockByID(ID id) {
         auto found = std::find_if(gBlocks.begin(), gBlocks.end(),
                                   [id](const std::shared_ptr<GBlock> &gBlock) { return gBlock->getId() == id; }
         );

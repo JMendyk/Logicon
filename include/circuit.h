@@ -22,7 +22,7 @@ namespace Logicon {
         std::map<ID, std::shared_ptr<Gate>> gates;
 
     public:
-        Data data;                                      /// public access data
+        //Data data;                                      /// public access data
         bool INITIALIZED_FLAG;                          /// true if circuit was calculated for the first time, false otherwise.
         /**
          * @brief Generates next unique ID in range [0, MAX_UINT] for elements
@@ -97,6 +97,8 @@ namespace Logicon {
          * @brief Clears circuit deleting all gates
          */
         void clear();
+
+        const ID getId() const;
 
     };
 } // namespace Logicon

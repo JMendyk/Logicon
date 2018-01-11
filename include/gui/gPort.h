@@ -21,23 +21,24 @@ namespace Logicon {
 
     public:
 
-        const std::weak_ptr<GCircuit> parentCircuit;        /// weak pointer to parent circuit (to enable usage of connect, disconnect)
-        const ID gateId;                                    /// ID of block it belongs to
-        const Port index;                                   /// index of port it represents
-        const bool isInput;                                 /// represents type of port
+        // @formatter:off
+        const std::weak_ptr<GCircuit> parentGCircuit;               /// weak pointer to parent circuit (to enable usage of connect, disconnect)
+        const ID gateId;                                            /// ID of block it belongs to
+        const Port port;                                            /// index of port it represents
+        const bool isInput;                                         /// represents type of port
         const UI::Vec2 relativePosition;                            /// Position in GCircuit in grid coordinates
 
-        bool DRAGGING_FLAG;                                        /// flag saying the block is dragged
-
+        bool DRAGGING_FLAG;                                         /// flag saying the block is dragged
+        // @formatter:on
         /**
          * @brief Constructor for GPort.
          * @param isInput true if the port is an input, false if it is an output
-         * @param parentCircuit weak pointer to parent GBlock
+         * @param parentGCircuit weak pointer to parent GBlock
          * @param gateId id of parent gate
          * @param index index in parent GBlock
          * @param parentPos position in parent
          */
-        GPort(bool isInput, std::shared_ptr<GCircuit> parentCircuit, ID gateId, Port index, UI::Vec2 relativePosition);
+        GPort(bool isInput, std::shared_ptr<GCircuit> parentGCircuit, ID gateId, Port index, UI::Vec2 relativePosition);
 
         /**
          * @bief Run when dragging wire from port to port.

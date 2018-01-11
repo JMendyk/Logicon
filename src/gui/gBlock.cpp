@@ -173,9 +173,9 @@ namespace Logicon {
     // TODO: move to gPort
     void GBlock::renderWire(std::shared_ptr<GPort> thisGPort, ID otherId, Port otherPort) {
         /// TODO: fix double rendering
-        bool isHigh = (bool) (thisGPort->isInput ? this->gate->getInputState(thisGPort->index)
+        bool isHigh = (bool) (thisGPort->isInput ? this->gate->getInputState(thisGPort->port)
                                                  : this->gate->getOutputState(
-                        thisGPort->index));
+                        thisGPort->port));
 
         auto otherGBlock = parentCircuit.lock()->getGBlockByID(otherId);
         // don't draw twice if other block is dragged

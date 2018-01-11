@@ -44,7 +44,9 @@ namespace Logicon {
         const float     GPORT_SIZE                      = CANVAS_GRID_SIZE - 2*GPORT_PADDING;                           /// Dimensions for GPort button
         const float     BEZIER_CONTROL_DISTANCE         = UI::CANVAS_GRID_SIZE * 2.0;                                   /// How far in canvas coordinates is control point away from gPort
         const float     BEZIER_THICKNESS                = 4.0;                                                          /// Thickness of bezier lines
-        const int     BEZIER_SEGMENTS                   = 20;                                                            /// Higher = smoother bezier
+        const int BEZIER_SEGMENTS = 20;                                                           /// Higher = smoother bezier
+
+        const float CLICK_TIMEOUT = 0.3;                                                          /// Mili
         // @formatter:on
 
         /// Represents 2D vector for UI purposes

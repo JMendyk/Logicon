@@ -98,7 +98,6 @@ namespace Logicon {
         }
 
         ImGui::PushID(gate->id);
-        //ImGui::BeginGroup(); // TODO: Creating group causes issues when dragging, needs investigation before usage
 
         // If GBlock is dragged, we want it to draw above all other GBlocks
         ImGui::GetWindowDrawList()->ChannelsSetCurrent(
@@ -119,15 +118,8 @@ namespace Logicon {
         // Allow overlap for port buttons
         ImGui::SetItemAllowOverlap();
 
-        // draw wires TODO: ptimize to not draw same beziers two times
-        // draw beziers from inputs
 
-        ImGui::PushID("wire_inputs");
-        for (int input = 0; input < gate->getInputsCount(); ++input)
-            for (Connection connection : gate->getInputConnections(input))
-                renderWire(gInputs[input], connection.id, connection.port);
-        ImGui::PopID();
-        // draw beziers from outputs
+        // draw beziers from outputs only
         ImGui::PushID("wire_outputs");
         for (int output = 0; output < gate->getOutputsCount(); ++output)
             for (Connection connection : gate->getOutputConnections(output))
@@ -178,9 +170,6 @@ namespace Logicon {
                         thisGPort->port));
 
         auto otherGBlock = parentCircuit.lock()->getGBlockByID(otherId);
-        // don't draw twice if other block is dragged
-        if (otherGBlock->isDragged())
-            return;
 
         ImColor color = isHigh ? ImColor(255, 195, 17) : ImColor(68, 74, 121);
 
@@ -198,7 +187,7 @@ namespace Logicon {
         UI::Vec2 beginControl = begin + (thisGPort->isInput ?
                                          UI::Vec2(-UI::BEZIER_CONTROL_DISTANCE, 0) :
                                          UI::Vec2(UI::BEZIER_CONTROL_DISTANCE, 0));
-        end = UI::toCanvasCoordinates(end) + shift;
+        end = UI::toCanvasCoordinates(end) + shift + otherGBlock->getDragDeltaExact();
         UI::Vec2 endControl = end + (thisGPort->isInput ?
                                      UI::Vec2(UI::BEZIER_CONTROL_DISTANCE, 0) :
                                      UI::Vec2(-UI::BEZIER_CONTROL_DISTANCE, 0));
@@ -260,6 +249,10 @@ namespace Logicon {
 
     bool GBlock::isDragged() const {
         return DRAGGING_FLAG;
+    }
+
+    const UI::Vec2 &GBlock::getDragDeltaExact() const {
+        return dragDeltaExact;
     }
 
 } // namespace Logicon

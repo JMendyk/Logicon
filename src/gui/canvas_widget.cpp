@@ -12,9 +12,7 @@ namespace Logicon {
             instance = new CanvasWidget();
         }
         instance->app = app;
-        instance->gCircuit = std::make_shared<GCircuit>(app->circuit); // create new gCircuit and init with apps model
-        return instance->gCircuit->init();
-
+        return true;
     }
 
     bool CanvasWidget::close() {
@@ -49,8 +47,12 @@ namespace Logicon {
         return instance;
     }
 
-    void CanvasWidget::set_current_gate_to_place(GATE_TYPE gate_type) {
-        gCircuit->set_current_gate_to_place(gate_type);
+    void CanvasWidget::setGCircuit(const std::shared_ptr<Circuit> circuit) {
+        instance->gCircuit = std::make_shared<GCircuit>(circuit); // create new gCircuit and init with apps model
+    }
+
+    const std::shared_ptr<GCircuit> &CanvasWidget::getGCircuit() const {
+        return gCircuit;
     }
 
 } // namespace Logicon

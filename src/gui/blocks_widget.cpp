@@ -61,7 +61,7 @@ namespace Logicon {
                     current_gate_to_place = gate_type;
                 }
 
-                app->set_current_gate_to_place(current_gate_to_place);
+                app->canvasWidget->getGCircuit()->set_current_gate_to_place(current_gate_to_place);
             };
 
             static auto gate_preview = [set_current_gate_to_place](ImGuiID id, GATE_TYPE gate_type, Texture tex, float size) {

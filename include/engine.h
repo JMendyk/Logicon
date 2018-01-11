@@ -37,32 +37,38 @@ namespace Logicon {
          * Updates inputs of gates connected with gate gate.
          *
          */
-        void propagateSignal(Circuit c, std::shared_ptr<Gate> gate);
+        void propagateSignal(std::shared_ptr<Circuit> c, std::shared_ptr<Gate> gate);
 
         /**
          * Initializes new circut.
          * Sets its state on tick 0.
          */
-        void restart(Circuit c);
+        void restart(std::shared_ptr<Circuit> c);
 
         /**
          * Calculates order of updating WITHOUT setting states of any gates.
          * Used when downloading previously used circut.
          */
-        void calcTree(Circuit c);
+        void calcTree(std::shared_ptr<Circuit> c);
 
         /**
          * Calculates state of circuit based on the previous one.
          * Calculates all gates at once and then pushes results through edges.
          */
-        void calcLogic(Circuit c);
+        void calcLogic(std::shared_ptr<Circuit> c);
 
         /**
          * Calculates state of circuit based on the previous one.
          * Calculates state of each gate and immediately pushes it's results.
          * (Should be better option for gui)
          */
-        void calcLogicImmediate(Circuit c);
+        void calcLogicImmediate(std::shared_ptr<Circuit> c);
+
+        /**
+         * Calculates next state of circuit with deduction based on INITIALISED_FLAG
+         *
+         */
+        void calc(std::shared_ptr<Circuit> c, bool immediate);
     };
 } // namespace Logicon
 

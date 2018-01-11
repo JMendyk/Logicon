@@ -8,18 +8,21 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-#include <string>
-
 #include "types.h"
-
 #include "gui/gUtils.h"
+#include <string>
+#include <chrono>
+
+#include "engine.h"
+#include "circuit.h"
 
 #include "gui/menu_widget.h"
 #include "gui/blocks_widget.h"
-#include <gui/canvas_widget.h>
+#include "gui/canvas_widget.h"
 #include "gui/footer_widget.h"
 
 namespace Logicon {
+
 
     /**
      * @brief Main app class.
@@ -27,25 +30,31 @@ namespace Logicon {
      * Main program loop is located in here.
      */
     class App {
-        //Clock clock;
-        //Engine engine;
 
-        /// GL Window used as GUI root container
-        GLFWwindow *window;
+
+        GLFWwindow *window;                                             /// GL Window used as GUI root container
 
     public:
-        static std::string APP_TITLE;
+        Tick tickrate;                                                  /// how often engine calculates logic
 
+        Engine *engine;                                                 /// Engine singleton
+        std::shared_ptr<Circuit> circuit;                               /// current circuit
+        int timer;
+        float simulationSpeed;
+
+        std::string APP_TITLE;
         MenuWidget *menuWidget;
         BlocksWidget *blocksWidget;
         FooterWidget *footerWidget;
         CanvasWidget *canvasWidget;
 
-        Tick tickrate;                                      /// how often engine calculates logic
-        std::shared_ptr<Circuit> circuit;                   /// current circuit
-        enum State {                                        /// Represents current mode in which app is running TODO: Move UNINITIALIZED state inside CIRCUIT
-            UNINITIALIZED, RUNNING, PAUSED, STEP_BY_STEP
+        enum STATE {                                        /// Represents current mode in which app is running TODO: Move UNINITIALIZED state inside CIRCUIT
+            RUNNING,
+            PAUSED,
+            RESTART
         } state;
+
+        bool STEP_NEXT_STEP;
 
         /// Constructor creates new Circuit
         App();
@@ -53,13 +62,7 @@ namespace Logicon {
         /**
          * @brief Starts the app.
          */
-        void run();
-
-        /**
-         * Receive information from BlocksWidget which Gate should be placed in GCircuit
-         * @param gate_type gate to place
-         */
-        void set_current_gate_to_place(GATE_TYPE gate_type);
+        void run(bool shellMode);
 
     private:
 
@@ -68,7 +71,26 @@ namespace Logicon {
          * Called once by App::run when app starts
          * @return true if initialization was successful
          */
-        bool init();
+        bool init(bool shellMode);
+
+        /**
+         * @brief Simmilar to init() - closes proper files etc.
+         * Called once by App::run when app is about to close
+         * @return true if close was a success
+         */
+        bool close(bool shellMode);
+
+
+        /**
+         * @brief Initializes app for GUI mode
+         * @return true if initialization was successful
+         */
+        bool initGui();
+
+        /**
+         * @brief Launch app in GUI mode
+         */
+        void runGUI();
 
         /**
          * @brief Renders imgui widgets.
@@ -77,11 +99,27 @@ namespace Logicon {
         void render();
 
         /**
-         * @brief Simmilar to init() - closes proper files etc.
-         * Called once by App::run when app is about to close
-         * @return true if everything was closed successfuly
+         * @brief Run when exiting the gui
+         * @return true if close was a success
          */
-        bool close();
+        bool closeGui();
+
+        /**
+         * @brief Initializes app for Shell mode
+         * @return true if initialization was successful
+         */
+        bool initShell();
+
+        /**
+         * @brief Launch app in shell mode
+         */
+        void runShell();
+
+        /**
+         * @brief Run when exiting the shell
+         * @return true if close was a success
+         */
+        bool closeShell();
     };
 
 } // namespace Logicon

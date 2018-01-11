@@ -19,11 +19,16 @@ namespace Logicon {
         App *app;
         std::shared_ptr<GCircuit> gCircuit;
 
+
+    private:
+
         CanvasWidget() = default;
 
     public:
 
         static CanvasWidget *getInstance();
+
+        const std::shared_ptr<GCircuit> &getGCircuit() const;
 
         /**
          * Constructor accepting pointer to parent app.
@@ -36,11 +41,8 @@ namespace Logicon {
 
         bool close();
 
-        /**
-         * Receive information from BlocksWidget which Gate should be placed in GCircuit
-         * @param gate_type gate to place
-         */
-        void set_current_gate_to_place(GATE_TYPE gate_type);
+        void setGCircuit(const std::shared_ptr<Circuit> circuit);
+
     };
 
 } // namespace Logicon

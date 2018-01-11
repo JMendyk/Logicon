@@ -70,26 +70,32 @@ namespace Logicon {
             ImGui::VerticalSeparator();
             ImGui::SameLine();
 
-            ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_play().textureId),
-                               {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                               UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                               ImVec4(0, 0, 0, 0),
-                               UI::MENU_WIDGET_BUTTON_FG_COLOR
-            );
+            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_play().textureId),
+                                   {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                                   UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                                   ImVec4(0, 0, 0, 0),
+                                   UI::MENU_WIDGET_BUTTON_FG_COLOR
+            )) {
+                app->state = App::STATE::RUNNING;
+            }
             ImGui::SameLine();
-            ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_pause().textureId),
-                               {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                               UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                               ImVec4(0, 0, 0, 0),
-                               UI::MENU_WIDGET_BUTTON_FG_COLOR
-            );
+            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_pause().textureId),
+                                   {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                                   UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                                   ImVec4(0, 0, 0, 0),
+                                   UI::MENU_WIDGET_BUTTON_FG_COLOR
+            )) {
+                app->state = App::STATE::PAUSED;
+            }
             ImGui::SameLine();
-            ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_restart().textureId),
-                               {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                               UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                               ImVec4(0, 0, 0, 0),
-                               UI::MENU_WIDGET_BUTTON_FG_COLOR
-            );
+            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_restart().textureId),
+                                   {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                                   UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                                   ImVec4(0, 0, 0, 0),
+                                   UI::MENU_WIDGET_BUTTON_FG_COLOR
+            )) {
+                app->state = App::STATE::RESTART;
+            }
             ImGui::SameLine();
 
             ImGui::VerticalSeparator();
@@ -104,12 +110,14 @@ namespace Logicon {
             ImGui::PopItemWidth();
 
             ImGui::SameLine();
-            ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_step().textureId),
-                               {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                               UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                               ImVec4(0, 0, 0, 0),
-                               UI::MENU_WIDGET_BUTTON_FG_COLOR
-            );
+            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_step().textureId),
+                                   {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                                   UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                                   ImVec4(0, 0, 0, 0),
+                                   UI::MENU_WIDGET_BUTTON_FG_COLOR
+            )) {
+                app->STEP_NEXT_STEP = true;
+            }
             ImGui::SameLine();
         }
         ImGui::End();

@@ -60,6 +60,10 @@ namespace Logicon {
         NO_GATE = -1 /// Used by GCircuit - not in gate-placing mode
     };
 
+    static int fromMilis(float x) { return (int) (x * 1000); }
+
+    static float toMilis(int x) { return ((float) x) / 1000.0; }
+
 } // namespace Logicon
 
 #endif //LOGICON_TYPES_H

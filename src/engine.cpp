@@ -13,24 +13,24 @@ namespace Logicon{
     q.clear();
     }
 
-    void Engine::propagateSignal(Circuit c, std::shared_ptr<Gate> gate){
+    void Engine::propagateSignal(std::shared_ptr<Circuit> c, std::shared_ptr<Gate> gate) {
         for(Port port=0; port<gate->getOutputsCount(); port++)
         {
             if(!gate->isOutputEmpty(port)) {
                 con = gate->getOutputConnections(port);
                 for(int j=0; j<con.size(); j++) {
                     Connection co = con[j];
-                    auto gates1 = c.find(co.id);
+                    auto gates1 = c->find(co.id);
                     gates1->setInputState(co.port, gate->getOutputState(port));
                 }
             }
         }
     }
 
-    void Engine::restart(Circuit c) {
+    void Engine::restart(std::shared_ptr<Circuit> c) {
         i=0;
         q.clear();
-        graph = c.getGates();
+        graph = c->getGates();
         for(auto gate : graph){
             m.insert(std::pair<ID, int>(gate->getId(), 0));
         }
@@ -71,7 +71,7 @@ namespace Logicon{
         while(q.size() != graph.size() || i<q.size()) {
             for ( ; i<q.size(); i++) {
                 ID id = q[i];
-                auto gates = c.find(id);
+                auto gates = c->find(id);
                 gates->update();
                 this->propagateSignal(c, gates);
                 for(Port port=0; port<gates->getOutputsCount(); port++)
@@ -80,7 +80,7 @@ namespace Logicon{
                         con = gates->getOutputConnections(port);
                         for(int j=0; j<con.size(); j++) {
                             Connection co = con[j];
-                            auto gates1 = c.find(co.id);
+                            auto gates1 = c->find(co.id);
                             m[co.id]--;
                             if (m[co.id] == 0)
                                 q.push_back(co.id);
@@ -105,10 +105,10 @@ namespace Logicon{
         }
     }
 
-    void Engine::calcTree(Circuit c) {
+    void Engine::calcTree(std::shared_ptr<Circuit> c) {
         i=0;
         q.clear();
-        graph = c.getGates();
+        graph = c->getGates();
         for(auto gate : graph){
             m.insert(std::pair<ID, int>(gate->getId(), 0));
         }
@@ -149,7 +149,7 @@ namespace Logicon{
         while(q.size() != graph.size() || i<q.size()) {
             for ( ; i<q.size(); i++) {
                 ID id = q[i];
-                auto gates = c.find(id);
+                auto gates = c->find(id);
                 for(Port port=0; port<gates->getOutputsCount(); port++)
                 {
                     if(!gates->isOutputEmpty(port)) {
@@ -176,12 +176,12 @@ namespace Logicon{
         }
     }
 
-    void Engine::calcLogic(Circuit c) {
+    void Engine::calcLogic(std::shared_ptr<Circuit> c) {
         i=0;
         for ( ; i<q.size(); i++) {
             {
                 ID id = q[i];
-                auto gates = c.find(id);
+                auto gates = c->find(id);
                 gates->update();
             }
         }
@@ -189,18 +189,18 @@ namespace Logicon{
         for ( ; i<q.size(); i++) {
             {
                 ID id = q[i];
-                auto gates = c.find(id);
+                auto gates = c->find(id);
                 this->propagateSignal(c, gates);
             }
         }
     }
 
-    void Engine::calcLogicImmediate(Circuit c) {
+    void Engine::calcLogicImmediate(std::shared_ptr<Circuit> c) {
         i=0;
         for ( ; i<q.size(); i++) {
             {
                 ID id = q[i];
-                auto gates = c.find(id);
+                auto gates = c->find(id);
                 gates->update();
                 this->propagateSignal(c, gates);
             }
@@ -212,6 +212,15 @@ namespace Logicon{
             instance = new Engine();
         }
         return instance;
+    }
+
+    void Engine::calc(std::shared_ptr<Circuit> c, bool immediate) {
+        if (c->INITIALIZED_FLAG)
+            immediate ? calcLogicImmediate(c) : calcLogic(c);
+        else {
+            restart(c);
+            c->INITIALIZED_FLAG = true;
+        }
     }
 
 } // namespace Logicon

@@ -7,22 +7,263 @@
 #include <imgui_impl_glfw_gl3.h>
 #include "assetLoader.h"
 #include "logger.h"
+#include <gates/and.h>
+#include <gates/clock.h>
+#include <gates/delay.h>
+#include <gates/input.h>
+#include <gates/nand.h>
+#include <gates/nor.h>
+#include <gates/not.h>
+#include <gates/or.h>
+#include <gates/switch.h>
+#include <gates/xnor.h>
+#include <gates/xor.h>
 
 namespace Logicon {
 
-    std::string App::APP_TITLE = "Logicon";
+    App::App() : APP_TITLE("Logicon") {}
 
-    /*
-     * create new empty circuit, set tickrate to hard 1000
-     * TODO: move INITIALIZED/UNINITIALIZED state to Circuit.h, leave the rest in APP. (for serialization)
-     */
-    App::App() : tickrate(1000), state(State::PAUSED) {
+    bool App::init(bool shellMode) {
+        Logicon::Logger::init();
+        Logicon::Logger::info("Logicon started.");
         circuit = std::make_shared<Circuit>(Circuit::nextID());
+        engine = Logicon::Engine::getInstance();
+        return true;
     }
 
-    bool App::init() { //TODO: Place all app related initialization like logger, assets etc. here
+    void App::run(bool shellMode) {
+        if (!init(shellMode))
+            exit(1);
+        if (shellMode) { // SHELL
+            if (!initShell()) {
+                Logicon::Logger::err("Couldn't initialize Logicon in shell mode.");
+                exit(10);
+            }
+            runShell();
+            if (!closeShell()) {
+                Logicon::Logger::err("Couldn't properly close Logicon in shell mode");
+                exit(30);
+            }
+        } else {
+            if (!initGui()) { // GUI
+                Logicon::Logger::err("Couldn't initialize Logicon in GUI mode.");
+                exit(100);
+            }
+            runGUI();
+            if (!closeGui()) {
+                Logicon::Logger::err("Couldn't properly close Logicon in GUI mode");
+                exit(300);
+            }
+        }
+        if (!close(false))
+            exit(3);
+    }
 
-        // TODO: check for flag in init() for SHELL and GUI here instead of main
+    bool App::close(bool shellMode) {
+        Logicon::Logger::info("Logicon stoped.");
+        return true;
+    }
+
+    bool App::initShell() {
+        Logicon::Logger::info("MODE:   Shell");
+        return true;
+    }
+
+    void App::runShell() {
+        std::cout << "commands: " << std::endl;
+        std::cout << "   exit, info, add, connect, disconnect, set, reset, clear," << std::endl;
+        std::cout << "   propagate, restart, calculate, changeClock, changeDelay, update, click" << std::endl;
+        std::cout << "gates: " << std::endl;
+        std::cout << "   AND, CLOCK, DELAY, INPUT, NAND, NOR, OR, SWITCH, NOT, XNOR, XOR" << std::endl;
+        std::cout << "WARNING: BEFORE CALCULATE AND AFTER EACH GRAPH CHANGE RUN RESTART" << std::endl;
+        while (true) {
+            std::string cmd;
+            std::cin >> cmd;
+            if (cmd == "exit")
+                return;
+            else if (cmd == "info") {
+                auto gates = circuit->getGates();
+                if (gates.empty())
+                    std::cout << "circuit is empty" << std::endl;
+                else {
+                    std::cout << "================" << std::endl;
+                    for (const auto &gate : gates)
+                        [](const std::shared_ptr<Gate> &gate) -> void {
+                            std::string gateType;
+                            if (gate->gateType == Logicon::AND)
+                                gateType = "AND";
+                            else if (gate->gateType == Logicon::CLOCK)
+                                gateType = "CLOCK";
+                            else if (gate->gateType == Logicon::DELAY)
+                                gateType = "DELAY";
+                            else if (gate->gateType == Logicon::INPUT)
+                                gateType = "INPUT";
+                            else if (gate->gateType == Logicon::NAND)
+                                gateType = "NAND";
+                            else if (gate->gateType == Logicon::NOR)
+                                gateType = "NOR";
+                            else if (gate->gateType == Logicon::NOT)
+                                gateType = "NOT";
+                            else if (gate->gateType == Logicon::OR)
+                                gateType = "OR";
+                            else if (gate->gateType == Logicon::SWITCH)
+                                gateType = "SWITCH";
+                            else if (gate->gateType == Logicon::XNOR)
+                                gateType = "XNOR";
+                            else if (gate->gateType == Logicon::XOR)
+                                gateType = "XOR";
+
+
+                            std::cout << gateType << "~" << gate->id << " ";
+                            for (Port i = 0; i < gate->getInputsCount(); ++i) {
+                                std::cout << "I[" << i << "]=(" << gate->getInputState(i) << "){ ";
+                                auto inputs = gate->getInputConnections(i);
+                                for (auto &input : inputs)
+                                    std::cout << "#" << input.id << ":" << input.port << "  ";
+                                std::cout << "} ";
+                            }
+                            for (Port i = 0; i < gate->getOutputsCount(); ++i) {
+                                std::cout << "O[" << i << "]=(" << gate->getOutputState(i) << "){ ";
+                                auto outputs = gate->getOutputConnections(i);
+                                for (auto &output : outputs)
+                                    std::cout << "#~" << output.id << ":" << output.port << "  ";
+                                std::cout << "} ";
+                            }
+                            std::cout << std::endl;
+                        };
+
+                    std::cout << "================" << std::endl;
+                }
+            } else if (cmd == "add") {
+                std::string type;
+                std::cin >> type;
+                if (type == "AND") {
+                    auto ptr = std::make_shared<And>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, And>(ptr));
+                } else if (type == "CLOCK") {
+                    auto ptr = std::make_shared<Clock>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Clock>(ptr));
+                } else if (type == "DELAY") {
+                    auto ptr = std::make_shared<Delay>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Delay>(ptr));
+                } else if (type == "INPUT") {
+                    auto ptr = std::make_shared<Input>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Input>(ptr));
+                } else if (type == "NAND") {
+                    auto ptr = std::make_shared<Nand>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Nand>(ptr));
+                } else if (type == "NOR") {
+                    auto ptr = std::make_shared<Nor>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Nor>(ptr));
+                } else if (type == "OR") {
+                    auto ptr = std::make_shared<Or>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Or>(ptr));
+                } else if (type == "SWITCH") {
+                    auto ptr = std::make_shared<Switch>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Switch>(ptr));
+                } else if (type == "NOT") {
+                    auto ptr = std::make_shared<Not>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Not>(ptr));
+                } else if (type == "XNOR") {
+                    auto ptr = std::make_shared<Xnor>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Xnor>(ptr));
+                } else if (type == "XOR") {
+                    auto ptr = std::make_shared<Xor>(Circuit::nextID());
+                    circuit->add(std::static_pointer_cast<Gate, Xor>(ptr));
+                }
+
+            } else if (cmd == "remove") {
+                ID id;
+                std::cin >> id;
+
+                circuit->remove(id);
+            } else if (cmd == "connect") {
+                ID ID1, ID2;
+                Port output, input;
+                std::cin >> ID1 >> output >> ID2 >> input;
+                circuit->connect(ID1, output, ID2, input);
+            } else if (cmd == "disconnect") {
+                ID ID1, ID2;
+                Port output, input;
+                std::cin >> ID1 >> output >> ID2 >> input;
+                circuit->disconnect(ID1, output, ID2, input);
+            } else if (cmd == "set") {
+                ID id;
+                Port port;
+                bool isInput;
+                int state;
+                std::cin >> id >> port >> isInput >> state;
+                auto g = circuit->find(id);
+                if (g != nullptr) {
+                    if (isInput)
+                        g->setInputState(port, state);
+                    else
+                        g->setOutputState(port, state);
+                }
+            } else if (cmd == "update") {
+                ID id;
+                std::cin >> id;
+                auto g = circuit->find(id);
+                if (g != nullptr)
+                    g->update();
+            } else if (cmd == "click") {
+                ID id;
+                std::cin >> id;
+                auto g = circuit->find(id);
+                if (g->gateType != INPUT && g->gateType != SWITCH) continue;
+                if (g != nullptr)
+                    g->clickAction();
+            } else if (cmd == "reset") {
+                ID id;
+                std::cin >> id;
+                auto g = circuit->find(id);
+                if (g != nullptr)
+                    g->reset();
+            } else if (cmd == "clear") {
+                ID id;
+                std::cin >> id;
+                auto g = circuit->find(id);
+                if (g != nullptr)
+                    g->clear();
+            } else if (cmd == "propagate") {
+                ID id;
+                std::cin >> id;
+                auto gates = circuit->find(id);
+                engine->propagateSignal(circuit, gates);
+            } else if (cmd == "restart") {
+                engine->restart(circuit);
+            } else if (cmd == "calculate") {
+                engine->calcLogicImmediate(circuit);
+            } else if (cmd == "changeClock") {
+                ID id;
+                Tick onperiod, offperiod, phase;
+                std::cin >> id >> onperiod >> offperiod >> phase;
+                auto g = circuit->find(id);
+                if (g->gateType != CLOCK) continue;
+                auto g1 = std::static_pointer_cast<Clock, Gate>(g);
+                g1->changeSettings(onperiod, offperiod, phase);
+            } else if (cmd == "changeDelay") {
+                ID id;
+                Tick phase;
+                std::cin >> id >> phase;
+                auto g = circuit->find(id);
+                if (g->gateType != DELAY) continue;
+                auto g1 = std::static_pointer_cast<Delay, Gate>(g);
+                g1->setDelay(phase);
+            }
+        }
+    }
+
+    bool App::closeShell() {
+        Logicon::Logger::info("Shell closed");
+        return true;
+    }
+
+    bool App::initGui() {
+        Logicon::Logger::info("MODE:   GUI");
+        tickrate = 10;
+        state = STATE::PAUSED;
+
         // GL initialization
         glfwSetErrorCallback(
                 [](int error, const char *description) { Logicon::Logger::err("Error %d: %s", error, description); });
@@ -73,17 +314,14 @@ namespace Logicon {
         if (!this->footerWidget->init(this, this->window))
             return false;
 
-        // TODO: operate on a fresh file called 'circuit' as if it was just created
+        timer = 0;
+        canvasWidget->setGCircuit(circuit);
         return true;
     }
 
-    void App::run() {
-        if (!init()) { // TODO: close parts that were opened successfully
-            Logicon::Logger::err("Failed to initialize the app.");
-            exit(-1);
-        }
-
+    void App::runGUI() {
         // Main app loop
+
         while (!glfwWindowShouldClose(this->window)) {
             glfwPollEvents();
             ImGui_ImplGlfwGL3_NewFrame();
@@ -91,6 +329,28 @@ namespace Logicon {
             // if (tickrate...) engine.calcLogic(this.canvasWidget.gCircuit.circuit)
             this->footerWidget->setStr(1, std::to_string((int) ImGui::GetMousePos().x));
             this->footerWidget->setStr(2, std::to_string((int) ImGui::GetMousePos().y));
+            switch (state) {
+
+                case RUNNING:
+                    simulationSpeed = ImGui::GetTime();
+                    if (timer >= tickrate) {
+                        engine->calc(circuit, false);
+                        timer -= tickrate;
+                        footerWidget->setStr(3, std::to_string(fromMilis(ImGui::GetTime() - simulationSpeed)));
+                    }
+                    break;
+                case PAUSED:
+                    if (STEP_NEXT_STEP) {
+                        engine->calcLogic(circuit);
+                        STEP_NEXT_STEP = false;
+                    }
+                    break;
+                case RESTART:
+                    circuit->INITIALIZED_FLAG = false;
+                    timer = 0;
+                    state = PAUSED;
+                    break;
+            }
             this->render();
             int display_w, display_h;
             glfwGetFramebufferSize(window, &display_w, &display_h);
@@ -102,11 +362,7 @@ namespace Logicon {
             ImGui::Render();
 
             glfwSwapBuffers(window);
-        }
-
-        if (!close()) {
-            Logicon::Logger::err("Failed to properly close the app.");
-            exit(-1);
+            timer++; // next loop
         }
     }
 
@@ -118,28 +374,28 @@ namespace Logicon {
         this->menuWidget->render({UI::MARGIN,
                                   UI::MARGIN},
                                  {canvas_w - 2 * UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
-                                 UI::MENU_WIDGET_HEIGHT});
+                                  UI::MENU_WIDGET_HEIGHT});
         // Blocks Widget
         this->blocksWidget->render({canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
                                     UI::MARGIN},
                                    {UI::BLOCKS_WIDGET_WIDTH,
-                                   canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)});
+                                    canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)});
 
         // Canvas Widget
         this->canvasWidget->render({UI::MARGIN,
-                                   UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN},
+                                    UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN},
                                    {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
-                                   canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
-                                   UI::FOOTER_WIDGET_HEIGHT});
+                                    canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
+                                    UI::FOOTER_WIDGET_HEIGHT});
 
         // Footer Widget
         this->footerWidget->render({0,
-                                   (float) canvas_h - (UI::FOOTER_WIDGET_HEIGHT)},
+                                    (float) canvas_h - (UI::FOOTER_WIDGET_HEIGHT)},
                                    {(float) canvas_w,
-                                   UI::FOOTER_WIDGET_HEIGHT});
+                                    UI::FOOTER_WIDGET_HEIGHT});
     }
 
-    bool App::close() {
+    bool App::closeGui() {
         if (!this->menuWidget->close())
             return false;
 
@@ -158,7 +414,4 @@ namespace Logicon {
         return true;
     }
 
-    void App::set_current_gate_to_place(GATE_TYPE gate_type) {
-        canvasWidget->set_current_gate_to_place(gate_type);
-    }
 } // namespace Logicon

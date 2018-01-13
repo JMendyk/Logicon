@@ -10,7 +10,7 @@
 namespace Logicon {
 
     class FooterWidget {
-        std::string strings[5];
+        std::vector<std::string> strings;
 
 //-----------------------------------------------------------------------------
     private:

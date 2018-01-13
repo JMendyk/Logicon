@@ -16,6 +16,7 @@ namespace Logicon {
 //-----------------------------------------------------------------------------
 
     bool FooterWidget::init() {
+        strings.resize(5);
         for (std::string &s : strings)
             s = "";
         return true;
@@ -25,7 +26,6 @@ namespace Logicon {
         return true;
     }
 
-    // TODO: Update footer dummy text
     void FooterWidget::render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size) {
         ImGuiWindowFlags window_flags = 0
                                         | ImGuiWindowFlags_NoTitleBar
@@ -58,18 +58,21 @@ namespace Logicon {
              * thus order of elements is the same as they will appear on the screen
              */
 
-            static const int elements_count = 3;
             // The 100.0f is just a guess size for the first frame.
-            static std::vector<float> widths(elements_count, {100.0f});
+            static std::vector<float> widths(strings.size(), {100.0f});
             static const float ItemSpacing = ImGui::GetStyle().ItemSpacing.x;
             float pos = 0;
 
-            for (std::string &s : strings) {
+
+            for (int i = strings.size() - 1; i >= 0; --i) {
+                pos += widths[i] + ItemSpacing;
+                ImGui::SameLine((ImGui::GetWindowWidth() - pos));
                 ImGui::BeginGroup();
-                ImGui::Text(s.c_str());
-                ImGui::SameLine(70);
+                ImGui::Text(strings[i].c_str());
+                ImGui::SameLine();
                 ImGui::VerticalSeparator();
                 ImGui::EndGroup();
+                widths[i] = ImGui::GetItemRectSize().x;
             }
 
         }
@@ -77,7 +80,7 @@ namespace Logicon {
     }
 
     void FooterWidget::setStr(int idx, std::string str) {
-        if (idx < 0 || idx >= 5) return;
+        if (idx < 0 || idx >= strings.size()) return;
         strings[idx] = str;
     }
 

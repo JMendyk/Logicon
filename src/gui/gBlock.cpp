@@ -10,7 +10,7 @@
 namespace Logicon {
 
     GBlock::GBlock(std::shared_ptr<GCircuit> parentCircuit, std::shared_ptr<Gate> gate, UI::Vec2 relativePosition) :
-            parentCircuit(parentCircuit), gate(gate), position(relativePosition), DRAGGING_FLAG(false) {
+            parentCircuit(parentCircuit), gate(gate), position(relativePosition), DRAGGING_FLAG(false), MOVED_WHILE_DRAGGING_FLAG(false) {
 
         // deduce type (rectangle or square) based on gate type
         if (gate->gateType <= Logicon::XNOR)
@@ -70,7 +70,7 @@ namespace Logicon {
 
 
     void GBlock::render(bool should_interact) {
-        ImColor color(255, 255, 255);
+        ImColor color = should_interact ? ImColor(255, 255, 255, 200) : ImColor(255, 255, 255);
 
         assert(!parentCircuit.expired());
 
@@ -80,11 +80,14 @@ namespace Logicon {
             if (ImGui::IsMouseDown(0)) { // LPM is down
                 dragDeltaExact = ImGui::GetMouseDragDelta(); // Add delta vector
                 UI::Vec2 dragDeltaGrid = UI::toGridCoordinates(steppify(dragDeltaExact, UI::CANVAS_GRID_SIZE));
+                MOVED_WHILE_DRAGGING_FLAG |= dragDeltaGrid != UI::Vec2(0, 0);
 
-                if (parentCircuit.lock()->isOccupied(gate->id, getRect() + dragDeltaGrid)) // Color
-                    color = ImColor(255, 0, 0, 255); // RED
-                else
-                    color = ImColor(0, 255, 0, 255); // GREEN
+                if(MOVED_WHILE_DRAGGING_FLAG) {
+                    if (parentCircuit.lock()->isOccupied(gate->id, getRect() + dragDeltaGrid)) // Color
+                        color = ImColor(255, 0, 0, 255); // RED
+                    else
+                        color = ImColor(0, 255, 0, 255); // GREEN
+                }
             }
             if (ImGui::IsMouseReleased(0)) {
                 UI::Vec2 dragDeltaGrid = UI::toGridCoordinates(steppify(dragDeltaExact, UI::CANVAS_GRID_SIZE));
@@ -111,8 +114,8 @@ namespace Logicon {
                                UI::Vec2(1, 1),
                                0,
                                ImColor(0, 0, 0, 0),
-                               color) && should_interact) {
-            // TODO clickAction
+                               color) && should_interact && !MOVED_WHILE_DRAGGING_FLAG) {
+            gate->clickAction();
         }
 
         // Allow overlap for port buttons
@@ -128,7 +131,7 @@ namespace Logicon {
 
         // IsItemHovered doesn't check what is at the top of mouse cursor - it may be GPort
         bool mouse_is_clicked_over_me = false;
-        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0) && should_interact) {
+        if (ImGui::IsItemActive() && should_interact) {
             mouse_is_clicked_over_me = true;
             //dragDeltaExact = position;
         }
@@ -153,8 +156,9 @@ namespace Logicon {
         }
         ImGui::PopID();
 
-        if(mouse_is_clicked_over_me && !is_any_gport_dragged) {
+        if(should_interact && mouse_is_clicked_over_me && !is_any_gport_dragged && !DRAGGING_FLAG) {
             DRAGGING_FLAG = true;
+            MOVED_WHILE_DRAGGING_FLAG = false;
         }
 
         //ImGui::EndGroup();

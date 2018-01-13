@@ -30,6 +30,8 @@ namespace Logicon {
         std::vector<std::shared_ptr<GPort>> gOutptus;           /// outputs
 
         bool DRAGGING_FLAG;                                     /// flag saying the block is dragged
+        bool MOVED_WHILE_DRAGGING_FLAG;
+
         UI::Vec2 dragDeltaExact;                                /// drag delta in canvas coordinates
     public:
 

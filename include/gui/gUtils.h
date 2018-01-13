@@ -62,6 +62,16 @@ namespace Logicon {
             operator ImVec2() const { return ImVec2(x, y); };
         };
 
+        const float Vec2_PRECISION = 0.0001;
+
+        /// Comparison of vectors
+        static inline bool operator==(const Vec2 &lhs, const Vec2 &rhs) {
+            return fabsf(lhs.x - rhs.x) < Vec2_PRECISION
+                && fabsf(lhs.y - rhs.y) < Vec2_PRECISION;
+        }
+
+        static inline bool operator!=(const Vec2 &lhs, const Vec2 &rhs) { return !(lhs == rhs); }
+
         /// Add and subtract vectors
         static inline Vec2 operator+(const Vec2 &lhs, const Vec2 &rhs) { return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 

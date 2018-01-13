@@ -31,6 +31,13 @@ target_link_libraries(${EXECUTABLE_NAME} glfw)
 ##### ImGUI #####
 set(IMGUI_DIR ${DEPS_DIR}/imgui)
 
+target_compile_definitions(${EXECUTABLE_NAME} PUBLIC
+        IMGUI_INCLUDE_IMGUI_USER_H
+        IMGUI_INCLUDE_IMGUI_USER_INL
+        NO_IMGUI_ADDONS
+        YES_IMGUIFILESYSTEM
+)
+
 target_include_directories(${EXECUTABLE_NAME} PUBLIC ${IMGUI_DIR})
 target_sources(${EXECUTABLE_NAME}
     PUBLIC

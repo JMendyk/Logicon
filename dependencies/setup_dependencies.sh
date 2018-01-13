@@ -54,11 +54,12 @@ cd gl3w
 cd ..
 
 ##### ImGUI #####
-git clone https://github.com/ocornut/imgui.git imgui_repo
+echo "WARNING: Remember to apply manual fix for windows!"
+git clone https://github.com/Flix01/imgui.git imgui_repo
 mkdir imgui_impl_glfw_gl3
 cd imgui_repo
-    git checkout master
-    log_dependency imgui
+    git checkout "2015-10-Addons"
+    log_dependency "imgui + addons"
     cp examples/opengl3_example/imgui_impl_glfw_gl3.h \
        examples/opengl3_example/imgui_impl_glfw_gl3.cpp \
        ../imgui_impl_glfw_gl3

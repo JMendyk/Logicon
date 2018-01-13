@@ -40,3 +40,16 @@ Dependency: stb_image
 555efbe, Sun Jul 23 14:09:39 2017 -0700 : Update version numbers
 ------------------------------------------------------
 
+Updating dependencies - Sun Jan 14 18:51:57 2018 +0100
+Dependency: glfw
+999f355, Wed Aug 17 16:48:22 2016 +0200 : Documentation work
+Dependency: gl3w
+8f7f459, Thu Dec 14 14:01:25 2017 +0200 : dlopen with RTLD_LOCAL.
+Dependency: imgui + addons
+f793b2a, Sun Jan 14 16:12:21 2018 +0100 : Merge pull request #40 from JMendyk/2015-10-Addons
+Dependency: json
+9ff0cc0, Sat Feb 25 16:43:15 2017 +0100 : :memo: updated documentation
+Dependency: stb_image
+555efbe, Sun Jul 23 14:09:39 2017 -0700 : Update version numbers
+------------------------------------------------------
+

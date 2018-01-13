@@ -20,6 +20,7 @@ namespace Logicon {
 //-----------------------------------------------------------------------------
 
     bool BlocksWidget::init() {
+        PLACEMENT_MODE = false;
         return true;
     }
 
@@ -53,61 +54,40 @@ namespace Logicon {
 
             float size = ImGui::GetContentRegionAvailWidth();
 
-            static GATE_TYPE current_gate_to_place = NO_GATE;
             static auto set_current_gate_to_place = [this](GATE_TYPE gate_type) {
                 if (gate_type == current_gate_to_place) {
-                    current_gate_to_place = NO_GATE;
+                    PLACEMENT_MODE = false;
                 } else {
+                    PLACEMENT_MODE = true;
                     current_gate_to_place = gate_type;
                 }
-
-                CanvasWidget::getInstance().getGCircuit()->set_current_gate_to_place(current_gate_to_place);
             };
 
-            static auto gate_preview = [set_current_gate_to_place](ImGuiID id, GATE_TYPE gate_type, Texture tex,
-                                                                   float size) {
-                ImGui::PushID(id);
-                float height = size / (5.0f / 3);
+            for (int gateType = 0; gateType < GATE_TYPE_COUNT; ++gateType) {
+                if (gateType != Logicon::SWITCH_ON && gateType != Logicon::INPUT_ON) {
+                    ImGui::PushID(gateType);
+                    float height = size / (5.0f / 3);
 
-                if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(tex.textureId),
-                                       UI::Vec2(height * ((float) tex.width) / tex.height, height),
-                                       UI::Vec2(0, 0),
-                                       UI::Vec2(1, 1),
-                                       0, ImColor(0, 0, 0, 0),
-                                       current_gate_to_place == gate_type ? ImColor(128, 128, 128, 200) : ImColor(255,
-                                                                                                                  255,
-                                                                                                                  255,
-                                                                                                                  200))) {
-                    set_current_gate_to_place(gate_type);
+                    Texture tex = AssetLoader::getGateTexture((GATE_TYPE) gateType);
+                    if (ImGui::ImageButton(
+                            reinterpret_cast<ImTextureID>(tex.textureId),
+                            UI::Vec2(height * ((float) tex.width) / tex.height, height),
+                            UI::Vec2(0, 0), UI::Vec2(1, 1),
+                            0, ImColor(0, 0, 0, 0),
+                            (PLACEMENT_MODE && current_gate_to_place == gateType) ?
+                            ImColor(128, 128, 128, 200) :
+                            ImColor(255, 255, 255, 200))) {
+                        PLACEMENT_MODE = !PLACEMENT_MODE;
+                        current_gate_to_place = (GATE_TYPE) (gateType);
+                    }
+                    ImGui::Spacing();
+                    ImGui::NextColumn();
+                    ImGui::PopID();
                 }
-                ImGui::Spacing();
-                ImGui::NextColumn();
-                ImGui::PopID();
-            };
-
-            // TODO: Uncomment gates when their implementations will be available
-
-            gate_preview(ImGui::GetID("gate_or"), GATE_TYPE::OR, AssetLoader::gate_or(), size);
-            gate_preview(ImGui::GetID("gate_and"), GATE_TYPE::AND, AssetLoader::gate_and(), size);
-
-            gate_preview(ImGui::GetID("gate_nor"), GATE_TYPE::NOR, AssetLoader::gate_nor(), size);
-            gate_preview(ImGui::GetID("gate_nand"), GATE_TYPE::NAND, AssetLoader::gate_nand(), size);
-
-            gate_preview(ImGui::GetID("gate_not"), GATE_TYPE::NOT, AssetLoader::gate_not(), size);
-            gate_preview(ImGui::GetID("gate_xnor"), GATE_TYPE::XNOR, AssetLoader::gate_xnor(), size);
-
-            gate_preview(ImGui::GetID("gate_xor"), GATE_TYPE::XOR, AssetLoader::gate_xor(), size);
-
-            gate_preview(ImGui::GetID("gate_switch_off"), GATE_TYPE::SWITCH, AssetLoader::gate_switch_off(), size);
-            gate_preview(ImGui::GetID("gate_delay"), GATE_TYPE::DELAY, AssetLoader::gate_delay(), size);
-
-            gate_preview(ImGui::GetID("gate_input_low"), GATE_TYPE::INPUT, AssetLoader::gate_input_low(), size);
-            gate_preview(ImGui::GetID("gate_clock"), GATE_TYPE::CLOCK, AssetLoader::gate_clock(), size);
-
-            ImGui::EndColumns();
-            ImGui::EndGroup();
+            }
 
         }
+        ImGui::EndGroup();
         ImGui::End();
     }
 

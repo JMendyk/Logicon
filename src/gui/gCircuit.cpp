@@ -16,10 +16,11 @@
 #include <gates/nand.h>
 #include <gates/nor.h>
 #include <gates/xnor.h>
+#include <gui/blocks_widget.h>
 
 namespace Logicon {
 
-    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit), currentGateToPlace(NO_GATE) {}
+    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit) {}
 
     bool GCircuit::init() {
         assert(circuit != nullptr);
@@ -69,7 +70,6 @@ namespace Logicon {
     }
 
     void GCircuit::remove(ID &id) {
-        // TODO: Check for potential memory leaks
         auto found = std::find_if(gBlocks.begin(), gBlocks.end(),
                                   [id](const std::shared_ptr<GBlock> &gBlock) { return gBlock->getId() == id; }
         );
@@ -79,7 +79,6 @@ namespace Logicon {
 
     void GCircuit::clear() {
         gBlocks.clear();
-        // TODO: circuit->clear();
     }
 
     bool GCircuit::isOccupied(ID id, UI::Rect rect) {
@@ -106,19 +105,6 @@ namespace Logicon {
             return false;
         found->move(pos);
         return true;
-    }
-
-    void GCircuit::connect(ID idFrom, Port output, ID idTo, Port input) {
-        circuit->connect(idFrom, output, idTo, input);
-    }
-
-    void GCircuit::disconnect(ID idFrom, Port output, ID idTo, Port input) {
-        circuit->disconnect(idFrom, output, idTo, input);
-    }
-
-    void GCircuit::update() {
-        for (const auto &gBlock : gBlocks)
-            gBlock->update();
     }
 
     void GCircuit::render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size) {
@@ -158,56 +144,25 @@ namespace Logicon {
             }
 
             ImGui::GetWindowDrawList()->ChannelsSplit(UI::CANVAS_CHANNEL_COUNT);
-            {
-                /*
-                 * Render gBlocks
-                 */
-                std::for_each(gBlocks.begin(), gBlocks.end(), [this](const std::shared_ptr<GBlock> &gBlock) {
-                    gBlock->render(currentGateToPlace == NO_GATE);
-                });
-            }
+
+            // Render gBlocks
+            std::for_each(gBlocks.begin(), gBlocks.end(), [this](const std::shared_ptr<GBlock> &gBlock) {
+                gBlock->render(!BlocksWidget::getInstance().PLACEMENT_MODE);
+            });
             ImGui::GetWindowDrawList()->ChannelsMerge();
 
-            if (currentGateToPlace != NO_GATE) {
-                Texture tex;
-                switch (currentGateToPlace) {
-
-                    case NOT:tex = Logicon::AssetLoader::gate_not();
-                        break;
-                    case DELAY:tex = Logicon::AssetLoader::gate_delay();
-                        break;
-                    case SWITCH:tex = Logicon::AssetLoader::gate_switch_off();
-                        break;
-                    case AND:tex = Logicon::AssetLoader::gate_and();
-                        break;
-                    case OR:tex = Logicon::AssetLoader::gate_or();
-                        break;
-                    case XOR:tex = Logicon::AssetLoader::gate_xor();
-                        break;
-                    case NAND:tex = Logicon::AssetLoader::gate_nand();
-                        break;
-                    case NOR:tex = Logicon::AssetLoader::gate_nor();
-                        break;
-                    case XNOR:tex = Logicon::AssetLoader::gate_xnor();
-                        break;
-                    case CLOCK:tex = Logicon::AssetLoader::gate_clock();
-                        break;
-                    case INPUT:tex = Logicon::AssetLoader::gate_input_low();
-                        break;
-                    case NO_GATE:
-                        assert(false); // Should not happen since we checked if currentGateToPlace != NO_GATE
-                        break;
-                }
+            /// TODO: move to BlocksWidget with overriding draw list of canvas...
+            if (BlocksWidget::getInstance().PLACEMENT_MODE) {
+                GATE_TYPE currentGateToPlace = BlocksWidget::getInstance().current_gate_to_place;
+                Texture tex = AssetLoader::getGateTexture(currentGateToPlace);
 
                 UI::Vec2 mouse_pos = ImGui::GetIO().MousePos;
-
                 UI::Vec2 dimension;
-                if (currentGateToPlace <= Logicon::XNOR)
-                    dimension = UI::Vec2(5, 3);
-                else
-                    dimension = UI::Vec2(3, 3);
+                dimension =
+                        currentGateToPlace <= Logicon::XNOR ? dimension = UI::Vec2(5, 3) : dimension = UI::Vec2(3, 3);
 
-                UI::Vec2 top_left = steppify(mouse_pos - dl_origin - (dimension*UI::CANVAS_GRID_SIZE)/2, UI::CANVAS_GRID_SIZE);
+                UI::Vec2 top_left = steppify(mouse_pos - dl_origin - (dimension * UI::CANVAS_GRID_SIZE) / 2,
+                                             UI::CANVAS_GRID_SIZE);
 
                 UI::Rect rect(UI::toGridCoordinates(top_left), UI::toGridCoordinates(top_left) + dimension);
 
@@ -220,15 +175,12 @@ namespace Logicon {
 
                 dimension = dimension * UI::CANVAS_GRID_SIZE;
                 ImGui::SetCursorPos(top_left);
-                if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(tex.textureId),
-                                       dimension,
-                                       UI::Vec2(0, 0),
-                                       UI::Vec2(1, 1),
+                if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(tex.textureId), dimension,
+                                       UI::Vec2(0, 0), UI::Vec2(1, 1),
                                        0,
-                                       ImColor(0, 0, 0, 0),
-                                       color) && !isOccupied(2147483647, rect)) {
+                                       ImColor(0, 0, 0, 0), color) &&
+                    !isOccupied(-1, rect)) {
 
-                    // TODO: Uncomment gates when their implementations will be available
 
                     switch (currentGateToPlace) {
 
@@ -244,7 +196,7 @@ namespace Logicon {
                             insert(g1, UI::toGridCoordinates(top_left));
                             break;
                         }
-                        case SWITCH: {
+                        case SWITCH_OFF: {
                             auto g1 = std::make_shared<Switch>(Circuit::nextID());
                             circuit->add(std::static_pointer_cast<Gate, Switch>(g1));
                             insert(g1, UI::toGridCoordinates(top_left));
@@ -292,7 +244,7 @@ namespace Logicon {
                             insert(g1, UI::toGridCoordinates(top_left));
                             break;
                         }
-                        case INPUT: {
+                        case INPUT_OFF: {
                             auto g1 = std::make_shared<Input>(Circuit::nextID());
                             circuit->add(std::static_pointer_cast<Gate, Input>(g1));
                             insert(g1, UI::toGridCoordinates(top_left));
@@ -306,10 +258,6 @@ namespace Logicon {
         }
         ImGui::EndChild();
         ImGui::PopStyleVar(2);
-    }
-
-    void GCircuit::set_current_gate_to_place(GATE_TYPE gate_type) {
-        currentGateToPlace = gate_type;
     }
 
     // =====

@@ -26,7 +26,7 @@ namespace Logicon{
             nlohmann::json j_gate = {{"id",      Gate->id},
                                      {"x",       pos.x},
                                      {"y",       pos.y},
-                                     {"type",    Gate->gateType},
+                                     {"type",    Gate->getGateType()},
                                      {"in_cnt",  Gate->getInputsCount()},
                                      {"out_cnt", Gate->getOutputsCount()}};
             j_gates += j_gate;

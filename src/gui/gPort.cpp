@@ -40,8 +40,8 @@ void Logicon::GPort::render(const UI::Vec2 &gBlockPos, bool should_interact) {
                            parentGCircuit.lock()->getCircuit()->getGateById(gateId)->getOutputConnections(port);
         for (Connection connection : connections)
             isInput ?
-            parentGCircuit.lock()->disconnect(connection.id, connection.port, gateId, port) :
-            parentGCircuit.lock()->disconnect(gateId, port, connection.id, connection.port);
+            parentGCircuit.lock()->getCircuit()->disconnect(connection.id, connection.port, gateId, port) :
+            parentGCircuit.lock()->getCircuit()->disconnect(gateId, port, connection.id, connection.port);
     }
 
     struct GPortDragDropData {
@@ -67,9 +67,9 @@ void Logicon::GPort::render(const UI::Vec2 &gBlockPos, bool should_interact) {
             auto *data = *((GPortDragDropData **) payload->Data);
             //printf("got payload: %d %d local: %d %d\n", data->idFrom, data->output, gateId, port);
             if (isInput) {
-                parentGCircuit.lock()->connect(data->idFrom, data->output, gateId, port);
+                parentGCircuit.lock()->getCircuit()->connect(data->idFrom, data->output, gateId, port);
             } else {
-                parentGCircuit.lock()->connect(gateId, port, data->idFrom, data->output);
+                parentGCircuit.lock()->getCircuit()->connect(gateId, port, data->idFrom, data->output);
             }
             delete (data);
         }

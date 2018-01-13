@@ -3,8 +3,6 @@
 //
 
 #include <exceptions/wrongPortException.h>
-#include <algorithm>
-#include <iostream>
 #include "gates/gate.h"
 
 namespace Logicon {
@@ -20,13 +18,17 @@ namespace Logicon {
             output.first = 0;
     }
 
-    // ======
-    // INPUTS
-    // ======
-
     const ID Gate::getId() const {
         return id;
     }
+
+    const GATE_TYPE Gate::getGateType() const {
+        return gateType;
+    }
+
+    // ======
+    // INPUTS
+    // ======
 
     int Gate::getInputsCount() const {
         return this->inputs.size();

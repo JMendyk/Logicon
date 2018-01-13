@@ -14,64 +14,29 @@ namespace Logicon {
             parentCircuit(parentCircuit), gate(gate), position(relativePosition), DRAGGING_FLAG(false), MOVED_WHILE_DRAGGING_FLAG(false) {
 
         // deduce type (rectangle or square) based on gate type
-        if (gate->gateType <= Logicon::XNOR)
+        if (gate->getGateType() <= Logicon::XNOR)
             this->dimension = UI::Vec2(5, 3);
         else
             this->dimension = UI::Vec2(3, 3);
 
         // initialize GPorts
-        gInputs.resize(gateInputsCount[gate->gateType]);
-        for (int inputIndex = 0; inputIndex < gateInputsCount[gate->gateType]; ++inputIndex)
+        gInputs.resize(gateInputsCount[gate->getGateType()]);
+        for (int inputIndex = 0; inputIndex < gateInputsCount[gate->getGateType()]; ++inputIndex)
             gInputs[inputIndex] = std::make_shared<GPort>(true, parentCircuit, gate->id, inputIndex,
-                                                          UI::gPortInputPositions[gate->gateType][inputIndex]);
+                                                          UI::gPortInputPositions[gate->getGateType()][inputIndex]);
 
-        gOutptus.resize(gateOutputsCount[gate->gateType]);
-        for (int outputIndex = 0; outputIndex < gateOutputsCount[gate->gateType]; ++outputIndex)
+        gOutptus.resize(gateOutputsCount[gate->getGateType()]);
+        for (int outputIndex = 0; outputIndex < gateOutputsCount[gate->getGateType()]; ++outputIndex)
             gOutptus[outputIndex] = std::make_shared<GPort>(false, parentCircuit, gate->id, outputIndex,
-                                                            UI::gPortOutputPositions[gate->gateType][outputIndex]);
+                                                            UI::gPortOutputPositions[gate->getGateType()][outputIndex]);
 
         // set image
-        switch (gate->gateType) {
-
-            case Logicon::NOT:
-                texture = Logicon::AssetLoader::gate_not();
-                break;
-            case Logicon::DELAY:
-                texture = Logicon::AssetLoader::gate_delay();
-                break;
-            case Logicon::SWITCH:
-                texture = Logicon::AssetLoader::gate_switch_off();
-                break;
-            case Logicon::AND:
-                texture = Logicon::AssetLoader::gate_and();
-                break;
-            case Logicon::OR:
-                texture = Logicon::AssetLoader::gate_or();
-                break;
-            case Logicon::XOR:
-                texture = Logicon::AssetLoader::gate_xor();
-                break;
-            case Logicon::NAND:
-                texture = Logicon::AssetLoader::gate_nand();
-                break;
-            case Logicon::NOR:
-                texture = Logicon::AssetLoader::gate_nor();
-                break;
-            case Logicon::XNOR:
-                texture = Logicon::AssetLoader::gate_xnor();
-                break;
-            case Logicon::CLOCK:
-                texture = Logicon::AssetLoader::gate_clock();
-                break;
-            case Logicon::INPUT:
-                texture = Logicon::AssetLoader::gate_input_low();
-                break;
-        }
+        texture = AssetLoader::getGateTexture(gate->getGateType());
     }
 
 
     void GBlock::render(bool should_interact) {
-        ImColor color = should_interact ? ImColor(255, 255, 255, 200) : ImColor(255, 255, 255);
+        ImColor color = should_interact ? ImColor(255, 255, 255, 200) : ImColor(255, 255, 255, 255);
 
         assert(!parentCircuit.expired());
 
@@ -107,7 +72,10 @@ namespace Logicon {
         ImGui::GetWindowDrawList()->ChannelsSetCurrent(
                 DRAGGING_FLAG ? UI::ACTIVE_GBLOCK_CHANNEL : UI::DEFAULT_GBLOCK_CHANNEL);
 
-        // Rendering GBlock
+        // update texture
+        texture = AssetLoader::getGateTexture(gate->getGateType());
+
+        // Render textured button
         ImGui::SetCursorPos(UI::toCanvasCoordinates(position) + dragDeltaExact);
         if (ImGui::ImageButton((ImTextureID) texture.textureId,
                                dimension * UI::CANVAS_GRID_SIZE,
@@ -117,7 +85,6 @@ namespace Logicon {
                                ImColor(0, 0, 0, 0),
                                color) && should_interact && !MOVED_WHILE_DRAGGING_FLAG) {
             gate->clickAction();
-            update();
         }
 
         // Allow overlap for port buttons
@@ -242,18 +209,6 @@ namespace Logicon {
 
     void GBlock::move(const UI::Vec2 pos) {
         this->position = pos;
-    }
-
-    void GBlock::update() {
-        if (gate->gateType == Logicon::SWITCH) {
-            std::static_pointer_cast<Switch, Gate>(this->gate)->isClicked() ?
-                    texture = AssetLoader::gate_switch_on() :
-                    texture = AssetLoader::gate_switch_off();
-        } else if (gate->gateType == Logicon::INPUT) {
-            std::static_pointer_cast<Input, Gate>(this->gate)->isClicked() ?
-                    texture = AssetLoader::gate_input_high() :
-                    texture = AssetLoader::gate_input_low();
-        }
     }
 
     bool GBlock::isDragged() const {

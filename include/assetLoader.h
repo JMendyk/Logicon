@@ -6,17 +6,18 @@
 #define LOGICON_ASSETLOADER_H
 
 #include <graphics.h>
+#include "types.h"
 
 namespace Logicon {
 
     class AssetLoader {
     private:
-        static AssetLoader *instance;
+
         Texture _gate_and;
         Texture _gate_clock;
         Texture _gate_delay;
-        Texture _gate_input_high;
-        Texture _gate_input_low;
+        Texture _gate_input_on;
+        Texture _gate_input_off;
         Texture _gate_nand;
         Texture _gate_nor;
         Texture _gate_not;
@@ -33,54 +34,29 @@ namespace Logicon {
         Texture _icon_save;
         Texture _icon_step;
 
+//-----------------------------------------------------------------------------
+    private:
         AssetLoader() = default;
 
-        void _loadAssets();
+    public:
+        static AssetLoader &getInstance();
+
+        AssetLoader(const AssetLoader &) = delete;
+
+        void operator=(const AssetLoader &) = delete;
+//-----------------------------------------------------------------------------
 
     public:
-        static AssetLoader *assetLoader();
+
+        enum ICON {
+            NEW, OPEN, PAUSE, PLAY, RESTART, SAVE, STEP
+        };
 
         static void loadAssets();
 
-        static Texture &gate_and();
+        static Texture &getGateTexture(GATE_TYPE gate);
 
-        static Texture &gate_clock();
-
-        static Texture &gate_delay();
-
-        static Texture &gate_input_high();
-
-        static Texture &gate_input_low();
-
-        static Texture &gate_nand();
-
-        static Texture &gate_nor();
-
-        static Texture &gate_not();
-
-        static Texture &gate_or();
-
-        static Texture &gate_switch_off();
-
-        static Texture &gate_switch_on();
-
-        static Texture &gate_xnor();
-
-        static Texture &gate_xor();
-
-        static Texture &icon_new();
-
-        static Texture &icon_open();
-
-        static Texture &icon_pause();
-
-        static Texture &icon_play();
-
-        static Texture &icon_restart();
-
-        static Texture &icon_save();
-
-        static Texture &icon_step();
+        static Texture &getIconTexture(ICON icon);
 
     };
 } // namespace Logicon

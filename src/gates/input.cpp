@@ -5,21 +5,21 @@
 #include "gates/input.h"
 
 namespace Logicon {
-    Input::Input(ID id) : Gate(GATE_TYPE::INPUT, id), STATE_FLAG(false) {}
+    Input::Input(ID id) : Gate(GATE_TYPE::INPUT_OFF, id) {}
 
     void Input::update() {
-        this->setOutputState(0, STATE_FLAG);
+        this->setOutputState(0, gateType == INPUT_ON);
     }
 
     void Input::clickAction() {
-        STATE_FLAG ^= 1;
+        gateType = (gateType == INPUT_ON ? INPUT_OFF : INPUT_ON);
     }
 
     bool Input::isClicked() const {
-        return STATE_FLAG;
+        return gateType == INPUT_ON;
     }
 
     void Input::setClicked(bool clicked) {
-        STATE_FLAG = clicked;
+        gateType = (gateType == INPUT_ON ? INPUT_OFF : INPUT_ON);
     }
 } // namespace Logicon

@@ -257,22 +257,26 @@ namespace Logicon {
         }
 
         // TODO: make extern and init in App::init()
-        static Vec2 gPortInputPositions[9][2]                                                                           /// Positions of inputs in gates
-                {{Vec2(0, 1), {}},      // NOT
-                 {Vec2(0, 1), {}},      // DELAY
-                 {Vec2(0, 1), {}},      // SWITCH
+        static Vec2 gPortInputPositions[GATE_TYPE_COUNT][2]                                                             /// Positions of inputs in gates
+                {{Vec2(0, 1), {}},              // NOT
+                 {Vec2(0, 1), {}},              // DELAY
+                 {Vec2(0, 1), {}},              // SWITCH_ON
+                 {Vec2(0, 1), {}},              // SWITCH_OFF
                  {Vec2(0, 0), Vec2(0, 2)},      // AND
                  {Vec2(0, 0), Vec2(0, 2)},      // OR
                  {Vec2(0, 0), Vec2(0, 2)},      // XOR
                  {Vec2(0, 0), Vec2(0, 2)},      // NAND
                  {Vec2(0, 0), Vec2(0, 2)},      // NOR
                  {Vec2(0, 0), Vec2(0, 2)},      // XNOR
+                 {{},         {}},                       // INPUT_ON
+                 {{},         {}}                        // INPUT_OFF
                 };
 
         static Vec2 gPortOutputPositions[GATE_TYPE_COUNT][1]                                                            /// Positions of outputs in gates
                 {{Vec2(4, 1)},                  // NOT
                  {Vec2(4, 1)},                  // DELAY
-                 {Vec2(4, 1)},                  // SWITCH
+                 {Vec2(4, 1)},                  // SWITCH_ON
+                 {Vec2(4, 1)},                  // SWITCH_OFF
                  {Vec2(4, 1)},                  // AND
                  {Vec2(4, 1)},                  // OR
                  {Vec2(4, 1)},                  // XOR
@@ -280,7 +284,8 @@ namespace Logicon {
                  {Vec2(4, 1)},                  // NOR
                  {Vec2(4, 1)},                  // XNOR
                  {Vec2(2, 1)},                  // CLOCK
-                 {Vec2(2, 1)},                  // INPUT
+                 {Vec2(2, 1)},                  // INPUT_ON
+                 {Vec2(2, 1)},                  // INPUT_OFF
                 };
     } // namespace UI
 

@@ -19,10 +19,6 @@ namespace Logicon {
      */
     class Input : public Gate {
 
-    private:
-        /// state of input
-        int STATE_FLAG;
-
     public:
         /// Constructor: default state is LOW
         explicit Input(ID id);

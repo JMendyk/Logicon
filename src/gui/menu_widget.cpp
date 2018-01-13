@@ -42,60 +42,66 @@ namespace Logicon {
             ImGui::SetWindowPos(window_pos, ImGuiCond_Always);
             ImGui::SetWindowSize(window_size, ImGuiCond_Always);
 
-            //ImGui::Button("New", UI::Vec2(sz, sz));
-            ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_new().textureId),
-                               {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                               UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                               ImVec4(0, 0, 0, 0),
-                               UI::MENU_WIDGET_BUTTON_FG_COLOR
+            /// NEW
+            ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::NEW).textureId),
+                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
             );
             ImGui::SameLine();
-            ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_open().textureId),
-                               {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                               UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                               ImVec4(0, 0, 0, 0),
-                               UI::MENU_WIDGET_BUTTON_FG_COLOR
+            /// OPEN
+            ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::OPEN).textureId),
+                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
             );
             ImGui::SameLine();
-            ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_save().textureId),
-                               {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                               UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                               ImVec4(0, 0, 0, 0),
-                               UI::MENU_WIDGET_BUTTON_FG_COLOR
+            /// SAVE
+            ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::SAVE).textureId),
+                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
             );
             ImGui::SameLine();
 
             ImGui::VerticalSeparator();
             ImGui::SameLine();
 
-            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_play().textureId),
-                                   {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                                   UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                                   ImVec4(0, 0, 0, 0),
-                                   UI::MENU_WIDGET_BUTTON_FG_COLOR
+            /// PLAY
+            if (ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::PLAY).textureId),
+                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
                 App::getInstance().state = App::STATE::RUNNING;
             }
             ImGui::SameLine();
-            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_pause().textureId),
-                                   {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                                   UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                                   ImVec4(0, 0, 0, 0),
-                                   UI::MENU_WIDGET_BUTTON_FG_COLOR
+            /// PAUSE
+            if (ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::PAUSE).textureId),
+                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
                 App::getInstance().state = App::STATE::PAUSED;
             }
             ImGui::SameLine();
-            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_restart().textureId),
-                                   {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                                   UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                                   ImVec4(0, 0, 0, 0),
-                                   UI::MENU_WIDGET_BUTTON_FG_COLOR
+            /// RESTART
+            if (ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::RESTART).textureId),
+                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
                 App::getInstance().state = App::STATE::RESTART;
             }
             ImGui::SameLine();
 
+            /// TICKRATE
             ImGui::VerticalSeparator();
             ImGui::SameLine();
 
@@ -108,7 +114,9 @@ namespace Logicon {
             ImGui::PopItemWidth();
 
             ImGui::SameLine();
-            if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_step().textureId),
+            /// STEP
+            if (ImGui::ImageButton(
+                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::STEP).textureId),
                                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
                                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
                                    ImVec4(0, 0, 0, 0),

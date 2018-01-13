@@ -12,11 +12,11 @@
 namespace Logicon {
 
     class BlocksWidget {
-        static BlocksWidget *instance;
 
 //-----------------------------------------------------------------------------
     private:
         BlocksWidget() = default;
+
     public:
         static BlocksWidget &getInstance();
 
@@ -25,6 +25,9 @@ namespace Logicon {
         void operator=(const BlocksWidget &) = delete;
 //-----------------------------------------------------------------------------
     public:
+        GATE_TYPE current_gate_to_place;
+        bool PLACEMENT_MODE;
+
         bool init();
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);

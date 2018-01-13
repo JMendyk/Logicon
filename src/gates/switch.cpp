@@ -5,22 +5,22 @@
 #include "gates/switch.h"
 
 namespace Logicon {
-    Switch::Switch(ID id) : Gate(GATE_TYPE::SWITCH, id), STATE_FLAG(false) {
+    Switch::Switch(ID id) : Gate(GATE_TYPE::SWITCH_OFF, id) {
     }
 
     void Switch::update() {
-        this->setOutputState(0, STATE_FLAG ? this->getInputState(0) : 0);
+        this->setOutputState(0, gateType == SWITCH_ON ? this->getInputState(0) : 0);
     }
 
     void Switch::clickAction() {
-        STATE_FLAG ^= 1;
+        gateType = (gateType == SWITCH_ON ? SWITCH_OFF : SWITCH_ON);
     }
 
     bool Switch::isClicked() const {
-        return STATE_FLAG;
+        return gateType == SWITCH_ON;
     }
 
     void Switch::setClicked(bool clicked) {
-        STATE_FLAG = clicked;
+        gateType = (clicked ? SWITCH_ON : SWITCH_OFF);
     }
 } // namespace Logicon

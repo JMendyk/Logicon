@@ -102,27 +102,29 @@ namespace Logicon {
                     for (const auto &gate : gates)
                         [](const std::shared_ptr<Gate> &gate) -> void {
                             std::string gateType;
-                            if (gate->gateType == Logicon::AND)
+                            if (gate->getGateType() == Logicon::AND)
                                 gateType = "AND";
-                            else if (gate->gateType == Logicon::CLOCK)
+                            else if (gate->getGateType() == Logicon::CLOCK)
                                 gateType = "CLOCK";
-                            else if (gate->gateType == Logicon::DELAY)
+                            else if (gate->getGateType() == Logicon::DELAY)
                                 gateType = "DELAY";
-                            else if (gate->gateType == Logicon::INPUT)
+                            else if (gate->getGateType() == Logicon::INPUT_ON ||
+                                     gate->getGateType() == Logicon::INPUT_OFF)
                                 gateType = "INPUT";
-                            else if (gate->gateType == Logicon::NAND)
+                            else if (gate->getGateType() == Logicon::NAND)
                                 gateType = "NAND";
-                            else if (gate->gateType == Logicon::NOR)
+                            else if (gate->getGateType() == Logicon::NOR)
                                 gateType = "NOR";
-                            else if (gate->gateType == Logicon::NOT)
+                            else if (gate->getGateType() == Logicon::NOT)
                                 gateType = "NOT";
-                            else if (gate->gateType == Logicon::OR)
+                            else if (gate->getGateType() == Logicon::OR)
                                 gateType = "OR";
-                            else if (gate->gateType == Logicon::SWITCH)
+                            else if (gate->getGateType() == Logicon::SWITCH_ON ||
+                                     gate->getGateType() == Logicon::SWITCH_OFF)
                                 gateType = "SWITCH";
-                            else if (gate->gateType == Logicon::XNOR)
+                            else if (gate->getGateType() == Logicon::XNOR)
                                 gateType = "XNOR";
-                            else if (gate->gateType == Logicon::XOR)
+                            else if (gate->getGateType() == Logicon::XOR)
                                 gateType = "XOR";
 
 
@@ -222,7 +224,6 @@ namespace Logicon {
                 ID id;
                 std::cin >> id;
                 auto g = circuit->find(id);
-                if (g->gateType != INPUT && g->gateType != SWITCH) continue;
                 if (g != nullptr)
                     g->clickAction();
             } else if (cmd == "reset") {
@@ -251,7 +252,7 @@ namespace Logicon {
                 Tick onperiod, offperiod, phase;
                 std::cin >> id >> onperiod >> offperiod >> phase;
                 auto g = circuit->find(id);
-                if (g->gateType != CLOCK) continue;
+                if (g->getGateType() != CLOCK) continue;
                 auto g1 = std::static_pointer_cast<Clock, Gate>(g);
                 g1->changeSettings(onperiod, offperiod, phase);
             } else if (cmd == "changeDelay") {
@@ -259,7 +260,7 @@ namespace Logicon {
                 Tick phase;
                 std::cin >> id >> phase;
                 auto g = circuit->find(id);
-                if (g->gateType != DELAY) continue;
+                if (g->getGateType() != DELAY) continue;
                 auto g1 = std::static_pointer_cast<Delay, Gate>(g);
                 g1->setDelay(phase);
             }

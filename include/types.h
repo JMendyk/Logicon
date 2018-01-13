@@ -27,19 +27,45 @@ namespace Logicon {
 
 
     // @formatter:off
-    typedef unsigned int    ID;                                         /// ID type identifying all blocks. IDs are >= 0, so anything < 0 can be used as flag (document it)
-    typedef unsigned int    Port;                                       /// Represents port by it's index in corresponding array in `Gate`.
+    typedef int             ID;                                         /// ID type identifying all blocks. IDs are >= 0, so anything < 0 can be used as flag (document it)
+    typedef int             Port;                                       /// Represents port by it's index in corresponding array in `Gate`.
     typedef int             State;                                      /// Represents port state OFF(0) or ON(1). Engine can use other variables to indicate if state was calculated.
     typedef int             Tick;                                       /// Represents tick type.
 
-    const unsigned int      GATE_TYPE_COUNT = 11;                       /// How many types of gates there is
+    const unsigned int      GATE_TYPE_COUNT = 13;                       /// How many types of gates there is
     static const State      initialState = 0;                           /// Represents initial state of port
 
     // TODO: make extern and init in App::init()
     static unsigned int     gateInputsCount  [GATE_TYPE_COUNT]                 /// inputs count for GATE_TYPE corresponding gates
-                            {1,1,1,2,2,2,2,2,2,0,0};
+                            {1,     // NOT
+                             1,     // DELAY
+                             1,     // SWITCH_ON
+                             1,     // SWITCH_OFF
+                             2,     // AND
+                             2,     // OR
+                             2,     // XOR
+                             2,     // NAND
+                             2,     // NOR
+                             2,     // XNOR
+                             0,     // CLOCK
+                             0,     // INPUT_ON
+                             0      // INPUT_OFF
+                            };
     static unsigned int     gateOutputsCount [GATE_TYPE_COUNT]                 /// outputs count for GATE_TYPE corresponding gates
-                            {1,1,1,1,1,1,1,1,1,1,1};
+                            {1,     // NOT
+                             1,     // DELAY
+                             1,     // SWITCH_ON
+                             1,     // SWITCH_OFF
+                             1,     // AND
+                             1,     // OR
+                             1,     // XOR
+                             1,     // NAND
+                             1,     // NOR
+                             1,     // XNOR
+                             1,     // CLOCK
+                             1,     // INPUT_ON
+                             1      // INPUT_OFF
+                            };
 
     // @formatter:on
 
@@ -56,8 +82,7 @@ namespace Logicon {
     };
 
     enum GATE_TYPE {                                                    /// Represents gate type. Used instead of runtime type deduction.
-        NOT, DELAY, SWITCH, AND, OR, XOR, NAND, NOR, XNOR, CLOCK, INPUT,
-        NO_GATE = -1 /// Used by GCircuit - not in gate-placing mode
+        NOT, DELAY, SWITCH_ON, SWITCH_OFF, AND, OR, XOR, NAND, NOR, XNOR, CLOCK, INPUT_ON, INPUT_OFF
     };
 
     static int fromMilis(float x) { return (int) (x * 1000); }

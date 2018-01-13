@@ -25,8 +25,6 @@ namespace Logicon {
         // local typedef for container
         typedef std::list<std::shared_ptr<GBlock>> _GBLOCK_CONTAINER_TYPE;
 
-        GATE_TYPE currentGateToPlace;
-
         std::shared_ptr<Circuit> circuit;
         _GBLOCK_CONTAINER_TYPE gBlocks; // list with positions and blocks, TODO: spatial data struct
 
@@ -82,13 +80,13 @@ namespace Logicon {
         void insert(std::shared_ptr<Gate> gate, UI::Vec2 pos);
 
         /**
-         * @brief Removes GBlock and corresponding gate from model
+         * @brief Removes GBlock from visual model
          * @param id ID of GBlock that should be removed
          */
         void remove(ID &id);
 
         /**
-         * @brief clears GCircuit and model
+         * @brief clears GCircuit
          */
         void clear();
 
@@ -110,40 +108,11 @@ namespace Logicon {
         bool move(ID &id, UI::Vec2 pos);
 
         /**
-         * @brief Connects two GBlocks
-         * @param idFrom ID of GBlock where connection starts
-         * @param output Output port of the starting GBlock
-         * @param idTo ID of GBlock where connection ends
-         * @param input Input port of the ending GBlock
-         */
-        void connect(ID idFrom, Port output, ID idTo, Port input);
-
-        /**
-         * @brief Disconnects two GBlocks that were previously connected
-         * @param idFrom ID of GBlock where connections starts
-         * @param output Output port of the starting GBlock
-         * @param idTo ID of GBlock where connections ends
-         * @param input Input port of the ending GBlock
-         */
-        void disconnect(ID idFrom, Port output, ID idTo, Port input);
-
-        /**
-         * @brief Updates graphical information based on circuit: changes images, cable colors, input colors etc.
-         */
-        void update();
-
-        /**
          * @brief Renders GCircuit
          * @param window_pos
          * @param window_size
          */
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
-
-        /**
-         * Receive information from BlocksWidget which Gate should be placed
-         * @param gate_type gate to place
-         */
-        void set_current_gate_to_place(GATE_TYPE gate_type);
 
     private:
 

@@ -35,17 +35,12 @@ namespace Logicon {
         std::vector<std::pair<State, PortConnectionList_> > outputs;
         /// additional data individual for each gate like labels etc.
 
-    public:
+    protected:
         /// Represents gate type
-        const GATE_TYPE gateType;
+        GATE_TYPE gateType;
+    public:
         /// ID representing gate
         const ID id;
-
-        /**
-         * @deprecated
-         * @return returns ID
-         */
-        const ID getId() const;
 
         /**
          * @brief Constructor accepting new unique ID and a number of inputs and outputs.
@@ -54,6 +49,18 @@ namespace Logicon {
          * @param outputsCount number of outputs
          */
         explicit Gate(GATE_TYPE gateType, ID id);
+
+        /**
+         * @deprecated
+         * @return returns ID
+         */
+        const ID getId() const;
+
+        /**
+         * @brief Returns gate type
+         * @return gate type
+         */
+        const GATE_TYPE getGateType() const;
 
         // ======
         // INPUTS

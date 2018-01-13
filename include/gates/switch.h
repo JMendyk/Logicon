@@ -16,10 +16,6 @@ namespace Logicon{
      */
     class Switch : public Gate {
 
-    private:
-        /// switch state
-        bool STATE_FLAG;
-
     public:
         /// Constructor: default state is LOW
         explicit Switch(ID id);

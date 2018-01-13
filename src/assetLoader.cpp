@@ -6,122 +6,83 @@
 
 namespace Logicon {
 
-    AssetLoader *AssetLoader::instance = nullptr;
 
-
-    Texture &AssetLoader::gate_and() {
-        return instance->_gate_and;
-    }
-
-    Texture &AssetLoader::gate_clock() {
-        return instance->_gate_clock;
-    }
-
-    Texture &AssetLoader::gate_delay() {
-        return instance->_gate_delay;
-    }
-
-    Texture &AssetLoader::gate_input_high() {
-        return instance->_gate_input_high;
-    }
-
-    Texture &AssetLoader::gate_input_low() {
-        return instance->_gate_input_low;
-    }
-
-    Texture &AssetLoader::gate_nand() {
-        return instance->_gate_nand;
-    }
-
-    Texture &AssetLoader::gate_nor() {
-        return instance->_gate_nor;
-    }
-
-    Texture &AssetLoader::gate_not() {
-        return instance->_gate_not;
-    }
-
-    Texture &AssetLoader::gate_or() {
-        return instance->_gate_or;
-    }
-
-    Texture &AssetLoader::gate_switch_off() {
-        return instance->_gate_switch_off;
-    }
-
-    Texture &AssetLoader::gate_switch_on() {
-        return instance->_gate_switch_on;
-    }
-
-    Texture &AssetLoader::gate_xnor() {
-        return instance->_gate_xnor;
-    }
-
-    Texture &AssetLoader::gate_xor() {
-        return instance->_gate_xor;
-    }
-
-    Texture &AssetLoader::icon_new() {
-        return instance->_icon_new;
-    }
-
-    Texture &AssetLoader::icon_open() {
-        return instance->_icon_open;
-    }
-
-    Texture &AssetLoader::icon_pause() {
-        return instance->_icon_pause;
-    }
-
-    Texture &AssetLoader::icon_play() {
-        return instance->_icon_play;
-    }
-
-    Texture &AssetLoader::icon_restart() {
-        return instance->_icon_restart;
-    }
-
-    Texture &AssetLoader::icon_save() {
-        return instance->_icon_save;
-    }
-
-    Texture &AssetLoader::icon_step() {
-        return instance->_icon_step;
-    }
-
-    void AssetLoader::_loadAssets() {
-        _gate_and = load_texture("assets/gates/gate_and.png");
-        _gate_clock = load_texture("assets/gates/gate_clock.png");
-        _gate_delay = load_texture("assets/gates/gate_delay.png");
-        _gate_input_high = load_texture("assets/gates/gate_input_high.png");
-        _gate_input_low = load_texture("assets/gates/gate_input_low.png");
-        _gate_nand = load_texture("assets/gates/gate_nand.png");
-        _gate_nor = load_texture("assets/gates/gate_nor.png");
-        _gate_not = load_texture("assets/gates/gate_not.png");
-        _gate_or = load_texture("assets/gates/gate_or.png");
-        _gate_switch_off = load_texture("assets/gates/gate_switch_off.png");
-        _gate_switch_on = load_texture("assets/gates/gate_switch_on.png");
-        _gate_xnor = load_texture("assets/gates/gate_xnor.png");
-        _gate_xor = load_texture("assets/gates/gate_xor.png");
-        _icon_new = load_texture("assets/icons/icon_new.png");
-        _icon_open = load_texture("assets/icons/icon_open.png");
-        _icon_pause = load_texture("assets/icons/icon_pause.png");
-        _icon_play = load_texture("assets/icons/icon_play.png");
-        _icon_restart = load_texture("assets/icons/icon_restart.png");
-        _icon_save = load_texture("assets/icons/icon_save.png");
-        _icon_step = load_texture("assets/icons/icon_step.png");
-    }
-
-    AssetLoader *AssetLoader::assetLoader() {
-        if (instance == nullptr) {
-            instance = new AssetLoader();
-        }
+    AssetLoader &AssetLoader::getInstance() {
+        static AssetLoader instance;
         return instance;
     }
 
     void AssetLoader::loadAssets() {
-        assetLoader();
-        instance->_loadAssets();
+        getInstance()._gate_and = load_texture("assets/gates/gate_and.png");
+        getInstance()._gate_clock = load_texture("assets/gates/gate_clock.png");
+        getInstance()._gate_delay = load_texture("assets/gates/gate_delay.png");
+        getInstance()._gate_input_on = load_texture("assets/gates/gate_input_high.png");
+        getInstance()._gate_input_off = load_texture("assets/gates/gate_input_low.png");
+        getInstance()._gate_nand = load_texture("assets/gates/gate_nand.png");
+        getInstance()._gate_nor = load_texture("assets/gates/gate_nor.png");
+        getInstance()._gate_not = load_texture("assets/gates/gate_not.png");
+        getInstance()._gate_or = load_texture("assets/gates/gate_or.png");
+        getInstance()._gate_switch_on = load_texture("assets/gates/gate_switch_on.png");
+        getInstance()._gate_switch_off = load_texture("assets/gates/gate_switch_off.png");
+        getInstance()._gate_xnor = load_texture("assets/gates/gate_xnor.png");
+        getInstance()._gate_xor = load_texture("assets/gates/gate_xor.png");
+        getInstance()._icon_new = load_texture("assets/icons/icon_new.png");
+        getInstance()._icon_open = load_texture("assets/icons/icon_open.png");
+        getInstance()._icon_pause = load_texture("assets/icons/icon_pause.png");
+        getInstance()._icon_play = load_texture("assets/icons/icon_play.png");
+        getInstance()._icon_restart = load_texture("assets/icons/icon_restart.png");
+        getInstance()._icon_save = load_texture("assets/icons/icon_save.png");
+        getInstance()._icon_step = load_texture("assets/icons/icon_step.png");
+    }
+
+    Texture &AssetLoader::getGateTexture(GATE_TYPE gate) {
+        switch (gate) {
+            case Logicon::NOT:
+                return getInstance()._gate_not;
+            case Logicon::DELAY:
+                return getInstance()._gate_delay;
+            case Logicon::SWITCH_ON:
+                return getInstance()._gate_switch_on;
+            case Logicon::SWITCH_OFF:
+                return getInstance()._gate_switch_off;
+            case Logicon::AND:
+                return getInstance()._gate_and;
+            case Logicon::OR:
+                return getInstance()._gate_or;
+            case Logicon::XOR:
+                return getInstance()._gate_xor;
+            case Logicon::NAND:
+                return getInstance()._gate_nand;
+            case Logicon::NOR:
+                return getInstance()._gate_nor;
+            case Logicon::XNOR:
+                return getInstance()._gate_xnor;
+            case Logicon::CLOCK:
+                return getInstance()._gate_clock;
+            case Logicon::INPUT_ON:
+                return getInstance()._gate_input_on;
+            case Logicon::INPUT_OFF:
+                return getInstance()._gate_input_off;
+        }
+    }
+
+    Texture &AssetLoader::getIconTexture(AssetLoader::ICON icon) {
+        switch (icon) {
+            case NEW:
+                return getInstance()._icon_new;
+            case OPEN:
+                return getInstance()._icon_open;
+            case PAUSE:
+                return getInstance()._icon_pause;
+            case PLAY:
+                return getInstance()._icon_play;
+            case RESTART:
+                return getInstance()._icon_restart;
+            case SAVE:
+                return getInstance()._icon_save;
+            case STEP:
+                return getInstance()._icon_step;
+        }
     }
 } // namespace Logicon
 

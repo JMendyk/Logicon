@@ -4,6 +4,7 @@
 
 #include <assetLoader.h>
 #include <gates/switch.h>
+#include <gates/input.h>
 #include "gui/gBlock.h"
 #include "gui/gCircuit.h"
 
@@ -32,37 +33,37 @@ namespace Logicon {
         // set image
         switch (gate->gateType) {
 
-            case NOT:
+            case Logicon::NOT:
                 texture = Logicon::AssetLoader::gate_not();
                 break;
-            case DELAY:
+            case Logicon::DELAY:
                 texture = Logicon::AssetLoader::gate_delay();
                 break;
-            case SWITCH:
+            case Logicon::SWITCH:
                 texture = Logicon::AssetLoader::gate_switch_off();
                 break;
-            case AND:
+            case Logicon::AND:
                 texture = Logicon::AssetLoader::gate_and();
                 break;
-            case OR:
+            case Logicon::OR:
                 texture = Logicon::AssetLoader::gate_or();
                 break;
-            case XOR:
+            case Logicon::XOR:
                 texture = Logicon::AssetLoader::gate_xor();
                 break;
-            case NAND:
+            case Logicon::NAND:
                 texture = Logicon::AssetLoader::gate_nand();
                 break;
-            case NOR:
+            case Logicon::NOR:
                 texture = Logicon::AssetLoader::gate_nor();
                 break;
-            case XNOR:
+            case Logicon::XNOR:
                 texture = Logicon::AssetLoader::gate_xnor();
                 break;
-            case CLOCK:
+            case Logicon::CLOCK:
                 texture = Logicon::AssetLoader::gate_clock();
                 break;
-            case INPUT:
+            case Logicon::INPUT:
                 texture = Logicon::AssetLoader::gate_input_low();
                 break;
         }
@@ -116,6 +117,7 @@ namespace Logicon {
                                ImColor(0, 0, 0, 0),
                                color) && should_interact && !MOVED_WHILE_DRAGGING_FLAG) {
             gate->clickAction();
+            update();
         }
 
         // Allow overlap for port buttons
@@ -175,7 +177,7 @@ namespace Logicon {
 
         auto otherGBlock = parentCircuit.lock()->getGBlockByID(otherId);
 
-        ImColor color = isHigh ? ImColor(255, 195, 17) : ImColor(68, 74, 121);
+        ImColor color = isHigh ? UI::HIGH_STATE_COLOR : UI::LOW_STATE_COLOR;
 
         // upper left corner of the window
         UI::Vec2 shift = ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
@@ -243,12 +245,15 @@ namespace Logicon {
     }
 
     void GBlock::update() {
-        if (gate->gateType == SWITCH) {
-            // cast(parent->getCircuit()->find(this->id))->isOn == true ... texture = switch_on ...
-        } else if (gate->gateType == INPUT) {
-            // std::static_pointer_cast<Logicon::Switch>(parent->getCircuit()->find(this->id))->isOn() ? texture = ... :
+        if (gate->gateType == Logicon::SWITCH) {
+            std::static_pointer_cast<Switch, Gate>(this->gate)->isClicked() ?
+                    texture = AssetLoader::gate_switch_on() :
+                    texture = AssetLoader::gate_switch_off();
+        } else if (gate->gateType == Logicon::INPUT) {
+            std::static_pointer_cast<Input, Gate>(this->gate)->isClicked() ?
+                    texture = AssetLoader::gate_input_high() :
+                    texture = AssetLoader::gate_input_low();
         }
-        // TODO: Implement
     }
 
     bool GBlock::isDragged() const {

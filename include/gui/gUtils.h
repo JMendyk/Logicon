@@ -46,7 +46,8 @@ namespace Logicon {
         const float     BEZIER_THICKNESS                = 4.0;                                                          /// Thickness of bezier lines
         const int BEZIER_SEGMENTS = 20;                                                           /// Higher = smoother bezier
 
-        const float CLICK_TIMEOUT = 0.3;                                                          /// Mili
+        const ImColor HIGH_STATE_COLOR = ImColor(255, 195, 17);
+        const ImColor LOW_STATE_COLOR = ImColor(68, 74, 121);
         // @formatter:on
 
         /// Represents 2D vector for UI purposes

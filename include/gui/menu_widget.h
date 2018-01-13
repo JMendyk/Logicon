@@ -11,18 +11,23 @@
 
 namespace Logicon {
 
-    //forward declare App
-    class App;
 
     class MenuWidget {
-        static MenuWidget *instance;
-        App *app;
-        GLFWwindow *window;
 
+        ImFont *myFont;
+//-----------------------------------------------------------------------------
+    private:
         MenuWidget() = default;
+
     public:
-        static MenuWidget *getInstance();
-        bool init(App *app, GLFWwindow *window);
+        static MenuWidget &getInstance();
+
+        MenuWidget(const MenuWidget &) = delete;
+
+        void operator=(const MenuWidget &) = delete;
+//-----------------------------------------------------------------------------
+    public:
+        bool init();
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
 

@@ -25,39 +25,40 @@ namespace Logicon {
 
 
     /**
-     * @brief Main app class.
+     * @brief Main app class. Singleton.
      * Coordinates work between various components: menus, engine, canvas, circuit, parsers, data etc.
      * Main program loop is located in here.
      */
     class App {
 
+//-----------------------------------------------------------------------------
+    private:
+        App() = default;
+
+    public:
+
+        static App &getInstance();
+
+        App(App const &) = delete;
+
+        void operator=(App const &) = delete;
+//-----------------------------------------------------------------------------
 
         GLFWwindow *window;                                             /// GL Window used as GUI root container
 
     public:
-        Tick tickrate;                                                  /// how often engine calculates logic
-
-        Engine *engine;                                                 /// Engine singleton
-        std::shared_ptr<Circuit> circuit;                               /// current circuit
-        int timer;
-        float simulationSpeed;
-
         std::string APP_TITLE;
-        MenuWidget *menuWidget;
-        BlocksWidget *blocksWidget;
-        FooterWidget *footerWidget;
-        CanvasWidget *canvasWidget;
+        std::shared_ptr<Circuit> circuit;                               /// current circuit
 
         enum STATE {                                        /// Represents current mode in which app is running TODO: Move UNINITIALIZED state inside CIRCUIT
             RUNNING,
             PAUSED,
             RESTART
         } state;
-
+        Tick tickrate;                                                  /// how often engine calculates logic
+        int timer;
+        float simulationSpeed;
         bool STEP_NEXT_STEP;
-
-        /// Constructor creates new Circuit
-        App();
 
         /**
          * @brief Starts the app.
@@ -71,15 +72,39 @@ namespace Logicon {
          * Called once by App::run when app starts
          * @return true if initialization was successful
          */
-        bool init(bool shellMode);
+        bool init();
 
         /**
          * @brief Simmilar to init() - closes proper files etc.
          * Called once by App::run when app is about to close
          * @return true if close was a success
          */
-        bool close(bool shellMode);
+        bool close();
 
+//-----------------------------------------------------------------------------
+// SHELL
+//-----------------------------------------------------------------------------
+
+        /**
+         * @brief Initializes app for Shell mode
+         * @return true if initialization was successful
+         */
+        bool initShell();
+
+        /**
+         * @brief Launch app in shell mode
+         */
+        void runShell();
+
+        /**
+         * @brief Run when exiting the shell
+         * @return true if close was a success
+         */
+        bool closeShell();
+
+//-----------------------------------------------------------------------------
+// GUI
+//-----------------------------------------------------------------------------
 
         /**
          * @brief Initializes app for GUI mode
@@ -103,23 +128,6 @@ namespace Logicon {
          * @return true if close was a success
          */
         bool closeGui();
-
-        /**
-         * @brief Initializes app for Shell mode
-         * @return true if initialization was successful
-         */
-        bool initShell();
-
-        /**
-         * @brief Launch app in shell mode
-         */
-        void runShell();
-
-        /**
-         * @brief Run when exiting the shell
-         * @return true if close was a success
-         */
-        bool closeShell();
     };
 
 } // namespace Logicon

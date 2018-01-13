@@ -4,21 +4,20 @@
 
 #include "gui/footer_widget.h"
 
-#include <iostream>
-
 // For VerticalSeparator - since re-implementing it
 // would required adding many ImGui's internal functions
 
 namespace Logicon {
 
-    FooterWidget *FooterWidget::instance = nullptr;
+    FooterWidget &FooterWidget::getInstance() {
+        static FooterWidget instance;
+        return instance;
+    }
+//-----------------------------------------------------------------------------
 
-    bool FooterWidget::init(App *app, GLFWwindow *window) {
-        if (instance == nullptr) {
-            instance = new FooterWidget();
-        }
-        instance->app = app;
-        instance->window = window;
+    bool FooterWidget::init() {
+        for (std::string &s : strings)
+            s = "";
         return true;
     }
 
@@ -65,50 +64,21 @@ namespace Logicon {
             static const float ItemSpacing = ImGui::GetStyle().ItemSpacing.x;
             float pos = 0;
 
-            for (int idx = elements_count - 1; idx >= 0; idx--) {
-                pos += widths[idx] + ItemSpacing;
-                ImGui::SameLine(ImGui::GetWindowWidth() - pos);
+            for (std::string &s : strings) {
                 ImGui::BeginGroup();
-                if (idx == 0) {
-                    ImGui::Text(str1.c_str());
-                    ImGui::SameLine();
-                    ImGui::VerticalSeparator();
-                } else if (idx == 1) {
-                    ImGui::Text(str2.c_str());
-                    ImGui::SameLine();
-                    ImGui::VerticalSeparator();
-                } else if (idx == 2) {
-                    ImGui::Text(str3.c_str());
-                }
+                ImGui::Text(s.c_str());
+                ImGui::SameLine(70);
+                ImGui::VerticalSeparator();
                 ImGui::EndGroup();
-                widths[idx] = ImGui::GetItemRectSize().x;
             }
 
         }
         ImGui::End();
     }
 
-    FooterWidget *FooterWidget::getInstance() {
-        if (instance == nullptr) {
-            instance = new FooterWidget();
-        }
-        return instance;
-    }
-
     void FooterWidget::setStr(int idx, std::string str) {
-        switch (idx) {
-            case 1:
-                str1 = "x:" + str;
-                break;
-            case 2:
-                str2 = "y:" + str;
-                break;
-            case 3:
-                str3 = str;
-                break;
-            default:
-                break;
-        }
+        if (idx < 0 || idx >= 5) return;
+        strings[idx] = str;
     }
 
 } // namespace Logicon

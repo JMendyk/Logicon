@@ -18,7 +18,7 @@ namespace Logicon {
      * Allows to store values such as: labels, image paths, descriptions, positions of buttons, data about GBlocks etc.
      */
     class Data {
-        static void save(std::string path, GCircuit *gCircuit);
+        static void save(std::string path, std::shared_ptr<GCircuit> gCircuit);
 
         static std::shared_ptr<GCircuit> read(std::string path);
     };

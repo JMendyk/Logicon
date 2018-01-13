@@ -11,22 +11,20 @@
 
 namespace Logicon {
 
-    // forward declaraton of parent
-    class App;
-
     class CanvasWidget {
-        static CanvasWidget *instance;
-        App *app;
         std::shared_ptr<GCircuit> gCircuit;
 
-
+//-----------------------------------------------------------------------------
     private:
-
         CanvasWidget() = default;
-
     public:
+        static CanvasWidget &getInstance();
 
-        static CanvasWidget *getInstance();
+        CanvasWidget(const CanvasWidget &) = delete;
+
+        void operator=(const CanvasWidget &) = delete;
+//-----------------------------------------------------------------------------
+    public:
 
         const std::shared_ptr<GCircuit> &getGCircuit() const;
 
@@ -35,13 +33,13 @@ namespace Logicon {
          * @param parent parent app
          * @return true if initialization was successful
          */
-        bool init(App *parent);
+        bool init(std::shared_ptr<Circuit> circuit);
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
 
         bool close();
 
-        void setGCircuit(const std::shared_ptr<Circuit> circuit);
+        void setGCircuit(std::shared_ptr<GCircuit> gCircuit);
 
     };
 

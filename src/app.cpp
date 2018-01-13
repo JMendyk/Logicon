@@ -21,18 +21,16 @@
 
 namespace Logicon {
 
-    App::App() : APP_TITLE("Logicon") {}
 
-    bool App::init(bool shellMode) {
-        Logicon::Logger::init();
-        Logicon::Logger::info("Logicon started.");
-        circuit = std::make_shared<Circuit>(Circuit::nextID());
-        engine = Logicon::Engine::getInstance();
-        return true;
+    App &App::getInstance() {
+        static App instance;
+        return instance;
     }
 
+//-----------------------------------------------------------------------------
+
     void App::run(bool shellMode) {
-        if (!init(shellMode))
+        if (!init())
             exit(1);
         if (shellMode) { // SHELL
             if (!initShell()) {
@@ -55,14 +53,28 @@ namespace Logicon {
                 exit(300);
             }
         }
-        if (!close(false))
+        if (!close())
             exit(3);
     }
 
-    bool App::close(bool shellMode) {
+//-----------------------------------------------------------------------------
+
+    bool App::init() {
+        APP_TITLE = "Logicon";
+        Logicon::Logger::init();
+        Logicon::Logger::info("Logicon started.");
+        circuit = std::make_shared<Circuit>(Circuit::nextID());
+        return true;
+    }
+
+    bool App::close() {
         Logicon::Logger::info("Logicon stoped.");
         return true;
     }
+
+//-----------------------------------------------------------------------------
+// SHELL
+//-----------------------------------------------------------------------------
 
     bool App::initShell() {
         Logicon::Logger::info("MODE:   Shell");
@@ -229,11 +241,11 @@ namespace Logicon {
                 ID id;
                 std::cin >> id;
                 auto gates = circuit->find(id);
-                engine->propagateSignal(circuit, gates);
+                Engine::getInstance().propagateSignal(circuit, gates);
             } else if (cmd == "restart") {
-                engine->restart(circuit);
+                Engine::getInstance().restart(circuit);
             } else if (cmd == "calculate") {
-                engine->calcLogicImmediate(circuit);
+                Engine::getInstance().calcLogicImmediate(circuit);
             } else if (cmd == "changeClock") {
                 ID id;
                 Tick onperiod, offperiod, phase;
@@ -258,6 +270,10 @@ namespace Logicon {
         Logicon::Logger::info("Shell closed");
         return true;
     }
+
+//-----------------------------------------------------------------------------
+// GUI
+//-----------------------------------------------------------------------------
 
     bool App::initGui() {
         Logicon::Logger::info("MODE:   GUI");
@@ -298,50 +314,40 @@ namespace Logicon {
         AssetLoader::loadAssets();
 
         // Widgets
-        this->menuWidget = MenuWidget::getInstance();
-        if (!this->menuWidget->init(this, this->window))
-            return false;
-
-        this->blocksWidget = BlocksWidget::getInstance();
-        if (!this->blocksWidget->init(this, this->window))
-            return false;
-
-        this->canvasWidget = CanvasWidget::getInstance();
-        if (!this->canvasWidget->init(this))
-            return false;
-
-        this->footerWidget = FooterWidget::getInstance();
-        if (!this->footerWidget->init(this, this->window))
+        if (!MenuWidget::getInstance().init() ||
+            !BlocksWidget::getInstance().init() ||
+            !CanvasWidget::getInstance().init(circuit) ||
+            !FooterWidget::getInstance().init())
             return false;
 
         timer = 0;
-        canvasWidget->setGCircuit(circuit);
+        simulationSpeed = ImGui::GetTime();
         return true;
     }
 
     void App::runGUI() {
         // Main app loop
-
         while (!glfwWindowShouldClose(this->window)) {
             glfwPollEvents();
             ImGui_ImplGlfwGL3_NewFrame();
 
             // if (tickrate...) engine.calcLogic(this.canvasWidget.gCircuit.circuit)
-            this->footerWidget->setStr(1, std::to_string((int) ImGui::GetMousePos().x));
-            this->footerWidget->setStr(2, std::to_string((int) ImGui::GetMousePos().y));
+            FooterWidget::getInstance().setStr(1, std::to_string((int) ImGui::GetMousePos().x));
+            FooterWidget::getInstance().setStr(2, std::to_string((int) ImGui::GetMousePos().y));
             switch (state) {
 
                 case RUNNING:
-                    simulationSpeed = ImGui::GetTime();
+                    FooterWidget::getInstance().setStr(3,
+                                                       std::to_string(fromMilis(ImGui::GetTime() - simulationSpeed)));
                     if (timer >= tickrate) {
-                        engine->calc(circuit, false);
+                        Engine::getInstance().calc(circuit, false);
                         timer -= tickrate;
-                        footerWidget->setStr(3, std::to_string(fromMilis(ImGui::GetTime() - simulationSpeed)));
+                        simulationSpeed = ImGui::GetTime();
                     }
                     break;
                 case PAUSED:
                     if (STEP_NEXT_STEP) {
-                        engine->calcLogic(circuit);
+                        Engine::getInstance().calcLogic(circuit);
                         STEP_NEXT_STEP = false;
                     }
                     break;
@@ -371,42 +377,37 @@ namespace Logicon {
         glfwGetFramebufferSize(window, &canvas_w, &canvas_h);
 
         // Menu Widget
-        this->menuWidget->render({UI::MARGIN,
-                                  UI::MARGIN},
-                                 {canvas_w - 2 * UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
-                                  UI::MENU_WIDGET_HEIGHT});
+        MenuWidget::getInstance().render({UI::MARGIN,
+                                          UI::MARGIN},
+                                         {canvas_w - 2 * UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+                                          UI::MENU_WIDGET_HEIGHT});
         // Blocks Widget
-        this->blocksWidget->render({canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
-                                    UI::MARGIN},
-                                   {UI::BLOCKS_WIDGET_WIDTH,
-                                    canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)});
+        BlocksWidget::getInstance().render({canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
+                                            UI::MARGIN},
+                                           {UI::BLOCKS_WIDGET_WIDTH,
+                                            canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)});
 
         // Canvas Widget
-        this->canvasWidget->render({UI::MARGIN,
-                                    UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN},
-                                   {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
-                                    canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
-                                    UI::FOOTER_WIDGET_HEIGHT});
+        CanvasWidget::getInstance().render({UI::MARGIN,
+                                            UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN},
+                                           {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+                                            canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
+                                            UI::FOOTER_WIDGET_HEIGHT});
 
         // Footer Widget
-        this->footerWidget->render({0,
-                                    (float) canvas_h - (UI::FOOTER_WIDGET_HEIGHT)},
-                                   {(float) canvas_w,
-                                    UI::FOOTER_WIDGET_HEIGHT});
+        FooterWidget::getInstance().render({0,
+                                            (float) canvas_h - (UI::FOOTER_WIDGET_HEIGHT)},
+                                           {(float) canvas_w,
+                                            UI::FOOTER_WIDGET_HEIGHT});
     }
 
     bool App::closeGui() {
-        if (!this->menuWidget->close())
+        if (MenuWidget::getInstance().close() ||
+            !BlocksWidget::getInstance().close() ||
+            !CanvasWidget::getInstance().close() ||
+            !FooterWidget::getInstance().close())
             return false;
 
-        if (!this->blocksWidget->close())
-            return false;
-
-        if (!this->canvasWidget->close())
-            return false;
-
-        if (!this->footerWidget->close())
-            return false;
 
         ImGui_ImplGlfwGL3_Shutdown();
         glfwTerminate();

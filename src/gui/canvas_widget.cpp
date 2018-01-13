@@ -5,13 +5,15 @@
 #include <app.h>
 
 namespace Logicon {
-    CanvasWidget *CanvasWidget::instance = nullptr;
 
-    bool CanvasWidget::init(App *app) {
-        if (instance == nullptr) {
-            instance = new CanvasWidget();
-        }
-        instance->app = app;
+    CanvasWidget &CanvasWidget::getInstance() {
+        static CanvasWidget instance;
+        return instance;
+    }
+//-----------------------------------------------------------------------------
+
+    bool CanvasWidget::init(std::shared_ptr<Circuit> circuit) {
+        gCircuit = std::make_shared<GCircuit>(circuit);
         return true;
     }
 
@@ -40,15 +42,8 @@ namespace Logicon {
         ImGui::End();
     }
 
-    CanvasWidget *CanvasWidget::getInstance() {
-        if (instance == nullptr) {
-            instance = new CanvasWidget();
-        }
-        return instance;
-    }
-
-    void CanvasWidget::setGCircuit(const std::shared_ptr<Circuit> circuit) {
-        instance->gCircuit = std::make_shared<GCircuit>(circuit); // create new gCircuit and init with apps model
+    void CanvasWidget::setGCircuit(const std::shared_ptr<GCircuit> gCircuit) {
+        this->gCircuit = gCircuit; // create new gCircuit and init with apps model
     }
 
     const std::shared_ptr<GCircuit> &CanvasWidget::getGCircuit() const {

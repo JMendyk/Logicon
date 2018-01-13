@@ -11,21 +11,24 @@
 
 namespace Logicon {
 
-    // forward declare App
-    class App;
-
     class BlocksWidget {
         static BlocksWidget *instance;
 
-        App *app;
-        GLFWwindow* window;
-
+//-----------------------------------------------------------------------------
+    private:
         BlocksWidget() = default;
     public:
-        static BlocksWidget *getInstance();
-        bool init(App *app, GLFWwindow *window);
+        static BlocksWidget &getInstance();
+
+        BlocksWidget(const BlocksWidget &) = delete;
+
+        void operator=(const BlocksWidget &) = delete;
+//-----------------------------------------------------------------------------
+    public:
+        bool init();
 
         void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
+
         bool close();
     };
 

@@ -10,22 +10,20 @@
 
 namespace Logicon {
 
-    MenuWidget *MenuWidget::instance = nullptr;
-    ImFont *myFont = nullptr;
+    MenuWidget &MenuWidget::getInstance() {
+        static MenuWidget instance;
+        return instance;
+    }
+//-----------------------------------------------------------------------------
 
-    bool MenuWidget::init(App *app, GLFWwindow *window) {
-        if (instance == nullptr) {
-            instance = new MenuWidget();
-        }
-        instance->app = app;
-        instance->window = window;
+    bool MenuWidget::init() {
 
         static ImFontConfig imFontConfig = ImFontConfig();
         imFontConfig.SizePixels = 32.0f;
         imFontConfig.RasterizerMultiply = 4;
         myFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/fonts/Roboto-Medium.ttf", 32.0f, &imFontConfig);
 
-        return myFont != NULL;
+        return myFont != nullptr;
     }
 
     bool MenuWidget::close() {
@@ -76,7 +74,7 @@ namespace Logicon {
                                    ImVec4(0, 0, 0, 0),
                                    UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
-                app->state = App::STATE::RUNNING;
+                App::getInstance().state = App::STATE::RUNNING;
             }
             ImGui::SameLine();
             if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_pause().textureId),
@@ -85,7 +83,7 @@ namespace Logicon {
                                    ImVec4(0, 0, 0, 0),
                                    UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
-                app->state = App::STATE::PAUSED;
+                App::getInstance().state = App::STATE::PAUSED;
             }
             ImGui::SameLine();
             if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(Logicon::AssetLoader::icon_restart().textureId),
@@ -94,7 +92,7 @@ namespace Logicon {
                                    ImVec4(0, 0, 0, 0),
                                    UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
-                app->state = App::STATE::RESTART;
+                App::getInstance().state = App::STATE::RESTART;
             }
             ImGui::SameLine();
 
@@ -104,7 +102,7 @@ namespace Logicon {
             ImGui::PushItemWidth(256);
             ImGui::PushFont(myFont);
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, UI::Vec2(8, 8));
-            ImGui::InputInt("", &(app->tickrate), 0, 0);
+            ImGui::InputInt("", &(App::getInstance().tickrate), 0, 0);
             ImGui::PopStyleVar();
             ImGui::PopFont();
             ImGui::PopItemWidth();
@@ -116,18 +114,11 @@ namespace Logicon {
                                    ImVec4(0, 0, 0, 0),
                                    UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
-                app->STEP_NEXT_STEP = true;
+                App::getInstance().STEP_NEXT_STEP = true;
             }
             ImGui::SameLine();
         }
         ImGui::End();
-    }
-
-    MenuWidget *MenuWidget::getInstance() {
-        if (instance == nullptr) {
-            instance = new MenuWidget();
-        }
-        return instance;
     }
 
 } // namespace Logicon

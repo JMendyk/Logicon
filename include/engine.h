@@ -13,26 +13,32 @@ namespace Logicon {
      *
      * Engine allows user to initialize the first state of a circuit and calculate next states based on current.
      */
-    class Engine{
+    class Engine {
+//-----------------------------------------------------------------------------
+    private:
+        Engine();
 
+    public:
+        static Engine &getInstance();
+
+        Engine(const Engine &) = delete;
+
+        void operator=(const Engine &) = delete;
+//-----------------------------------------------------------------------------
     private:
 
-        static Engine *instance;
-        ///LOCAL VARIABLES
+        /// LOCAL VARIABLES
         std::list<std::shared_ptr<Gate> > graph;
         int i;
         std::map<ID, int> m;
         std::vector<Connection> con;
         ///===========================
 
-        ///Order of updating the gates
+        /// Order of updating the gates
         std::vector<ID> q;
-
-        Engine();
 
     public:
 
-        static Engine *getInstance();
         /**
          * Updates inputs of gates connected with gate gate.
          *

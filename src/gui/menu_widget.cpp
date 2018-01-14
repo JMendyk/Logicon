@@ -30,7 +30,7 @@ namespace Logicon {
         return true;
     }
 
-    void MenuWidget::render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size) {
+    void MenuWidget::render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size, const UI::Vec2 &dialog_pos, const UI::Vec2 &dialog_size) {
         ImGuiWindowFlags window_flags =
                 0
                 | ImGuiWindowFlags_NoTitleBar
@@ -51,25 +51,48 @@ namespace Logicon {
             );
             ImGui::SameLine();
             /// OPEN
-            if (ImGui::ImageButton(
-                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::OPEN).textureId),
-                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
-            )) {
-                auto gc = Data::read("test.json");
+            static ImGuiFs::Dialog open_dlg;
+            const bool open_clicked = ImGui::ImageButton(
+                reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::OPEN).textureId),
+                {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
+            );
+
+            const char *open_path = open_dlg.chooseFileDialog(
+                open_clicked,
+                nullptr,
+                Data::LOGICON_FILE_EXTENSION.c_str(),
+                nullptr,
+                dialog_size,
+                dialog_pos
+            );
+            if (strlen(open_path) > 0) {
+                auto gc = Data::read(open_path);
                 CanvasWidget::getInstance().setGCircuit(gc);
                 App::getInstance().circuit = gc->getCircuit();
             }
             ImGui::SameLine();
             /// SAVE
-            if (ImGui::ImageButton(
-                    reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::SAVE).textureId),
-                    {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
-                    UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
-                    ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
-            )) {
-                Data::save("test.json", CanvasWidget::getInstance().getGCircuit());
+            static ImGuiFs::Dialog save_dlg;
+            const bool save_clicked = ImGui::ImageButton(
+                reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::SAVE).textureId),
+                {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
+            );
+
+            const char *save_path = save_dlg.saveFileDialog(
+                save_clicked,
+                nullptr,
+                ("circuit"+Data::LOGICON_FILE_EXTENSION).c_str(),
+                Data::LOGICON_FILE_EXTENSION.c_str(),
+                nullptr,
+                dialog_size,
+                dialog_pos
+            );
+            if (strlen(save_path) > 0) {
+                Data::save(save_path, CanvasWidget::getInstance().getGCircuit());
             }
             ImGui::SameLine();
 

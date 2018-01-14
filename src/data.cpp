@@ -18,6 +18,9 @@
 #include <gates/input.h>
 
 namespace Logicon{
+
+    const std::string Data::LOGICON_FILE_EXTENSION = ".lgc";
+
     void Data::save(std::string path, std::shared_ptr<GCircuit> gCircuit) {
         const std::shared_ptr<Circuit> circuit = gCircuit->getCircuit();
         nlohmann::json j_gates = nlohmann::json::array();

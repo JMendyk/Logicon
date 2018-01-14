@@ -29,7 +29,7 @@ namespace Logicon {
     public:
         bool init();
 
-        void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size);
+        void render(const UI::Vec2 &window_pos, const UI::Vec2 &window_size, const UI::Vec2 &dialog_pos, const UI::Vec2 &dialog_size);
 
         bool close();
     };

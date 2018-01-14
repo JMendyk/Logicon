@@ -375,11 +375,20 @@ namespace Logicon {
         int canvas_w, canvas_h;
         glfwGetFramebufferSize(window, &canvas_w, &canvas_h);
 
+        UI::Vec2 canvas_pos = {UI::MARGIN,
+                               UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN};
+
+        UI::Vec2 canvas_size = {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
+                                canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
+                                    UI::FOOTER_WIDGET_HEIGHT};
+
         // Menu Widget
         MenuWidget::getInstance().render({UI::MARGIN,
                                           UI::MARGIN},
                                          {canvas_w - 2 * UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
-                                          UI::MENU_WIDGET_HEIGHT});
+                                          UI::MENU_WIDGET_HEIGHT},
+                                         canvas_pos,
+                                         canvas_size);
         // Blocks Widget
         BlocksWidget::getInstance().render({canvas_w - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH,
                                             UI::MARGIN},
@@ -387,11 +396,7 @@ namespace Logicon {
                                             canvas_h - (UI::MARGIN + UI::FOOTER_WIDGET_HEIGHT + UI::MARGIN)});
 
         // Canvas Widget
-        CanvasWidget::getInstance().render({UI::MARGIN,
-                                            UI::MARGIN + UI::MENU_WIDGET_HEIGHT + UI::MARGIN},
-                                           {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
-                                            canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
-                                            UI::FOOTER_WIDGET_HEIGHT});
+        CanvasWidget::getInstance().render(canvas_pos, canvas_size);
 
         // Footer Widget
         FooterWidget::getInstance().render({0,

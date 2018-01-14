@@ -22,7 +22,7 @@ namespace Logicon{
         const std::shared_ptr<Circuit> circuit = gCircuit->getCircuit();
         nlohmann::json j_gates = nlohmann::json::array();
         for (auto Gate : circuit->getGates()) {
-            auto pos = gCircuit->getGBlockByID(Gate->id)->getDimension();
+            auto pos = gCircuit->getGBlockByID(Gate->id)->getPosition();
             nlohmann::json j_gate = {{"id",      Gate->id},
                                      {"x",       pos.x},
                                      {"y",       pos.y},
@@ -49,44 +49,55 @@ namespace Logicon{
         std::shared_ptr<Circuit> circuit = std::make_shared<Circuit>(j.value("id", 0));
         std::shared_ptr<GCircuit> gCircuit = std::make_shared<GCircuit>(circuit);
         circuit->INITIALIZED_FLAG = j.value("flag", 0);
-        for (int i = 0; i < (j.value("list", {})).size(); i++) {
-            nlohmann::json j_gate = j.value("list", {});
+        nlohmann::json arr = j["list"];
+        std::cout << arr << std::endl;
+        std::cout.flush();
+        for (int i = 0; i < arr.size(); i++) {
+            nlohmann::json j_gate = arr[i];
+            std::cout << j_gate;
+            std::cout.flush();
             std::shared_ptr<Gate> gate;
-            int type = j_gate.value("type", -1);
-            int id = j_gate.value("id", 1);
+            GATE_TYPE type = (GATE_TYPE) (j_gate.value("type", -1));
+            ID id = j_gate.value("id", 1);
             UI::Vec2 pos = UI::Vec2(j_gate.value("x", 1), j_gate.value("y", 1));
             switch (type) {
-                case 0:
+                case NOT:
                     gate = std::make_shared<Not>(id);
                     break;
-                case 1:
+                case DELAY:
                     gate = std::make_shared<Delay>(id);
                     break;
-                case 2:
+                case SWITCH_ON:
                     gate = std::make_shared<Switch>(id);
                     break;
-                case 3:
+                case SWITCH_OFF:
+                    gate = std::make_shared<Switch>(id);
+                    break;
+                case AND:
                     gate = std::make_shared<And>(id);
                     break;
-                case 4:
+                case OR:
                     gate = std::make_shared<Or>(id);
                     break;
-                case 5:
+                case XOR:
                     gate = std::make_shared<Xor>(id);
                     break;
-                case 6:
+                case NAND:
                     gate = std::make_shared<Nand>(id);
                     break;
-                case 7:
+                case NOR:
                     gate = std::make_shared<Nor>(id);
                     break;
-                case 8:
+                case XNOR:
                     gate = std::make_shared<Xnor>(id);
                     break;
-                case 9:
+                case CLOCK:
                     gate = std::make_shared<Clock>(id);
                     break;
-                case 10:
+                case INPUT_ON:
+                    gate = std::make_shared<Input>(id);
+                    break;
+                case INPUT_OFF:
                     gate = std::make_shared<Input>(id);
                     break;
             }

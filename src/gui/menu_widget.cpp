@@ -51,20 +51,26 @@ namespace Logicon {
             );
             ImGui::SameLine();
             /// OPEN
-            ImGui::ImageButton(
+            if (ImGui::ImageButton(
                     reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::OPEN).textureId),
                     {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
                     UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
                     ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
-            );
+            )) {
+                auto gc = Data::read("test.json");
+                CanvasWidget::getInstance().setGCircuit(gc);
+                App::getInstance().circuit = gc->getCircuit();
+            }
             ImGui::SameLine();
             /// SAVE
-            ImGui::ImageButton(
+            if (ImGui::ImageButton(
                     reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::SAVE).textureId),
                     {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
                     UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
                     ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
-            );
+            )) {
+                Data::save("test.json", CanvasWidget::getInstance().getGCircuit());
+            }
             ImGui::SameLine();
 
             ImGui::VerticalSeparator();

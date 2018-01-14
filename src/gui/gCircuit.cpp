@@ -17,6 +17,7 @@
 #include <gates/nor.h>
 #include <gates/xnor.h>
 #include <gui/blocks_widget.h>
+#include <gui/footer_widget.h>
 
 namespace Logicon {
 
@@ -118,6 +119,16 @@ namespace Logicon {
         if (ImGui::BeginChild(ImGui::GetID("GCircuit"), window_size, false, window_flags)) {
             ImDrawList *dl = ImGui::GetWindowDrawList();
             const UI::Vec2 dl_origin = ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
+
+            {
+                UI::Vec2 hovered_grid_cell =
+                    UI::toGridCoordinates(ImGui::GetMousePos() - dl_origin);
+
+                std::string status_x = ImGui::IsWindowHovered() ? std::to_string((int)hovered_grid_cell.x) : "-";
+                std::string status_y = ImGui::IsWindowHovered() ? std::to_string((int)hovered_grid_cell.y) : "-";
+
+                FooterWidget::getInstance().pushStatus(status_x + " x " + status_y);
+            }
 
             scrollCanvas();
 

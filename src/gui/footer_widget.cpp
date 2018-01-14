@@ -16,9 +16,6 @@ namespace Logicon {
 //-----------------------------------------------------------------------------
 
     bool FooterWidget::init() {
-        strings.resize(5);
-        for (std::string &s : strings)
-            s = "";
         return true;
     }
 
@@ -59,29 +56,31 @@ namespace Logicon {
              */
 
             // The 100.0f is just a guess size for the first frame.
-            static std::vector<float> widths(strings.size(), {100.0f});
             static const float ItemSpacing = ImGui::GetStyle().ItemSpacing.x;
             float pos = 0;
 
 
-            for (int i = strings.size() - 1; i >= 0; --i) {
-                pos += widths[i] + ItemSpacing;
+            for (int i = static_cast<int>(statues.size() - 1); i >= 0; --i) {
+                pos += status_widths[i] + ItemSpacing;
                 ImGui::SameLine((ImGui::GetWindowWidth() - pos));
                 ImGui::BeginGroup();
-                ImGui::Text(strings[i].c_str());
+                ImGui::Text(statues[i].c_str());
                 ImGui::SameLine();
-                ImGui::VerticalSeparator();
+                if(i < statues.size() - 1) ImGui::VerticalSeparator();
                 ImGui::EndGroup();
-                widths[i] = ImGui::GetItemRectSize().x;
+                status_widths[i] = ImGui::GetItemRectSize().x;
             }
+
+            statues.clear();
 
         }
         ImGui::End();
     }
 
-    void FooterWidget::setStr(int idx, std::string str) {
-        if (idx < 0 || idx >= strings.size()) return;
-        strings[idx] = str;
+    void FooterWidget::pushStatus(std::string str) {
+        statues.push_back(str);
+        if(statues.size() > status_widths.size())
+            status_widths.resize(statues.size(), 100.0f);
     }
 
 } // namespace Logicon

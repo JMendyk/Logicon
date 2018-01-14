@@ -10,7 +10,8 @@
 namespace Logicon {
 
     class FooterWidget {
-        std::vector<std::string> strings;
+        std::vector<std::string> statues;
+        std::vector<float> status_widths;
 
 //-----------------------------------------------------------------------------
     private:
@@ -31,7 +32,7 @@ namespace Logicon {
 
         bool close();
 
-        void setStr(int idx, std::string str);
+        void pushStatus(std::string str);
     };
 
 };

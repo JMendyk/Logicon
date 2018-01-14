@@ -333,13 +333,11 @@ namespace Logicon {
             ImGui_ImplGlfwGL3_NewFrame();
 
             // if (tickrate...) engine.calcLogic(this.canvasWidget.gCircuit.circuit)
-            FooterWidget::getInstance().setStr(1, std::to_string((int) ImGui::GetMousePos().x));
-            FooterWidget::getInstance().setStr(2, std::to_string((int) ImGui::GetMousePos().y));
             switch (state) {
 
                 case RUNNING:
-                    FooterWidget::getInstance().setStr(3,
-                                                       std::to_string(fromMilis(ImGui::GetTime() - simulationSpeed)));
+                    FooterWidget::getInstance().pushStatus(std::to_string(fromMilis(
+                        ImGui::GetTime() - simulationSpeed)));
                     if (timer >= tickrate) {
                         Engine::getInstance().calc(circuit, false);
                         timer -= tickrate;

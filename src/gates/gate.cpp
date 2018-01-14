@@ -73,7 +73,7 @@ namespace Logicon {
     }
 
     const std::vector<std::pair<State, Gate::PortConnectionList_>> &Gate::getInputs() const {
-        return outputs;
+        return inputs;
     }
 
     void Gate::setInputConnection(Port input, ID otherId, Port otherPort) {

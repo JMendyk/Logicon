@@ -20,6 +20,6 @@ namespace Logicon {
     }
 
     void Input::setClicked(bool clicked) {
-        gateType = (gateType == INPUT_ON ? INPUT_OFF : INPUT_ON);
+        gateType = (clicked ? INPUT_ON : INPUT_OFF);
     }
 } // namespace Logicon

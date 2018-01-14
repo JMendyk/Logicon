@@ -69,9 +69,11 @@ namespace Logicon{
                     break;
                 case SWITCH_ON:
                     gate = std::make_shared<Switch>(id);
+                    std::static_pointer_cast<Switch, Gate>(gate)->setClicked(true);
                     break;
                 case SWITCH_OFF:
                     gate = std::make_shared<Switch>(id);
+                    std::static_pointer_cast<Switch, Gate>(gate)->setClicked(false);
                     break;
                 case AND:
                     gate = std::make_shared<And>(id);
@@ -96,9 +98,11 @@ namespace Logicon{
                     break;
                 case INPUT_ON:
                     gate = std::make_shared<Input>(id);
+                    std::static_pointer_cast<Input, Gate>(gate)->setClicked(true);
                     break;
                 case INPUT_OFF:
                     gate = std::make_shared<Input>(id);
+                    std::static_pointer_cast<Input, Gate>(gate)->setClicked(false);
                     break;
             }
             circuit->add(gate);

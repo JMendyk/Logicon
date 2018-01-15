@@ -34,14 +34,40 @@ namespace Logicon {
             ImGui::SetWindowPos(window_pos, ImGuiCond_Always);
             ImGui::SetWindowSize(window_size, ImGuiCond_Always);
 
+            const int left_area_fields = 3;
+
             // Left area
-            for (int idx = 0; idx < 2; idx++) {
+            for (int idx = 0; idx < left_area_fields; idx++) {
                 if (idx == 0) {
                     ImGui::Text("Logicon");
-                    ImGui::SameLine();
-                    ImGui::VerticalSeparator();
                 } else if (idx == 1) {
                     ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+                } else if (idx == 2) {
+                    showHelpMarker(
+                        "Top menu:\n"
+                        "\tNew circuit\n"
+                        "\tLoad circuit from file\n"
+                        "\tSave circuit to file\n"
+                        "\tStart/pause/reset logic simulation\n"
+                        "\tChange simulation speed, switch to step-by-step mode\n"
+                        "\tLoad/save states of free (not connected) inputs/outputs\n"
+                        "Right menu:\n"
+                        "\tAdd gates by selecting one of them. In main area click where gates should be placed. "
+                        "To finish adding gate click the same one again or press Esc.\n"
+                        "Main area (circuit):\n"
+                        "\tMove gates around by dragging and dropping.\n"
+                        "\tConnect gates by dragging and dropping between desired ports.\n"
+                        "\tRMB to remove connection(s) coming out of hovered port.\n"
+                        "\tSome gates respond to clicking - such as input or switch.\n"
+                        "\tRMB on gate to open context menu.\n"
+                        "\tDEL+CLICK to disconnect port with everything or remove block.\n"
+                        "\tLMB to switch active elements.\n"
+                        "\tHold MMB and drag to scroll canvas.\n"
+                    );
+                }
+                if(idx < left_area_fields - 1) {
+                    ImGui::SameLine();
+                    ImGui::VerticalSeparator();
                 }
                 ImGui::SameLine();
             }
@@ -75,6 +101,18 @@ namespace Logicon {
 
         }
         ImGui::End();
+    }
+
+    void FooterWidget::showHelpMarker(const char* desc) {
+        ImGui::TextDisabled("(?)");
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(450.0f);
+            ImGui::TextUnformatted(desc);
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
+        }
     }
 
     void FooterWidget::pushStatus(std::string str) {

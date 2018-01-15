@@ -17,6 +17,8 @@ namespace Logicon {
     private:
         FooterWidget() = default;
 
+        static void showHelpMarker(const char* desc);
+
     public:
         static FooterWidget &getInstance();
 

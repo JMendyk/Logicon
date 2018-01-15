@@ -136,7 +136,7 @@ namespace Logicon {
 
             // FIXME: This solution can be improved by only updating content_size if new GBlock is added or existing one was moved.
             std::for_each(gBlocks.begin(), gBlocks.end(), [](const std::shared_ptr<GBlock> &gBlock) {
-                UI::Vec2 br = gBlock->getRect().getBottomRight();
+                UI::Vec2 br = UI::toCanvasCoordinates(gBlock->getRect().getBottomRight()) + gBlock->getDragDeltaExact();
                 content_size.x = fmaxf(content_size.x, br.x);
                 content_size.y = fmaxf(content_size.y, br.y);
             });

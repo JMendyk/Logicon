@@ -21,7 +21,7 @@
 
 namespace Logicon {
 
-    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit) {}
+    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit), postponedRemoval(-1) {}
 
     bool GCircuit::init() {
         assert(circuit != nullptr);
@@ -70,7 +70,7 @@ namespace Logicon {
         gBlocks.push_back(inserted);
     }
 
-    void GCircuit::remove(ID &id) {
+    void GCircuit::remove(ID id) {
         auto found = std::find_if(gBlocks.begin(), gBlocks.end(),
                                   [id](const std::shared_ptr<GBlock> &gBlock) { return gBlock->getId() == id; }
         );
@@ -97,7 +97,7 @@ namespace Logicon {
         ) != gBlocks.end();
     }
 
-    bool GCircuit::move(ID &id, UI::Vec2 pos) {
+    bool GCircuit::move(ID id, UI::Vec2 pos) {
         // Maybe call isOccupied to make sure that no block overlapping will occur.
         auto found = getGBlockByID(id);
         if (found == nullptr)
@@ -158,7 +158,7 @@ namespace Logicon {
 
             // Render gBlocks
             std::for_each(gBlocks.begin(), gBlocks.end(), [this](const std::shared_ptr<GBlock> &gBlock) {
-                gBlock->render(!BlocksWidget::getInstance().PLACEMENT_MODE);
+                gBlock->render();
             });
             ImGui::GetWindowDrawList()->ChannelsMerge();
 
@@ -269,6 +269,7 @@ namespace Logicon {
         }
         ImGui::EndChild();
         ImGui::PopStyleVar(2);
+
     }
 
     // =====

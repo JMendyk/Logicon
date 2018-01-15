@@ -32,22 +32,29 @@ namespace Logicon {
 
         const float     CANVAS_GRID_SIZE                = 32.0;                                                         /// Basic square size on canvas
 
-        const int       CANVAS_CHANNEL_COUNT            = 4;                                                            /// Like z-index, that many layers to draw
+        const int CANVAS_CHANNEL_COUNT = 6;                                                            /// Like z-index, that many layers to draw
         const int       DEFAULT_GBLOCK_CHANNEL          = 0;
-        const int       DEFAULT_CONNECTION_CHANNEL      = 1; // unused
-        const int       DEFAULT_GPORT_CHANNEL           = 1;
-        const int       ACTIVE_GBLOCK_CHANNEL           = 2;
-        const int       ACTIVE_CONNECTION_CHANNEL       = 4; // unused
-        const int       ACTIVE_GPORT_CHANNEL            = 3;
+        const int DEFAULT_CONNECTION_CHANNEL = 1;
+        const int DEFAULT_GPORT_CHANNEL = 2;
+        const int ACTIVE_GBLOCK_CHANNEL = 3;
+        const int ACTIVE_GPORT_CHANNEL = 4;
+        const int ACTIVE_CONNECTION_CHANNEL = 5;
 
         const float     GPORT_PADDING                   = CANVAS_GRID_SIZE / 8.0;
         const float     GPORT_SIZE                      = CANVAS_GRID_SIZE - 2*GPORT_PADDING;                           /// Dimensions for GPort button
-        const float     BEZIER_CONTROL_DISTANCE         = UI::CANVAS_GRID_SIZE * 2.0;                                   /// How far in canvas coordinates is control point away from gPort
+        const float BEZIER_CONTROL_DISTANCE = UI::CANVAS_GRID_SIZE *
+                                              4.0;                                   /// How far in canvas coordinates is control point away from gPort
         const float     BEZIER_THICKNESS                = 4.0;                                                          /// Thickness of bezier lines
         const int BEZIER_SEGMENTS = 20;                                                           /// Higher = smoother bezier
 
-        const ImColor HIGH_STATE_COLOR = ImColor(255, 195, 17);
-        const ImColor LOW_STATE_COLOR = ImColor(68, 74, 121);
+        const ImColor ON_STATE_COLOR = ImColor(255, 195, 17);
+        const ImColor OFF_STATE_COLOR = ImColor(68, 74, 119);
+        const ImColor DEFAULT_GBLOCK_COLOR = ImColor(255, 255, 255, 200);                                  /// Default
+        const ImColor DIMMED_GBLOCK_COLOR = ImColor(100, 100, 100, 200);
+        const ImColor DEFAULT_GPORT_COLOR = ImColor(68, 75, 119);
+        const ImColor DIMMED_GPORT_COLOR = ImColor(34, 40, 61, 200);
+
+        const std::string GPORT_NONE_HOVERED = "-";                                                          /// value for GPORT_CURRENTLY_HOVERED flag while non is hovered
         // @formatter:on
 
         /// Represents 2D vector for UI purposes
@@ -68,7 +75,7 @@ namespace Logicon {
         /// Comparison of vectors
         static inline bool operator==(const Vec2 &lhs, const Vec2 &rhs) {
             return fabsf(lhs.x - rhs.x) < Vec2_PRECISION
-                && fabsf(lhs.y - rhs.y) < Vec2_PRECISION;
+                   && fabsf(lhs.y - rhs.y) < Vec2_PRECISION;
         }
 
         static inline bool operator!=(const Vec2 &lhs, const Vec2 &rhs) { return !(lhs == rhs); }
@@ -268,8 +275,8 @@ namespace Logicon {
                  {Vec2(0, 0), Vec2(0, 2)},      // NAND
                  {Vec2(0, 0), Vec2(0, 2)},      // NOR
                  {Vec2(0, 0), Vec2(0, 2)},      // XNOR
-                 {{},         {}},                       // INPUT_ON
-                 {{},         {}}                        // INPUT_OFF
+                 {{},         {}},              // INPUT_ON
+                 {{},         {}}               // INPUT_OFF
                 };
 
         static Vec2 gPortOutputPositions[GATE_TYPE_COUNT][1]                                                            /// Positions of outputs in gates
@@ -286,6 +293,22 @@ namespace Logicon {
                  {Vec2(2, 1)},                  // CLOCK
                  {Vec2(2, 1)},                  // INPUT_ON
                  {Vec2(2, 1)},                  // INPUT_OFF
+                };
+
+        static Vec2 gBlockDimensions[GATE_TYPE_COUNT]
+                {{Vec2(5, 3)},                  // NOT
+                 {Vec2(5, 3)},                  // DELAY
+                 {Vec2(5, 3)},                  // SWITCH_ON
+                 {Vec2(5, 3)},                  // SWITCH_OFF
+                 {Vec2(5, 3)},                  // AND
+                 {Vec2(5, 3)},                  // OR
+                 {Vec2(5, 3)},                  // XOR
+                 {Vec2(5, 3)},                  // NAND
+                 {Vec2(5, 3)},                  // NOR
+                 {Vec2(5, 3)},                  // XNOR
+                 {Vec2(3, 3)},                  // CLOCK
+                 {Vec2(3, 3)},                  // INPUT_ON
+                 {Vec2(3, 3)},                  // INPUT_OFF
                 };
     } // namespace UI
 

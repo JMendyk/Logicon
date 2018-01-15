@@ -66,6 +66,21 @@ namespace Logicon {
                              1,     // INPUT_ON
                              1      // INPUT_OFF
                             };
+    static std::string gateTypeNames[GATE_TYPE_COUNT]
+            {"NOT",
+             "DELAY",
+             "SWITCH_ON",
+             "SWITCH_OFF",
+             "AND",
+             "OR",
+             "XOR",
+             "NAND",
+             "NOR",
+             "XNOR",
+             "CLOCK",
+             "INPUT_ON",
+             "INPUT_OFF"
+            };
 
     // @formatter:on
 

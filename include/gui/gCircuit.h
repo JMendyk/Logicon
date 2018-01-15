@@ -25,10 +25,11 @@ namespace Logicon {
         // local typedef for container
         typedef std::list<std::shared_ptr<GBlock>> _GBLOCK_CONTAINER_TYPE;
 
-        std::shared_ptr<Circuit> circuit;
-        _GBLOCK_CONTAINER_TYPE gBlocks; // list with positions and blocks, TODO: spatial data struct
+        std::shared_ptr<Circuit> circuit;               /// Model it represents
+        _GBLOCK_CONTAINER_TYPE gBlocks;                 /// list with positions and blocks, TODO: spatial data struct
 
     public:
+        ID postponedRemoval;                           /// ID of gate to be removed
 
         GCircuit(std::shared_ptr<Circuit> circuit);
 
@@ -83,7 +84,7 @@ namespace Logicon {
          * @brief Removes GBlock from visual model
          * @param id ID of GBlock that should be removed
          */
-        void remove(ID &id);
+        void remove(ID id);
 
         /**
          * @brief clears GCircuit
@@ -105,7 +106,7 @@ namespace Logicon {
          * @param pos new position as vector of integer values
          * @return true if move operation was successful
          */
-        bool move(ID &id, UI::Vec2 pos);
+        bool move(ID id, UI::Vec2 pos);
 
         /**
          * @brief Renders GCircuit

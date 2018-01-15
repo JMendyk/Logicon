@@ -54,14 +54,9 @@ namespace Logicon {
 
             float size = ImGui::GetContentRegionAvailWidth();
 
-            static auto set_current_gate_to_place = [this](GATE_TYPE gate_type) {
-                if (gate_type == current_gate_to_place) {
-                    PLACEMENT_MODE = false;
-                } else {
-                    PLACEMENT_MODE = true;
-                    current_gate_to_place = gate_type;
-                }
-            };
+            // cancel on escape
+            if (ImGui::IsKeyPressed(GLFW_KEY_ESCAPE))
+                PLACEMENT_MODE = false;
 
             for (int gateType = 0; gateType < GATE_TYPE_COUNT; ++gateType) {
                 if (gateType != Logicon::SWITCH_ON && gateType != Logicon::INPUT_ON) {
@@ -77,7 +72,8 @@ namespace Logicon {
                             (PLACEMENT_MODE && current_gate_to_place == gateType) ?
                             ImColor(128, 128, 128, 200) :
                             ImColor(255, 255, 255, 200))) {
-                        PLACEMENT_MODE = !PLACEMENT_MODE;
+                        if (!PLACEMENT_MODE || gateType == current_gate_to_place)
+                            PLACEMENT_MODE = !PLACEMENT_MODE;
                         current_gate_to_place = (GATE_TYPE) (gateType);
                     }
                     ImGui::Spacing();

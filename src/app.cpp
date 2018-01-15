@@ -403,6 +403,15 @@ namespace Logicon {
                                             (float) canvas_h - (UI::FOOTER_WIDGET_HEIGHT)},
                                            {(float) canvas_w,
                                             UI::FOOTER_WIDGET_HEIGHT});
+
+        // Trigger postponed removal of gates
+        ID postponedRemoval = CanvasWidget::getInstance().getGCircuit()->postponedRemoval;
+        if (postponedRemoval != -1) {
+            CanvasWidget::getInstance().getGCircuit()->remove(postponedRemoval);
+            CanvasWidget::getInstance().getGCircuit()->getCircuit()->remove(postponedRemoval);
+            Engine::getInstance().calcTree(CanvasWidget::getInstance().getGCircuit()->getCircuit());
+            CanvasWidget::getInstance().getGCircuit()->postponedRemoval = -1;
+        }
     }
 
     bool App::closeGui() {

@@ -19,35 +19,38 @@ namespace Logicon {
     // Enable making shared_ptr from *this pointer
     class GBlock {
 
-        std::weak_ptr<GCircuit> parentCircuit;                  /// Parent GCircuit
+        std::weak_ptr<GCircuit> parentGCircuit;                  /// Parent GCircuit
         std::shared_ptr<Gate> gate;                             /// Pointer to gate it represents
 
         UI::Vec2 position;                                      /// position in parent GCircuit in grid coordinates
         UI::Vec2 dimension;                                     /// Vector representing size of gBLock in grid coordinates
         Texture texture;                                        /// Current texture may change in input and switch
+        ImColor color;                                          /// Display color
 
         std::vector<std::shared_ptr<GPort>> gInputs;            /// inputs
-        std::vector<std::shared_ptr<GPort>> gOutptus;           /// outputs
-
-        bool DRAGGING_FLAG;                                     /// flag saying the block is dragged
-        bool MOVED_WHILE_DRAGGING_FLAG;
+        std::vector<std::shared_ptr<GPort>> gOutputs;           /// outputs
 
         UI::Vec2 dragDeltaExact;                                /// drag delta in canvas coordinates
+
     public:
+        bool GBLOCK_HOVERED_FLAG;                               /// flag saying the block is hovered and can be interacted with
+        bool GBLOCK_DRAGGED_FLAG;                               /// flag saying the block is dragged
+        bool GBLOCK_CONTEXT_OPENED_FLAG;
+
 
         /**
          * @brief Constructor for new GBlock
-         * @param parentCircuit parent circuit it belongs to
+         * @param parentGCircuit parent circuit it belongs to
          * @param gate original Gate from model
          * @param relativePosition in grid coordinates on canvas
          */
-        GBlock(std::shared_ptr<GCircuit> parentCircuit, std::shared_ptr<Gate> gate, UI::Vec2 relativePosition);
+        GBlock(std::shared_ptr<GCircuit> parentGCircuit, std::shared_ptr<Gate> gate, UI::Vec2 relativePosition);
 
         /**
          * @brief Renders the gBlock also checking if it is dragged
-         * @param should_interact suggestion whether GBlock should respond to user interactions
+         * @param placementMode suggestion whether GBlock should respond to user interactions
          */
-        void render(bool should_interact);
+        void render();
 
         const std::shared_ptr<Gate> &getGate() const;
 
@@ -76,28 +79,10 @@ namespace Logicon {
         std::shared_ptr<GPort> getGPort(bool isInput, Port port);
 
         /**
-         * @brief returns GPort at given position in the GBlock
-         * @param pos absolute position in canvas coordinates
-         * @return GPort at position or nullptr if no such port exists
-         */
-        std::shared_ptr<GPort> getGPortAt(UI::Vec2 &pos) const;
-
-        /**
          * @brief Updates position to new position.
          * @param pos new position for gBlock
          */
         void move(const UI::Vec2 pos);
-
-        /**
-         * @brief updates info about gate from model
-         */
-        void update();
-
-        /**
-         * @brief Checks if this block is beeing dragged
-         * @return DRAGGED_FLAG
-         */
-        bool isDragged() const;
 
         /**
          * @brief Returns exact drag delta in canvas coordinates
@@ -115,6 +100,7 @@ namespace Logicon {
          * @param otherPort ID for second endpoint
          */
         void renderWire(std::shared_ptr<GPort> thisGPort, ID otherId, Port otherPort);
+
     };
 
 } // namespace Logicon

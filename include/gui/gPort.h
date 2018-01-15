@@ -13,6 +13,8 @@ namespace Logicon {
     // FORWARD DECLARATION
     class GCircuit;
 
+    class BlocksWidget;
+
     class GPort {
         std::string uniqeElemId;
 
@@ -28,7 +30,8 @@ namespace Logicon {
         const bool isInput;                                         /// represents type of port
         const UI::Vec2 relativePosition;                            /// Position in GCircuit in grid coordinates
 
-        bool DRAGGING_FLAG;                                         /// flag saying the block is dragged
+        bool GPORT_DRAGGED_FLAG;                                       /// flag saying that a connection is being drawn
+        bool GPORT_HOVERED_FLAG;                                    /// true if mouse interacts with GPort, false otherwise
         // @formatter:on
         /**
          * @brief Constructor for GPort.
@@ -49,7 +52,7 @@ namespace Logicon {
          * @brief Renders GPort.
          * @param should_interact suggestion whether GBlock should respond to user interactions
          */
-        void render(const UI::Vec2 &gBlockPos, bool should_interact);
+        void render(const UI::Vec2 &gBlockPos, State state);
 
         /**
          * @brief Returns bounding box of this GPort in Grid coordinates relative to parent(with floats if GPort Margin is not zero)
@@ -57,7 +60,10 @@ namespace Logicon {
          */
         UI::Rect getRect();
 
-        bool isDragged() const;
+    public:
+        static std::string getHovered();
+
+        static std::string getDragged();
     };
 } // namespace Logicon
 

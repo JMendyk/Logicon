@@ -7,8 +7,6 @@
 
 #include "gui/gUtils.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Logicon {
 
 

@@ -33,6 +33,8 @@ namespace Logicon {
         Texture _icon_restart;
         Texture _icon_save;
         Texture _icon_step;
+        Texture _icon_load_inputs;
+        Texture _icon_save_outputs;
 
 //-----------------------------------------------------------------------------
     private:
@@ -49,7 +51,7 @@ namespace Logicon {
     public:
 
         enum ICON {
-            NEW, OPEN, PAUSE, PLAY, RESTART, SAVE, STEP
+            NEW, OPEN, PAUSE, PLAY, RESTART, SAVE, STEP, LOAD_INPUTS, SAVE_OUTPUTS
         };
 
         static void loadAssets();

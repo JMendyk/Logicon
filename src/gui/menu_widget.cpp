@@ -154,6 +154,52 @@ namespace Logicon {
                 App::getInstance().STEP_NEXT_STEP = true;
             }
             ImGui::SameLine();
+
+            /// LOAD INPUTS
+            ImGui::VerticalSeparator();
+            ImGui::SameLine();
+            static ImGuiFs::Dialog load_free_inputs_dlg;
+            const bool load_free_inputs_clicked = ImGui::ImageButton(
+                reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::LOAD_INPUTS).textureId),
+                {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
+            );
+
+            const char *load_free_inputs_path = load_free_inputs_dlg.chooseFileDialog(
+                load_free_inputs_clicked,
+                nullptr,
+                Data::FREE_IO_FILE_EXTENSION.c_str(),
+                nullptr,
+                dialog_size,
+                dialog_pos
+            );
+            if (strlen(load_free_inputs_path) > 0) {
+                Data::loadFreeInputs(load_free_inputs_path, CanvasWidget::getInstance().getGCircuit());
+            }
+
+            /// SAVE OUTPUTS
+            ImGui::SameLine();
+            static ImGuiFs::Dialog save_free_outputs_dlg;
+            const bool save_free_outputs_clicked = ImGui::ImageButton(
+                reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::SAVE_OUTPUTS).textureId),
+                {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
+                UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
+                ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
+            );
+
+            const char *save_free_outputs_path = save_free_outputs_dlg.saveFileDialog(
+                save_free_outputs_clicked,
+                nullptr,
+                ("outputs"+Data::FREE_IO_FILE_EXTENSION).c_str(),
+                Data::FREE_IO_FILE_EXTENSION.c_str(),
+                nullptr,
+                dialog_size,
+                dialog_pos
+            );
+            if (strlen(save_free_outputs_path) > 0) {
+                Data::saveFreeOutputs(save_free_outputs_path, CanvasWidget::getInstance().getGCircuit());
+            }
         }
         ImGui::End();
     }

@@ -33,6 +33,8 @@ namespace Logicon {
         getInstance()._icon_restart = load_texture("assets/icons/icon_restart.png");
         getInstance()._icon_save = load_texture("assets/icons/icon_save.png");
         getInstance()._icon_step = load_texture("assets/icons/icon_step.png");
+        getInstance()._icon_load_inputs = load_texture("assets/icons/icon_load_inputs.png");
+        getInstance()._icon_save_outputs = load_texture("assets/icons/icon_save_outputs.png");
     }
 
     Texture &AssetLoader::getGateTexture(GATE_TYPE gate) {
@@ -82,6 +84,10 @@ namespace Logicon {
                 return getInstance()._icon_save;
             case STEP:
                 return getInstance()._icon_step;
+            case LOAD_INPUTS:
+                return getInstance()._icon_load_inputs;
+            case SAVE_OUTPUTS:
+                return getInstance()._icon_save_outputs;
         }
     }
 } // namespace Logicon

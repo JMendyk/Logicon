@@ -16,10 +16,12 @@
 #include <gates/xnor.h>
 #include <gates/clock.h>
 #include <gates/input.h>
+#include <logger.h>
 
 namespace Logicon{
 
     const std::string Data::LOGICON_FILE_EXTENSION = ".lgc";
+    const std::string Data::FREE_IO_FILE_EXTENSION = ".json";
 
     void Data::save(std::string path, std::shared_ptr<GCircuit> gCircuit) {
         const std::shared_ptr<Circuit> circuit = gCircuit->getCircuit();
@@ -153,6 +155,59 @@ namespace Logicon{
             gCircuit->insert(gate, pos);
         }
         return gCircuit;
+    }
+
+    void Data::saveFreeOutputs(std::string path, std::shared_ptr<GCircuit> gCircuit) {
+        nlohmann::json j_outs = nlohmann::json::array();
+
+        for(auto block: gCircuit->getGBlocks()) {
+            const auto gate = block->getGate();
+            for(int port_id = 0; port_id < gate->getOutputsCount(); port_id++) {
+                if (!gate->isOutputEmpty(port_id)) continue;
+
+                j_outs.push_back({
+                    { "gblock_id", block->getId() },
+                    { "port",      port_id },
+                    { "state",     gate->getOutputState(port_id) }
+                });
+            }
+        }
+
+        std::ofstream file(path);
+        if (file.is_open()) {
+            file << j_outs.dump(4);
+            file.close();
+        }
+    }
+
+    void Data::loadFreeInputs(std::string path, std::shared_ptr<GCircuit> gCircuit) {
+        std::ifstream ffile(path);
+        nlohmann::json j_ins;
+        j_ins << ffile;
+
+        if(!j_ins.is_array()) {
+            Logger::err("loadFreeInputs called with malformed file");
+            return;
+        }
+
+        for(int idx = 0; idx < j_ins.size(); idx++) {
+            nlohmann::json item = j_ins.at(idx);
+            ID gblock_id = item.at("gblock_id");
+            Port port = item.at("port");
+            State state = item.at("state");
+
+            auto gBlock = gCircuit->getGBlockByID(gblock_id);
+            if(gBlock == nullptr) {
+                Logger::err("Loaded input for gate that doesn't exist! - gate %d", gblock_id);
+                continue;
+            }
+
+            auto gate = gBlock->getGate();
+
+            if(gate->isInputEmpty(port)) {
+                gate->setInputState(port, state);
+            } else Logger::warn("Loaded input (gate %d, port %d) should be free but isn't", gblock_id, port);
+        }
     }
 
 } // namespace Logicon

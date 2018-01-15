@@ -104,6 +104,8 @@ namespace Logicon {
         if (ImGui::IsMouseDown(0)) {
             if (GBLOCK_CLICK_BEGIN_ON_GBLOCK == -1)
                 GBLOCK_CLICK_BEGIN_ON_GBLOCK = GBLOCK_HOVERED_FLAG ? 1 : 0;
+            else if (GBLOCK_HOVERED_FLAG)
+                GBLOCK_CLICK_BEGIN_ON_GBLOCK = 1;
         }
 
         // unset GBLOCK_CLICK_BEGIN_ON_GBLOCK

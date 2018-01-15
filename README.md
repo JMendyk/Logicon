@@ -3,10 +3,10 @@
 
 ![logicon_promo](https://user-images.githubusercontent.com/9089004/34963682-17e7177a-fa4a-11e7-9c7a-805193857288.gif)
 
-### Download
+## Download
 [All compiled packages are available in "releases" section.](https://github.com/IIUWR17/lista-11-c5/releases)
 
-### Compile from sources
+## Compile from sources
 
 Requirements:
 - Modern C++ compiler supporting C++14,
@@ -31,13 +31,13 @@ to improve build speed.
 In project's root folder, directory `dist` will be created 
 with redistributable package for your platform.
 
-### Free port inputs/outputs reading/saving
+## Free port inputs/outputs reading/saving
 
 ![logicon_import_states](https://user-images.githubusercontent.com/9089004/34964042-ccf90a82-fa4b-11e7-887c-3a9a50563428.gif)
 
-Application lets user set values on free (not connected) inputs of gates in currently
-circuits and read values on free outputs to/from file. These files follow format 
-(and should be saved with `json` extension):
+Application lets user set values on free (not connected) inputs of gates in 
+circuit and read values of free outputs to/from file. These files follow format 
+(and should be saved with `*.json` extension):
 
 ```json
 [
@@ -52,7 +52,7 @@ circuits and read values on free outputs to/from file. These files follow format
 GBlock's ID and port's index can be seen when hovering desired gate and it's port.
 State is 1 when ON and 0 when OFF.
 
-### Authors
+## Authors
 *(in alphabetical order)*
 - [Mateusz Basiak (@inverb)](https://github.com/inverb)
 - [Jakub Mendyk (@JMendyk)](https://github.com/JMendyk)

@@ -415,7 +415,7 @@ namespace Logicon {
     }
 
     bool App::closeGui() {
-        if (MenuWidget::getInstance().close() ||
+        if (!MenuWidget::getInstance().close() ||
             !BlocksWidget::getInstance().close() ||
             !CanvasWidget::getInstance().close() ||
             !FooterWidget::getInstance().close())

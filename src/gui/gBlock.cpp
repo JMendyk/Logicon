@@ -15,6 +15,7 @@ namespace Logicon {
 
     static ID GBLOCK_CURRENTLY_HOVERED = -1;    /// holds info about currently hovered gate ID (excluding port areas)
     static ID GBLOCK_CURRENTLY_DRAGGED = -1;    /// holds info about currently dragget gate ID
+    static int GBLOCK_CLICK_BEGIN_ON_GBLOCK = -1;     /// true if dragging was started on any gblock: -1=unset 0=no 1 = yes
 
     GBlock::GBlock(std::shared_ptr<GCircuit> parentGCircuit, std::shared_ptr<Gate> gate, UI::Vec2 relativePosition) :
             parentGCircuit(parentGCircuit),
@@ -99,17 +100,29 @@ namespace Logicon {
         ImGui::SetItemAllowOverlap();
 
         /// FLAGS SETUP
+        // set GBLOCK_CLICK_BEGIN_ON_GBLOCK
+        if (ImGui::IsMouseDown(0)) {
+            if (GBLOCK_CLICK_BEGIN_ON_GBLOCK == -1)
+                GBLOCK_CLICK_BEGIN_ON_GBLOCK = GBLOCK_HOVERED_FLAG ? 1 : 0;
+        }
+
+        // unset GBLOCK_CLICK_BEGIN_ON_GBLOCK
+        if (ImGui::IsMouseReleased(0)) {
+            GBLOCK_CLICK_BEGIN_ON_GBLOCK = -1;
+        }
+
         // Set DRAGGED flag
         if (ImGui::IsItemHovered()                              // if item is hovered...
             && GBLOCK_CURRENTLY_DRAGGED == -1                   // and if currently dragged is nothing...
-            && GPort::getHovered() == UI::GPORT_NONE_HOVERED        // and no port is hovered...
+            && GPort::getHovered() == UI::GPORT_NONE_HOVERED    // and no port is hovered...
             && GPort::getDragged() == UI::GPORT_NONE_HOVERED    // and no port is dragged...
-            && ImGui::IsMouseDragging(0, 4.0)) {                // and is dragging with minimal threshold of 4 pixels
+            && ImGui::IsMouseDragging(0, 4.0)                   // and is dragging with minimal threshold of 4 pixels
+            && GBLOCK_CLICK_BEGIN_ON_GBLOCK) {
             GBLOCK_DRAGGED_FLAG = true;
             GBLOCK_CURRENTLY_DRAGGED = gate->id;
         }
 
-        // Set HOVERED flag FIXME: flag is set improperly if begin dragging on blue border and mouse move out of AABB
+        // Set HOVERED flag
         if (GBLOCK_DRAGGED_FLAG                                         // if the block is dragged or
             || (ImGui::IsItemHovered()                                  //    is hovered...
                 && GBLOCK_CURRENTLY_DRAGGED == -1                       //    and none other is dragged...

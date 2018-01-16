@@ -43,12 +43,14 @@ namespace Logicon {
             ImGui::SetWindowSize(window_size, ImGuiCond_Always);
 
             /// NEW
-            ImGui::ImageButton(
+            if(ImGui::ImageButton(
                     reinterpret_cast<ImTextureID>(Logicon::AssetLoader::getIconTexture(AssetLoader::NEW).textureId),
                     {Logicon::UI::MENU_WIDGET_BUTTON_SIZE, Logicon::UI::MENU_WIDGET_BUTTON_SIZE},
                     UI::Vec2(0, 0), UI::Vec2(1, 1), 0,
                     ImVec4(0, 0, 0, 0), UI::MENU_WIDGET_BUTTON_FG_COLOR
-            );
+            )){
+                CanvasWidget::getInstance().getGCircuit()->clear();
+            }
             ImGui::SameLine();
             /// OPEN
             static ImGuiFs::Dialog open_dlg;

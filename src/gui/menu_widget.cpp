@@ -153,6 +153,7 @@ namespace Logicon {
                                    ImVec4(0, 0, 0, 0),
                                    UI::MENU_WIDGET_BUTTON_FG_COLOR
             )) {
+                App::getInstance().state = App::PAUSED;
                 App::getInstance().STEP_NEXT_STEP = true;
             }
             ImGui::SameLine();

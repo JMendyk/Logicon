@@ -20,10 +20,13 @@ namespace Logicon {
     private:
         const ID id;
         std::map<ID, std::shared_ptr<Gate>> gates;
+        std::list<std::shared_ptr<Gate>> gatesList;
 
+        bool STRUCTURE_CHANGED_FLAG;                        /// true if structure changed since previous lookpu - only gates added/removed.
     public:
-        //Data data;                                      /// public access data
-        bool INITIALIZED_FLAG;                          /// true if circuit was calculated for the first time, false otherwise.
+        //Data data;                                        /// public access data
+        bool INITIALIZED_FLAG;                              /// true if circuit was calculated for the first time, false otherwise.
+        bool GRAPH_CHANGED_FLAG;                            /// true if graph changed since previous lookup - gates or connection added/removed.
         /**
          * @brief Generates next unique ID in range [0, MAX_UINT] for elements
          * @return new uniqe ID
@@ -92,6 +95,12 @@ namespace Logicon {
          * @return iterable container of pointers to gates.
          */
         std::list<std::shared_ptr<Gate>> getGates();
+
+        /**
+         * @brief Returns number of gates in circuit
+         * @return returns number of gates
+         */
+        int getGatesCount();
 
         /**
          * @brief Clears circuit deleting all gates

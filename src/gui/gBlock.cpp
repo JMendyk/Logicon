@@ -23,22 +23,11 @@ namespace Logicon {
             position(relativePosition),
             GBLOCK_HOVERED_FLAG(false),
             GBLOCK_DRAGGED_FLAG(false),
-            GBLOCK_CONTEXT_OPENED_FLAG(false) {
+            inited(false) {
 
         color = UI::DEFAULT_GBLOCK_COLOR;
         // deduce type (rectangle or square) based on gate type
         this->dimension = UI::gBlockDimensions[gate->getGateType()];
-
-        // initialize GPorts
-        gInputs.resize(gateInputsCount[gate->getGateType()]);
-        for (int inputIndex = 0; inputIndex < gateInputsCount[gate->getGateType()]; ++inputIndex)
-            gInputs[inputIndex] = std::make_shared<GPort>(true, parentGCircuit, gate->id, inputIndex,
-                                                          UI::gPortInputPositions[gate->getGateType()][inputIndex]);
-
-        gOutputs.resize(gateOutputsCount[gate->getGateType()]);
-        for (int outputIndex = 0; outputIndex < gateOutputsCount[gate->getGateType()]; ++outputIndex)
-            gOutputs[outputIndex] = std::make_shared<GPort>(false, parentGCircuit, gate->id, outputIndex,
-                                                            UI::gPortOutputPositions[gate->getGateType()][outputIndex]);
 
         // set image
         texture = AssetLoader::getGateTexture(gate->getGateType());
@@ -46,6 +35,7 @@ namespace Logicon {
 
     void GBlock::render() {
         assert(!parentGCircuit.expired());
+        init();
         bool placementMode = BlocksWidget::getInstance().PLACEMENT_MODE;
         bool wasDragging = false;
 
@@ -103,9 +93,7 @@ namespace Logicon {
         // set GBLOCK_CLICK_BEGIN_ON_GBLOCK
         if (ImGui::IsMouseDown(0)) {
             if (GBLOCK_CLICK_BEGIN_ON_GBLOCK == -1)
-                GBLOCK_CLICK_BEGIN_ON_GBLOCK = GBLOCK_HOVERED_FLAG ? 1 : 0;
-            else if (GBLOCK_HOVERED_FLAG)
-                GBLOCK_CLICK_BEGIN_ON_GBLOCK = 1;
+                GBLOCK_CLICK_BEGIN_ON_GBLOCK = GBLOCK_CURRENTLY_HOVERED != -1 ? 1 : 0;
         }
 
         // unset GBLOCK_CLICK_BEGIN_ON_GBLOCK
@@ -141,6 +129,48 @@ namespace Logicon {
                 GBLOCK_CURRENTLY_HOVERED = -1;
         }
 
+        /// CONTEXT MENU
+        if (ImGui::BeginPopupContextItem()) {
+            if (ImGui::Button("remove"))
+                parentGCircuit.lock()->remove(getId());
+            GATE_TYPE gt = gate->getGateType();
+            if (gt == Logicon::DELAY) {
+                auto gDelay = std::static_pointer_cast<Delay, Gate>(gate);
+                if(ImGui::Button("options"))
+                    ImGui::OpenPopup("delay_opt");
+                if(ImGui::BeginPopup("delay_opt")) {
+                    int delay_opt = gDelay->getDelay();
+                    ImGui::PushItemWidth(100.0);
+                    ImGui::InputInt("delay", &delay_opt);
+                    ImGui::PopItemWidth();
+                    if(delay_opt < 0) delay_opt = 0;
+                    gDelay->setDelay(delay_opt);
+                    ImGui::EndPopup();
+                }
+            }
+            if (gt == Logicon::CLOCK) {
+                auto gClock = std::static_pointer_cast<Clock, Gate>(gate);
+                if(ImGui::Button("options"))
+                    ImGui::OpenPopup("clock_opt");
+                if(ImGui::BeginPopup("clock_opt")) {
+                    int onPeriod_opt = gClock->getOnPeriod();
+                    int offPeriod_opt = gClock->getOffPeriod();
+                    int phase_opt = gClock->getPhase();
+                    ImGui::PushItemWidth(120.0);
+                    ImGui::InputInt("ON  period", &onPeriod_opt);
+                    ImGui::InputInt("OFF period", &offPeriod_opt);
+                    ImGui::InputInt("phase", &phase_opt);
+                    ImGui::PopItemWidth();
+                    if(onPeriod_opt < 0) onPeriod_opt = 0;
+                    if(offPeriod_opt < 0) offPeriod_opt = 0;
+                    if(phase_opt < 0) phase_opt = 0;
+                    gClock->changeSettings(onPeriod_opt, offPeriod_opt, phase_opt);
+                    ImGui::EndPopup();
+                }
+            }
+            ImGui::EndPopup();
+        }
+
         /// TOOLTIP
         if (GBLOCK_HOVERED_FLAG) {
             ImGui::BeginTooltip();
@@ -159,19 +189,9 @@ namespace Logicon {
             ImGui::EndTooltip();
         }
 
-        /// CONTEXT MENU
-        if (GBLOCK_HOVERED_FLAG && ImGui::IsMouseReleased(1))
-            GBLOCK_CONTEXT_OPENED_FLAG = true;
-        if (GBLOCK_CONTEXT_OPENED_FLAG) {
-            if (ImGui::BeginPopupContextItem()) // When used after an item that has an ID (here the Button), we can skip providing an ID to BeginPopupContextItem().
-            {
-                if (ImGui::Button("remove")) {
-                    parentGCircuit.lock()->postponedRemoval = getId();
-                    GBLOCK_CONTEXT_OPENED_FLAG = false;
-                }
-                ImGui::EndPopup();
-            }
-        }
+        /// REMOVE ON DELETE+LPM
+        if (GBLOCK_HOVERED_FLAG && ImGui::GetIO().KeysDown[UI::KEY_DELETE] && ImGui::IsMouseReleased(0))
+            parentGCircuit.lock()->remove(getId());
 
         /// RENDER WIRES
         // draw beziers from outputs only
@@ -189,13 +209,13 @@ namespace Logicon {
         // draw GPorts
         ImGui::PushID("gport_inputs");
         for (const auto &gInput : gInputs) {
-            gInput->render(position + UI::toGridCoordinates(dragDeltaExact), gate->getInputState(gInput->port));
+            gInput->render();
         }
         ImGui::PopID();
 
         ImGui::PushID("gport_outputs");
         for (auto gOutput : gOutputs) {
-            gOutput->render(position + UI::toGridCoordinates(dragDeltaExact), gate->getOutputState(gOutput->port));
+            gOutput->render();
         }
         ImGui::PopID();
 
@@ -205,8 +225,52 @@ namespace Logicon {
         /// POSTPONED REMOVAL TRIGGER
     }
 
+    const std::shared_ptr<Gate> &GBlock::getGate() const {
+        return gate;
+    }
+
+    const UI::Vec2 &GBlock::getPosition() const {
+        return position;
+    }
+
+    const UI::Vec2 &GBlock::getDimension() const {
+        return dimension;
+    }
+
+    const ID &GBlock::getId() const {
+        return gate->id;
+    }
+
+    UI::Rect GBlock::getRect() const {
+        return UI::Rect(position, position + dimension);
+    }
+
+    std::shared_ptr<GPort> GBlock::getGPort(bool isInput, Port port) {
+        init();
+        //TODO throw
+        if (port < 0 || (isInput && port >= gate->getInputsCount()) || (!isInput && port >= gate->getOutputsCount()))
+            return nullptr;
+        return isInput ? gInputs[port] : gOutputs[port];
+    }
+
+    const std::weak_ptr<GCircuit> &GBlock::getParentGCircuit() const {
+        return parentGCircuit;
+    }
+
+    const UI::Vec2 &GBlock::getDragDeltaExact() const {
+        return dragDeltaExact;
+    }
+
+    void GBlock::move(const UI::Vec2 pos) {
+        this->position = pos;
+    }
+
+//-----------------------------------------------------------------------------
+// INTERNAL
+//-----------------------------------------------------------------------------
     // TODO: move to gPort
     void GBlock::renderWire(std::shared_ptr<GPort> thisGPort, ID otherId, Port otherPort) {
+        init();
         /// TODO: fix double rendering
         bool isHigh = (bool) (thisGPort->isInput ? this->gate->getInputState(thisGPort->port)
                                                  : this->gate->getOutputState(thisGPort->port));
@@ -237,39 +301,18 @@ namespace Logicon {
                                                    UI::BEZIER_SEGMENTS);
     }
 
-    const ID &GBlock::getId() const {
-        return gate->id;
-    }
+    void GBlock::init() {
+        if (!inited) {
+            // initialize GPorts
+            gInputs.resize(gateInputsCount[gate->getGateType()]);
+            for (int inputIndex = 0; inputIndex < gateInputsCount[gate->getGateType()]; ++inputIndex)
+                gInputs[inputIndex] = std::make_shared<GPort>(shared_from_this(), true, inputIndex);
 
-    UI::Rect GBlock::getRect() const {
-        return UI::Rect(position, position + dimension);
-    }
-
-    std::shared_ptr<GPort> GBlock::getGPort(bool isInput, Port port) {
-        //TODO throw
-        if (port < 0 || (isInput && port >= gate->getInputsCount()) || (!isInput && port >= gate->getOutputsCount()))
-            return nullptr;
-        return isInput ? gInputs[port] : gOutputs[port];
-    }
-
-    const std::shared_ptr<Gate> &GBlock::getGate() const {
-        return gate;
-    }
-
-    const UI::Vec2 &GBlock::getPosition() const {
-        return position;
-    }
-
-    const UI::Vec2 &GBlock::getDimension() const {
-        return dimension;
-    }
-
-    void GBlock::move(const UI::Vec2 pos) {
-        this->position = pos;
-    }
-
-    const UI::Vec2 &GBlock::getDragDeltaExact() const {
-        return dragDeltaExact;
+            gOutputs.resize(gateOutputsCount[gate->getGateType()]);
+            for (int outputIndex = 0; outputIndex < gateOutputsCount[gate->getGateType()]; ++outputIndex)
+                gOutputs[outputIndex] = std::make_shared<GPort>(shared_from_this(), false, outputIndex);
+            inited = true;
+        }
     }
 
 } // namespace Logicon

@@ -11,25 +11,28 @@ namespace Logicon {
 
     static std::string GPORT_CURRENTLY_HOVERED = UI::GPORT_NONE_HOVERED;
     static std::string GPORT_CURRENTLY_DRAGGED = UI::GPORT_NONE_HOVERED;
+    static std::string GPORT_CLICK_BEGIN_ON_GPORT = "unset";
 
-    GPort::GPort(bool isInput, std::shared_ptr<GCircuit> parentGCircuit, ID gateId, Port port,
-                 UI::Vec2 relativePosition) :
+    GPort::GPort(std::shared_ptr<Logicon::GBlock> parentGBlock, bool isInput, Port port) :
             isInput(isInput),
-            parentGCircuit(parentGCircuit),
-            gateId(gateId),
+            parentGBlock(parentGBlock),
             port(port),
-            relativePosition(relativePosition),
+            relativePosition(isInput ?
+                             UI::gPortInputPositions[parentGBlock->getGate()->getGateType()][port] :
+                             UI::gPortOutputPositions[parentGBlock->getGate()->getGateType()][port]),
             GPORT_HOVERED_FLAG(false),
             GPORT_DRAGGED_FLAG(false) {
-        uniqeElemId = "~" + std::to_string(gateId) + ":" + (isInput ? "I" : "O") + ":" + std::to_string(port);
+        uniqeElemId =
+                "~" + std::to_string(parentGBlock->getId()) + ":" + (isInput ? "I" : "O") + ":" + std::to_string(port);
     }
 
-    void GPort::dragging() {
-
-    }
-
-    void GPort::render(const UI::Vec2 &gBlockPos, State state) {
+    void GPort::render() {
         bool placementMode = BlocksWidget::getInstance().PLACEMENT_MODE;
+        UI::Vec2 gBlockPos =
+                parentGBlock.lock()->getPosition() + UI::toGridCoordinates(parentGBlock.lock()->getDragDeltaExact());
+        State state = isInput ?
+                      parentGBlock.lock()->getGate()->getInputState(port) :
+                      parentGBlock.lock()->getGate()->getOutputState(port);
         /// RENDER PORT
         ImGui::PushID(port);
         ImGui::SetCursorPos(UI::toCanvasCoordinates(gBlockPos + relativePosition) +
@@ -50,40 +53,39 @@ namespace Logicon {
                 GPORT_CURRENTLY_HOVERED = UI::GPORT_NONE_HOVERED;
         }
 
-        // DRAGGED FLAG
-        if (GPORT_HOVERED_FLAG && ImGui::IsMouseDown(0)) {
-            GPORT_DRAGGED_FLAG = true;
-            GPORT_CURRENTLY_DRAGGED = uniqeElemId;
-        }
-
-        if (ImGui::IsMouseReleased(0)) {
-            GPORT_DRAGGED_FLAG = false;
-            GPORT_CURRENTLY_DRAGGED = UI::GPORT_NONE_HOVERED;
-        }
-        /// Hover actions FIXME: add smart pointer to parent and make use of gate instead of finding each time
+        /// DISPLAY TOOLTIP
         if (GPORT_HOVERED_FLAG) {
             auto connections = isInput ?
-                               parentGCircuit.lock()->getCircuit()->getGateById(gateId)->getInputConnections(port) :
-                               parentGCircuit.lock()->getCircuit()->getGateById(gateId)->getOutputConnections(port);
+                               parentGBlock.lock()->getGate()->getInputConnections(port) :
+                               parentGBlock.lock()->getGate()->getOutputConnections(port);
             // Show tooltip with connections
+            ImGui::BeginTooltip();
+            ImGui::Text("~%d:%s[%d]", parentGBlock.lock()->getId(), isInput ? "IN" : "OUT", port);
             if (!connections.empty()) {
-                ImGui::BeginTooltip();
                 ImGui::Text("Connections:");
                 for (Connection connection : connections)
                     ImGui::Text("~%d:%d", connection.id, connection.port);
-                ImGui::EndTooltip();
             }
-            if (ImGui::IsMouseClicked(1)) { // Disconnect on RMB
-                for (Connection connection : connections)
-                    isInput ?
-                    parentGCircuit.lock()->getCircuit()->disconnect(connection.id, connection.port, gateId, port) :
-                    parentGCircuit.lock()->getCircuit()->disconnect(gateId, port, connection.id, connection.port);
-            }
+            ImGui::EndTooltip();
+        }
+        /// ERASE CONNECTIONS ON DEL+LMB
+        if (GPORT_HOVERED_FLAG && ImGui::GetIO().KeysDown[UI::KEY_DELETE] && ImGui::IsMouseClicked(0)) { // DEL+LMB
+            auto connections = isInput ?
+                               parentGBlock.lock()->getGate()->getInputConnections(port) :
+                               parentGBlock.lock()->getGate()->getOutputConnections(port);
+            for (Connection connection : connections)
+                isInput ?
+                parentGBlock.lock()->getParentGCircuit().lock()->disconnect(connection.id, connection.port,
+                                                                            parentGBlock.lock()->getId(), port) :
+                parentGBlock.lock()->getParentGCircuit().lock()->disconnect(parentGBlock.lock()->getId(), port,
+                                                                            connection.id, connection.port);
         }
 
         /// Send drag'n'drop payload
         if (!placementMode && ImGui::BeginDragDropSource()) {
-            Connection *GPortDragData = new Connection(gateId, port);
+            GPORT_DRAGGED_FLAG = true;
+            GPORT_CURRENTLY_DRAGGED = uniqeElemId;
+            Connection *GPortDragData = new Connection(parentGBlock.lock()->getId(), port);
             Connection **GPortDragDataPointer = &GPortDragData;
 
             //printf("send payload: %d %d local: %d %d\n", GPortDragData->id, GPortDragData->port, gateId, port);
@@ -101,23 +103,20 @@ namespace Logicon {
                 auto *data = *((Connection **) payload->Data);
                 //printf("got payload: %d %d local: %d %d\n", data->idFrom, data->output, gateId, port);
                 if (isInput)
-                    parentGCircuit.lock()->getCircuit()->connect(data->id, data->port, gateId, port);
+                    parentGBlock.lock()->getParentGCircuit().lock()->connect(data->id, data->port,
+                                                                             parentGBlock.lock()->getId(), port);
                 else
-                    parentGCircuit.lock()->getCircuit()->connect(gateId, port, data->id, data->port);
+                    parentGBlock.lock()->getParentGCircuit().lock()->connect(parentGBlock.lock()->getId(), port,
+                                                                             data->id, data->port);
                 delete (data);
             }
             ImGui::EndDragDropTarget();
+            GPORT_DRAGGED_FLAG = false;
+            GPORT_CURRENTLY_DRAGGED = UI::GPORT_NONE_HOVERED;
         }
 
         ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
         ImGui::PopID();
-    }
-
-    UI::Rect Logicon::GPort::getRect() {
-        return UI::Rect(relativePosition + UI::toGridCoordinates(UI::Vec2(UI::GPORT_PADDING, UI::GPORT_PADDING)),
-                        relativePosition + UI::toGridCoordinates(UI::Vec2(UI::GPORT_PADDING, UI::GPORT_PADDING)) +
-                        UI::toGridCoordinates(UI::Vec2(UI::GPORT_SIZE, UI::GPORT_SIZE))
-        );
     }
 
     std::string GPort::getHovered() {

@@ -21,7 +21,13 @@
 
 namespace Logicon {
 
-    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit), postponedRemoval(-1) {}
+    GCircuit::GCircuit(std::shared_ptr<Circuit> circuit) : circuit(circuit),
+                                                           POSTPONED_OPERATIONS(0),
+                                                           postponedRemoveId(0),
+                                                           postponedConnectFrom(0, 0),
+                                                           postponedConnectTo(0, 0),
+                                                           postponedDisconnectFrom(0, 0),
+                                                           postponedDisconnectTo(0, 0) {}
 
     bool GCircuit::init() {
         assert(circuit != nullptr);
@@ -71,15 +77,24 @@ namespace Logicon {
     }
 
     void GCircuit::remove(ID id) {
-        auto found = std::find_if(gBlocks.begin(), gBlocks.end(),
-                                  [id](const std::shared_ptr<GBlock> &gBlock) { return gBlock->getId() == id; }
-        );
-        if (found != gBlocks.end())
-            gBlocks.erase(found);
+        POSTPONED_OPERATIONS |= POSTPONED_REMOVE;
+        postponedRemoveId = id;
     }
 
     void GCircuit::clear() {
-        gBlocks.clear();
+        POSTPONED_OPERATIONS |= POSTPONED_CLEAR;
+    }
+
+    void GCircuit::connect(ID idFrom, Port output, ID idTo, Port input) {
+        POSTPONED_OPERATIONS |= POSTPONED_CONNECT;
+        postponedConnectFrom = {idFrom, output};
+        postponedConnectTo = {idTo, input};
+    }
+
+    void GCircuit::disconnect(ID idFrom, Port output, ID idTo, Port input) {
+        POSTPONED_OPERATIONS |= POSTPONED_DISCONNECT;
+        postponedDisconnectFrom = {idFrom, output};
+        postponedDisconnectTo = {idTo, input};
     }
 
     bool GCircuit::isOccupied(ID id, UI::Rect rect) {
@@ -122,10 +137,10 @@ namespace Logicon {
 
             {
                 UI::Vec2 hovered_grid_cell =
-                    UI::toGridCoordinates(ImGui::GetMousePos() - dl_origin);
+                        UI::toGridCoordinates(ImGui::GetMousePos() - dl_origin);
 
-                std::string status_x = ImGui::IsWindowHovered() ? std::to_string((int)hovered_grid_cell.x) : "-";
-                std::string status_y = ImGui::IsWindowHovered() ? std::to_string((int)hovered_grid_cell.y) : "-";
+                std::string status_x = ImGui::IsWindowHovered() ? std::to_string((int) hovered_grid_cell.x) : "-";
+                std::string status_y = ImGui::IsWindowHovered() ? std::to_string((int) hovered_grid_cell.y) : "-";
 
                 FooterWidget::getInstance().pushStatus(status_x + " x " + status_y);
             }
@@ -169,8 +184,7 @@ namespace Logicon {
 
                 UI::Vec2 mouse_pos = ImGui::GetIO().MousePos;
                 UI::Vec2 dimension;
-                dimension =
-                        currentGateToPlace <= Logicon::XNOR ? dimension = UI::Vec2(5, 3) : dimension = UI::Vec2(3, 3);
+                dimension = UI::gBlockDimensions[currentGateToPlace];
 
                 UI::Vec2 top_left = steppify(mouse_pos - dl_origin - (dimension * UI::CANVAS_GRID_SIZE) / 2,
                                              UI::CANVAS_GRID_SIZE);
@@ -270,11 +284,13 @@ namespace Logicon {
         ImGui::EndChild();
         ImGui::PopStyleVar(2);
 
+        // Apply all modifications: removes, connects etc. etc.
+        executePostponed();
     }
 
-    // =====
-    // LOCAL
-    // =====
+//-----------------------------------------------------------------------------
+// INTERNAL
+//-----------------------------------------------------------------------------
 
     void GCircuit::scrollCanvas() {
         UI::Vec2 scrolling = UI::Vec2(0.0f, 0.0f);
@@ -308,6 +324,44 @@ namespace Logicon {
         UI::Vec2 offset = UI::Vec2(ImGui::GetScrollX(), ImGui::GetScrollY()) - scrolling;
         ImGui::SetScrollX(offset.x);
         ImGui::SetScrollY(offset.y);
+    }
+
+    void GCircuit::executePostponed() {
+        // @formatter:off
+        if (POSTPONED_OPERATIONS & POSTPONED_CONNECT)
+            postponedConnect(postponedConnectFrom.id, postponedConnectFrom.port, postponedConnectTo.id, postponedConnectTo.port);
+        if (POSTPONED_OPERATIONS & POSTPONED_DISCONNECT)
+            postponedDisconnect(postponedConnectFrom.id, postponedConnectFrom.port, postponedConnectTo.id, postponedConnectTo.port);
+        if (POSTPONED_OPERATIONS & POSTPONED_REMOVE)
+            postponedRemove(postponedRemoveId);
+        if (POSTPONED_OPERATIONS & POSTPONED_CLEAR)
+            postponedClear();
+
+        POSTPONED_OPERATIONS = 0;
+        // @formatter:on
+    }
+
+    void GCircuit::postponedRemove(ID id) {
+        // remove from graphical model
+        auto found = std::find_if(gBlocks.begin(), gBlocks.end(),
+                                  [id](const std::shared_ptr<GBlock> &gBlock) { return gBlock->getId() == id; });
+        if (found != gBlocks.end())
+            gBlocks.erase(found);
+        // remove from model
+        circuit->remove(id);
+    }
+
+    void GCircuit::postponedClear() {
+        gBlocks.clear();
+        circuit->clear();
+    }
+
+    void GCircuit::postponedConnect(ID idFrom, Port output, ID idTo, Port input) {
+        circuit->connect(idFrom, output, idTo, input);
+    }
+
+    void GCircuit::postponedDisconnect(ID idFrom, Port output, ID idTo, Port input) {
+        circuit->disconnect(idFrom, output, idTo, input);
     }
 
 

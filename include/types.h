@@ -49,7 +49,8 @@ namespace Logicon {
                              2,     // XNOR
                              0,     // CLOCK
                              0,     // INPUT_ON
-                             0      // INPUT_OFF
+                             0,     // INPUT_OFF
+                             //1      // LED
                             };
     static unsigned int     gateOutputsCount [GATE_TYPE_COUNT]                 /// outputs count for GATE_TYPE corresponding gates
                             {1,     // NOT
@@ -64,7 +65,8 @@ namespace Logicon {
                              1,     // XNOR
                              1,     // CLOCK
                              1,     // INPUT_ON
-                             1      // INPUT_OFF
+                             1,     // INPUT_OFF
+                             //0      // LED
                             };
     static std::string gateTypeNames[GATE_TYPE_COUNT]
             {"NOT",
@@ -79,7 +81,8 @@ namespace Logicon {
              "XNOR",
              "CLOCK",
              "INPUT_ON",
-             "INPUT_OFF"
+             "INPUT_OFF",
+             //"LED"
             };
 
     // @formatter:on
@@ -97,7 +100,20 @@ namespace Logicon {
     };
 
     enum GATE_TYPE {                                                    /// Represents gate type. Used instead of runtime type deduction.
-        NOT, DELAY, SWITCH_ON, SWITCH_OFF, AND, OR, XOR, NAND, NOR, XNOR, CLOCK, INPUT_ON, INPUT_OFF
+        NOT,
+        DELAY,
+        SWITCH_ON,
+        SWITCH_OFF,
+        AND,
+        OR,
+        XOR,
+        NAND,
+        NOR,
+        XNOR,
+        CLOCK,
+        INPUT_ON,
+        INPUT_OFF,
+        //LED
     };
 
     static int fromMilis(float x) { return (int) (x * 1000); }

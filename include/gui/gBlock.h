@@ -17,9 +17,11 @@ namespace Logicon {
     class GCircuit;
 
     // Enable making shared_ptr from *this pointer
-    class GBlock {
+    class GBlock : public std::enable_shared_from_this<GBlock> {
 
-        std::weak_ptr<GCircuit> parentGCircuit;                  /// Parent GCircuit
+        bool inited;                                            /// late create GPorts
+
+        std::weak_ptr<GCircuit> parentGCircuit;                 /// Parent GCircuit
         std::shared_ptr<Gate> gate;                             /// Pointer to gate it represents
 
         UI::Vec2 position;                                      /// position in parent GCircuit in grid coordinates
@@ -35,7 +37,6 @@ namespace Logicon {
     public:
         bool GBLOCK_HOVERED_FLAG;                               /// flag saying the block is hovered and can be interacted with
         bool GBLOCK_DRAGGED_FLAG;                               /// flag saying the block is dragged
-        bool GBLOCK_CONTEXT_OPENED_FLAG;
 
 
         /**
@@ -52,10 +53,22 @@ namespace Logicon {
          */
         void render();
 
+        /**
+         * @brief Returns shared pointer to gate this GBlock points to
+         * @return returns shared pointer to gate
+         */
         const std::shared_ptr<Gate> &getGate() const;
 
+        /**
+         * @brief Returns positions in grid coordinates of this gate
+         * @return UI::Vec2 representing position on grid (upper left corner)
+         */
         const UI::Vec2 &getPosition() const;
 
+        /**
+         * @brief Returns dimensions in grid coordinates of this gate
+         * @return UI::Vec2 representing dimensions
+         */
         const UI::Vec2 &getDimension() const;
 
         /**
@@ -79,10 +92,10 @@ namespace Logicon {
         std::shared_ptr<GPort> getGPort(bool isInput, Port port);
 
         /**
-         * @brief Updates position to new position.
-         * @param pos new position for gBlock
+         * @brief Returns parent GCircuit that this gate belongs to
+         * @return parent GCircuit
          */
-        void move(const UI::Vec2 pos);
+        const std::weak_ptr<GCircuit> &getParentGCircuit() const;
 
         /**
          * @brief Returns exact drag delta in canvas coordinates
@@ -90,6 +103,14 @@ namespace Logicon {
          */
         const UI::Vec2 &getDragDeltaExact() const;
 
+        /**
+         * @brief Updates position to new position.
+         * @param pos new position for gBlock
+         */
+        void move(const UI::Vec2 pos);
+//-----------------------------------------------------------------------------
+// INTERNAL
+//-----------------------------------------------------------------------------
     private:
 
         /**
@@ -100,6 +121,11 @@ namespace Logicon {
          * @param otherPort ID for second endpoint
          */
         void renderWire(std::shared_ptr<GPort> thisGPort, ID otherId, Port otherPort);
+
+        /**
+         * @brief Lazy init GPorts
+         */
+        void init();
 
     };
 

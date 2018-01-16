@@ -337,7 +337,7 @@ namespace Logicon {
 
                 case RUNNING:
                     FooterWidget::getInstance().pushStatus(std::to_string(fromMilis(
-                        ImGui::GetTime() - simulationSpeed)));
+                            ImGui::GetTime() - simulationSpeed)));
                     if (timer >= tickrate) {
                         Engine::getInstance().calc(circuit, false);
                         timer -= tickrate;
@@ -380,7 +380,7 @@ namespace Logicon {
 
         UI::Vec2 canvas_size = {canvas_w - UI::MARGIN - UI::MARGIN - UI::BLOCKS_WIDGET_WIDTH - UI::MARGIN,
                                 canvas_h - UI::MARGIN - UI::MENU_WIDGET_HEIGHT - UI::MARGIN - UI::MARGIN -
-                                    UI::FOOTER_WIDGET_HEIGHT};
+                                UI::FOOTER_WIDGET_HEIGHT};
 
         // Menu Widget
         MenuWidget::getInstance().render({UI::MARGIN,
@@ -405,12 +405,9 @@ namespace Logicon {
                                             UI::FOOTER_WIDGET_HEIGHT});
 
         // Trigger postponed removal of gates
-        ID postponedRemoval = CanvasWidget::getInstance().getGCircuit()->postponedRemoval;
-        if (postponedRemoval != -1) {
-            CanvasWidget::getInstance().getGCircuit()->remove(postponedRemoval);
-            CanvasWidget::getInstance().getGCircuit()->getCircuit()->remove(postponedRemoval);
-            Engine::getInstance().calcTree(CanvasWidget::getInstance().getGCircuit()->getCircuit());
-            CanvasWidget::getInstance().getGCircuit()->postponedRemoval = -1;
+        if (circuit->GRAPH_CHANGED_FLAG) {
+            Engine::getInstance().calcTree(circuit);
+            circuit->GRAPH_CHANGED_FLAG = false;
         }
     }
 

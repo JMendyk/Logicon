@@ -15,7 +15,10 @@ namespace Logicon {
         return currentId++;
     }
 
-    Circuit::Circuit(ID id) : id(id), INITIALIZED_FLAG(false) {}
+    Circuit::Circuit(ID id) : id(id),
+                              INITIALIZED_FLAG(false),
+                              STRUCTURE_CHANGED_FLAG(true),
+                              GRAPH_CHANGED_FLAG(true) {}
 
     void Circuit::connect(ID idFrom, Port output, ID idTo, Port input) {
 
@@ -48,6 +51,7 @@ namespace Logicon {
                 gateTo->setInputConnection(input, idFrom, output);
             } else // TODO #1 fix windows SEH problems on rethrow
                 throw Logicon::logiconException("Information about connection isn't present in both gates!");
+            GRAPH_CHANGED_FLAG = true;
         } catch (Logicon::logiconException &e) {
             std::string circumstances = "While connecting blocks '" +
                                         std::to_string(idFrom) + ":" + std::to_string(output) +
@@ -87,6 +91,7 @@ namespace Logicon {
                 gateTo->clearInputConnections(input);
             } else
                 throw Logicon::logiconException("Information about connection isn't present in both gates!");
+            GRAPH_CHANGED_FLAG = true;
         } catch (Logicon::logiconException &e) {
             std::string circumstances = "While disconnecting blocks '" +
                                         std::to_string(idFrom) + ":" + std::to_string(output) +
@@ -103,6 +108,8 @@ namespace Logicon {
             if (gates.count(gate->id) > 0)
                 throw logiconException("Gates with the same ID cannot be in the same circuit!");
             gates.insert(std::pair<ID, std::shared_ptr<Gate>>(gate->id, gate));
+            STRUCTURE_CHANGED_FLAG = true;
+            GRAPH_CHANGED_FLAG = true;
         } catch (Logicon::logiconException &e) { // TODO #1
             std::string circumstances = "While adding gate with ID:'"
                                         + std::to_string(gate->id)
@@ -137,6 +144,8 @@ namespace Logicon {
             }
             //remove this
             gates.erase(id);
+            STRUCTURE_CHANGED_FLAG = true;
+            GRAPH_CHANGED_FLAG = true;
         } catch (wrongPortException &e) { // TODO #1
             std::string circumstances = "While removing gate with ID:'" +
                                         std::to_string(id) + "' from the circuit.";
@@ -157,19 +166,23 @@ namespace Logicon {
     }
 
     std::list<std::shared_ptr<Gate>> Circuit::getGates() {
-        std::list<std::shared_ptr<Gate>> gatesList;
-
-        // constructs list from map
-        std::transform(gates.begin(),
-                       gates.end(),
-                       std::back_inserter(gatesList),
-                       [](const std::map<ID, std::shared_ptr<Gate>>::value_type &entry) { return entry.second; });
-
+        if (STRUCTURE_CHANGED_FLAG) { // recreate gateList on structure change, not everytime getGates is called
+            // constructs list from map
+            gatesList.clear();
+            for(auto gate : gates)
+                gatesList.push_back(gate.second);
+            STRUCTURE_CHANGED_FLAG = false;
+        }
         return gatesList;
+    }
+
+    int Circuit::getGatesCount() {
+        return gates.size();
     }
 
     void Circuit::clear() {
         gates.clear();
+        STRUCTURE_CHANGED_FLAG = true;
     }
 
     const ID Circuit::getId() const {

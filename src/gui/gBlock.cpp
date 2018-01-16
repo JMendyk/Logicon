@@ -90,27 +90,9 @@ namespace Logicon {
         ImGui::SetItemAllowOverlap();
 
         /// FLAGS SETUP
-        // set GBLOCK_CLICK_BEGIN_ON_GBLOCK
-        if (ImGui::IsMouseDown(0)) {
-            if (GBLOCK_CLICK_BEGIN_ON_GBLOCK == -1)
-                GBLOCK_CLICK_BEGIN_ON_GBLOCK = GBLOCK_CURRENTLY_HOVERED != -1 ? 1 : 0;
-        }
 
-        // unset GBLOCK_CLICK_BEGIN_ON_GBLOCK
-        if (ImGui::IsMouseReleased(0)) {
-            GBLOCK_CLICK_BEGIN_ON_GBLOCK = -1;
-        }
-
-        // Set DRAGGED flag
-        if (ImGui::IsItemHovered()                              // if item is hovered...
-            && GBLOCK_CURRENTLY_DRAGGED == -1                   // and if currently dragged is nothing...
-            && GPort::getHovered() == UI::GPORT_NONE_HOVERED    // and no port is hovered...
-            && GPort::getDragged() == UI::GPORT_NONE_HOVERED    // and no port is dragged...
-            && ImGui::IsMouseDragging(0, 4.0)                   // and is dragging with minimal threshold of 4 pixels
-            && GBLOCK_CLICK_BEGIN_ON_GBLOCK) {
-            GBLOCK_DRAGGED_FLAG = true;
-            GBLOCK_CURRENTLY_DRAGGED = gate->id;
-        }
+        printf("CUR_HOV: %d CUR_DRAG: %d BEG: %d\n", GBLOCK_CURRENTLY_HOVERED, GBLOCK_CURRENTLY_DRAGGED,
+               GBLOCK_CLICK_BEGIN_ON_GBLOCK);
 
         // Set HOVERED flag
         if (GBLOCK_DRAGGED_FLAG                                         // if the block is dragged or
@@ -119,6 +101,34 @@ namespace Logicon {
                 && GPort::getHovered() == UI::GPORT_NONE_HOVERED)) {    //    and no port is hovered...
             GBLOCK_HOVERED_FLAG = true;
             GBLOCK_CURRENTLY_HOVERED = gate->id;
+        }
+
+        // set GBLOCK_CLICK_BEGIN_ON_GBLOCK
+        if (ImGui::IsMouseDown(0)) {
+            if(GBLOCK_CLICK_BEGIN_ON_GBLOCK == -1) {
+                auto hoveredGridCell = parentGCircuit.lock()->getHovered_grid_cell();
+                if(hoveredGridCell != UI::Vec2(-1,-1)) {
+                    if(parentGCircuit.lock()->getGBlockAt(hoveredGridCell) != nullptr)
+                        GBLOCK_CLICK_BEGIN_ON_GBLOCK = GBLOCK_CURRENTLY_HOVERED;
+                    else
+                        GBLOCK_CLICK_BEGIN_ON_GBLOCK = -2;
+                }
+            }
+        }
+
+        // unset GBLOCK_CLICK_BEGIN_ON_GBLOCK
+        if (ImGui::IsMouseReleased(0)) {
+            GBLOCK_CLICK_BEGIN_ON_GBLOCK = -1;
+        }
+
+        // Set DRAGGED flag
+        if (GBLOCK_CURRENTLY_DRAGGED == -1                   // and if currently dragged is nothing...
+            && GPort::getHovered() == UI::GPORT_NONE_HOVERED    // and no port is hovered...
+            && GPort::getDragged() == UI::GPORT_NONE_HOVERED    // and no port is dragged...
+            && ImGui::IsMouseDragging(0, 4.0)                   // and is dragging with minimal threshold of 4 pixels
+            && GBLOCK_CLICK_BEGIN_ON_GBLOCK == gate->getId()) {
+            GBLOCK_DRAGGED_FLAG = true;
+            GBLOCK_CURRENTLY_DRAGGED = gate->id;
         }
 
         // unset HOVERED flag
@@ -136,23 +146,23 @@ namespace Logicon {
             GATE_TYPE gt = gate->getGateType();
             if (gt == Logicon::DELAY) {
                 auto gDelay = std::static_pointer_cast<Delay, Gate>(gate);
-                if(ImGui::Button("options"))
+                if (ImGui::Button("options"))
                     ImGui::OpenPopup("delay_opt");
-                if(ImGui::BeginPopup("delay_opt")) {
+                if (ImGui::BeginPopup("delay_opt")) {
                     int delay_opt = gDelay->getDelay();
                     ImGui::PushItemWidth(100.0);
                     ImGui::InputInt("delay", &delay_opt);
                     ImGui::PopItemWidth();
-                    if(delay_opt < 0) delay_opt = 0;
+                    if (delay_opt < 0) delay_opt = 0;
                     gDelay->setDelay(delay_opt);
                     ImGui::EndPopup();
                 }
             }
             if (gt == Logicon::CLOCK) {
                 auto gClock = std::static_pointer_cast<Clock, Gate>(gate);
-                if(ImGui::Button("options"))
+                if (ImGui::Button("options"))
                     ImGui::OpenPopup("clock_opt");
-                if(ImGui::BeginPopup("clock_opt")) {
+                if (ImGui::BeginPopup("clock_opt")) {
                     int onPeriod_opt = gClock->getOnPeriod();
                     int offPeriod_opt = gClock->getOffPeriod();
                     int phase_opt = gClock->getPhase();
@@ -161,9 +171,9 @@ namespace Logicon {
                     ImGui::InputInt("OFF period", &offPeriod_opt);
                     ImGui::InputInt("phase", &phase_opt);
                     ImGui::PopItemWidth();
-                    if(onPeriod_opt < 0) onPeriod_opt = 0;
-                    if(offPeriod_opt < 0) offPeriod_opt = 0;
-                    if(phase_opt < 0) phase_opt = 0;
+                    if (onPeriod_opt < 0) onPeriod_opt = 0;
+                    if (offPeriod_opt < 0) offPeriod_opt = 0;
+                    if (phase_opt < 0) phase_opt = 0;
                     gClock->changeSettings(onPeriod_opt, offPeriod_opt, phase_opt);
                     ImGui::EndPopup();
                 }

@@ -23,37 +23,39 @@ namespace Logicon {
 
         // TODO: make all extern and init in App.init()
         // @formatter:off
-        const float     MARGIN                          = 16.0;                                                         /// Margin between elements
-        const float     MENU_WIDGET_HEIGHT              = 64.0;
-        const float     MENU_WIDGET_BUTTON_SIZE         = 48.0;
-        const ImColor   MENU_WIDGET_BUTTON_FG_COLOR     = ImColor(229, 229, 229);                                       /// Foreground color for buttons
-        const float     BLOCKS_WIDGET_WIDTH             = 300.0;
-        const float     FOOTER_WIDGET_HEIGHT            = 32.0;
+        const float     MARGIN                                  = 16.0;                                                 /// Margin between elements
+        const float     MENU_WIDGET_HEIGHT                      = 64.0;
+        const float     MENU_WIDGET_BUTTON_SIZE                 = 48.0;
+        const ImColor   MENU_WIDGET_BUTTON_NORMAL_COLOR         = ImColor(229, 229, 229);                               /// Foreground color for normal buttons
+        const ImColor   MENU_WIDGET_BUTTON_PLAY_PUSHED_COLOR    = ImColor(0, 145, 0);                                    /// Foreground color for pushed in play button
+        const ImColor   MENU_WIDGET_BUTTON_PAUSE_PUSHED_COLOR   = ImColor(125, 0, 0);                                    /// Foreground color for pushed in pause button
+        const float     BLOCKS_WIDGET_WIDTH                     = 300.0;
+        const float     FOOTER_WIDGET_HEIGHT                    = 32.0;
 
-        const float     CANVAS_GRID_SIZE                = 32.0;                                                         /// Basic square size on canvas
+        const float     CANVAS_GRID_SIZE                        = 32.0;                                                 /// Basic square size on canvas
 
-        const int       CANVAS_CHANNEL_COUNT            = 6;                                                            /// Like z-index, that many layers to draw
-        const int       DEFAULT_GBLOCK_CHANNEL          = 0;
-        const int       DEFAULT_CONNECTION_CHANNEL      = 1;
-        const int       DEFAULT_GPORT_CHANNEL           = 2;
-        const int       ACTIVE_GBLOCK_CHANNEL           = 3;
-        const int       ACTIVE_GPORT_CHANNEL            = 4;
-        const int       ACTIVE_CONNECTION_CHANNEL       = 5;
+        const int       CANVAS_CHANNEL_COUNT                    = 6;                                                    /// Like z-index, that many layers to draw
+        const int       DEFAULT_GBLOCK_CHANNEL                  = 0;
+        const int       DEFAULT_CONNECTION_CHANNEL              = 1;
+        const int       DEFAULT_GPORT_CHANNEL                   = 2;
+        const int       ACTIVE_GBLOCK_CHANNEL                   = 3;
+        const int       ACTIVE_GPORT_CHANNEL                    = 4;
+        const int       ACTIVE_CONNECTION_CHANNEL               = 5;
 
-        const float     GPORT_PADDING                   = CANVAS_GRID_SIZE / 8.0;
-        const float     GPORT_SIZE                      = CANVAS_GRID_SIZE - 2*GPORT_PADDING;                           /// Dimensions for GPort button
-        const float     BEZIER_CONTROL_DISTANCE         = UI::CANVAS_GRID_SIZE * 2.0;                                   /// How far in canvas coordinates is control point away from gPort
-        const float     BEZIER_THICKNESS                = 4.0;                                                          /// Thickness of bezier lines
-        const int       BEZIER_SEGMENTS                 = 20;                                                           /// Higher = smoother bezier
+        const float     GPORT_PADDING                           = CANVAS_GRID_SIZE / 8.0;
+        const float     GPORT_SIZE                              = CANVAS_GRID_SIZE - 2*GPORT_PADDING;                   /// Dimensions for GPort button
+        const float     BEZIER_CONTROL_DISTANCE                 = UI::CANVAS_GRID_SIZE * 2.0;                           /// How far in canvas coordinates is control point away from gPort
+        const float     BEZIER_THICKNESS                        = 4.0;                                                  /// Thickness of bezier lines
+        const int       BEZIER_SEGMENTS                         = 20;                                                   /// Higher = smoother bezier
 
-        const ImColor   ON_STATE_COLOR = ImColor(255, 195, 17);
-        const ImColor   OFF_STATE_COLOR = ImColor(68, 74, 119);
-        const ImColor   DEFAULT_GBLOCK_COLOR = ImColor(255, 255, 255, 200);                                             /// Default
-        const ImColor   DIMMED_GBLOCK_COLOR = ImColor(100, 100, 100, 200);
-        const ImColor   DEFAULT_GPORT_COLOR = ImColor(68, 75, 119);
-        const ImColor   DIMMED_GPORT_COLOR = ImColor(34, 40, 61, 200);
+        const ImColor   ON_STATE_COLOR                          = ImColor(255, 195, 17);
+        const ImColor   OFF_STATE_COLOR                         = ImColor(68, 74, 119);
+        const ImColor   DEFAULT_GBLOCK_COLOR                    = ImColor(255, 255, 255, 200);                          /// Default
+        const ImColor   DIMMED_GBLOCK_COLOR                     = ImColor(100, 100, 100, 200);
+        const ImColor   DEFAULT_GPORT_COLOR                     = ImColor(68, 75, 119);
+        const ImColor   DIMMED_GPORT_COLOR                      = ImColor(34, 40, 61, 200);
 
-        const std::string GPORT_NONE_HOVERED = "-";                                                                     /// value for GPORT_CURRENTLY_HOVERED flag while non is hovered
+        const std::string GPORT_NONE_HOVERED                    = "-";                                                  /// value for GPORT_CURRENTLY_HOVERED flag while non is hovered
 
         const int       KEY_DELETE                      = 261;
         // @formatter:on

@@ -35,11 +35,12 @@ namespace Logicon {
         const int   POSTPONED_CLEAR       = 1 << 1;
         const int   POSTPONED_CONNECT     = 1 << 2;
         const int   POSTPONED_DISCONNECT  = 1 << 3;
-        ID          postponedRemoveId;                  /// ID of gate to be removed, -1 if no postponed removal
-        Connection  postponedConnectFrom;               /// Connection info for postponed connect operation...
-        Connection  postponedConnectTo;                 /// ...
-        Connection  postponedDisconnectFrom;            /// Connection info for postponed disconnect operation...
-        Connection  postponedDisconnectTo;              /// ...
+        std::list<ID>          postponedRemoveList;                 /// ID of gate to be removed, -1 if no postponed removal
+        std::list<std::pair<Connection, Connection>>  postponedConnectList;                /// Connection info for postponed connect operation
+        std::list<std::pair<Connection, Connection>>  postponedDisconnectList;             /// Connection info for postponed disconnect operation
+
+        UI::Vec2 hovered_grid_cell;
+
         // @formatter:on
         GCircuit(std::shared_ptr<Circuit> circuit);
 
@@ -55,6 +56,9 @@ namespace Logicon {
          * @return true if close was successful
          */
         bool close();
+
+        const UI::Vec2 &getHovered_grid_cell() const;
+
 
         /**
          * @brief Returns this circuit
@@ -72,7 +76,7 @@ namespace Logicon {
         /**
          * @breif Returns pointer to GBlock at given position
          *
-         * @param pos position to check for
+         * @param pos position to check for in grid coordinates
          * @return pointer to GBlock or nullptr if block at given pos doesn't exist
          */
         std::shared_ptr<GBlock> getGBlockAt(UI::Vec2 &pos);
@@ -176,16 +180,16 @@ namespace Logicon {
         void executePostponed();
 
         /// @brief apllies modification during executePostponed()
-        void postponedRemove(ID id);
+        void postponedRemove();
 
         /// @brief apllies modification during executePostponed()
         void postponedClear();
 
         /// @brief apllies modification during executePostponed()
-        void postponedConnect(ID idFrom, Port output, ID idTo, Port input);
+        void postponedConnect();
 
         /// @brief apllies modification during executePostponed()
-        void postponedDisconnect(ID idFrom, Port output, ID idTo, Port input);
+        void postponedDisconnect();
     };
 
 } // namespace Logicon

@@ -53,6 +53,11 @@ namespace Logicon {
                 GPORT_CURRENTLY_HOVERED = UI::GPORT_NONE_HOVERED;
         }
 
+        if (ImGui::IsMouseReleased(0)) {
+            GPORT_DRAGGED_FLAG = false;
+            GPORT_CURRENTLY_DRAGGED = UI::GPORT_NONE_HOVERED;
+        }
+
         /// DISPLAY TOOLTIP
         if (GPORT_HOVERED_FLAG) {
             auto connections = isInput ?
@@ -79,6 +84,7 @@ namespace Logicon {
                                                                             parentGBlock.lock()->getId(), port) :
                 parentGBlock.lock()->getParentGCircuit().lock()->disconnect(parentGBlock.lock()->getId(), port,
                                                                             connection.id, connection.port);
+            GPORT_CURRENTLY_DRAGGED = uniqeElemId;
         }
 
         /// Send drag'n'drop payload
@@ -111,8 +117,6 @@ namespace Logicon {
                 delete (data);
             }
             ImGui::EndDragDropTarget();
-            GPORT_DRAGGED_FLAG = false;
-            GPORT_CURRENTLY_DRAGGED = UI::GPORT_NONE_HOVERED;
         }
 
         ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();

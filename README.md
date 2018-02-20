@@ -58,5 +58,4 @@ State is 1 when ON and 0 when OFF.
 - [Jakub Mendyk (@JMendyk)](https://github.com/JMendyk)
 - [Maksymilian Polarczyk (@T3sT3ro)](https://github.com/T3sT3ro)
 - [Rafał Tatarczuk (@Rufusmen)](https://github.com/Rufusmen)
-- [Maciej Walkowiak (@walkowiakm)](https://github.com/walkowiakm)
 - [Łukasz Wróblewski (@kralizekmd)](https://github.com/kralizekmd)

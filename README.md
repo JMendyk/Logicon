@@ -34,6 +34,7 @@ with redistributable package for your platform.
 ## Free port inputs/outputs reading/saving
 
 ![logicon_import_states](https://user-images.githubusercontent.com/9089004/34964042-ccf90a82-fa4b-11e7-887c-3a9a50563428.gif)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FT3sT3ro%2FLogicon.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FT3sT3ro%2FLogicon?ref=badge_shield)
 
 Application lets user set values on free (not connected) inputs of gates in 
 circuit and read values of free outputs to/from file. These files follow format 
@@ -59,3 +60,7 @@ State is 1 when ON and 0 when OFF.
 - [Maksymilian Polarczyk (@T3sT3ro)](https://github.com/T3sT3ro)
 - [Rafał Tatarczuk (@Rufusmen)](https://github.com/Rufusmen)
 - [Łukasz Wróblewski (@kralizekmd)](https://github.com/kralizekmd)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FT3sT3ro%2FLogicon.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FT3sT3ro%2FLogicon?ref=badge_large)
